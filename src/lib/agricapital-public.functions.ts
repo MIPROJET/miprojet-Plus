@@ -1,27 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
-
-const AGRICAPITAL_PROJECT_ID = "b7024000-fc34-4706-8901-2ce092283dbc";
+import { createClient } from "@supabase/supabase-js";
 
 export const getAgriCapitalPartition = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await supabaseAdmin
-    .from("mp_financial_records")
-    .select("record_type, amount, record_date, description, category")
-    .eq("project_id", AGRICAPITAL_PROJECT_ID)
-    .order("record_date", { ascending: true });
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) throw new Error("Supabase config missing");
+
+  const supa = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data, error } = await supa.rpc("get_agricapital_partition");
   if (error) throw new Error(error.message);
-  const records = data ?? [];
-  const inTypes = new Set(["apport", "don", "revenue", "vente", "subvention"]);
-  let entrees = 0, sorties = 0;
-  for (const r of records) {
-    if (inTypes.has(r.record_type)) entrees += Number(r.amount);
-    else sorties += Number(r.amount);
-  }
+
+  const payload = (data ?? {}) as {
+    entrees?: number; sorties?: number; solde?: number; nbOperations?: number;
+    records?: Array<{ record_type: string; amount: number; record_date: string; description: string | null; category: string | null }>;
+  };
   return {
-    entrees,
-    sorties,
-    solde: entrees - sorties,
-    nbOperations: records.length,
-    records: records.slice(0, 25), // aperçu
+    entrees: Number(payload.entrees ?? 0),
+    sorties: Number(payload.sorties ?? 0),
+    solde: Number(payload.solde ?? 0),
+    nbOperations: Number(payload.nbOperations ?? 0),
+    records: payload.records ?? [],
   };
 });
