@@ -49,6 +49,7 @@ function ProjectsPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
+  const [previewSlug, setPreviewSlug] = useState<string | null>(null);
 
   const projectsQ = useQuery({
     queryKey: ["my-projects", user.id],
