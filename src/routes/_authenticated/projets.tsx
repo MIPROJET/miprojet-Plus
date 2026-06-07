@@ -695,7 +695,7 @@ function GalleryField({ userId, projectId }: { userId: string; projectId: string
       <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
         {items.map((it: any) => (
           <div key={it.id} className="group relative aspect-square overflow-hidden rounded-lg border bg-muted">
-            <img src={publicUrlFor(it.storage_path)} alt="" className="h-full w-full object-cover" />
+            <SmartImage src={publicUrlFor(it.storage_path)} alt="" className="h-full w-full" />
             <button
               type="button"
               onClick={() => remove(it.id, it.storage_path)}
