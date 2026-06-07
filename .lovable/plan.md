@@ -1,61 +1,62 @@
-# Plan de finalisation AgriCapital
 
-Le périmètre est large — je propose de le découper en 3 lots livrables séquentiellement pour garder la qualité. Validez l'ordre (ou ajustez) et je lance le lot 1.
+# Plan de finalisation MiProjet+
 
-## Lot 1 — Identité visuelle & page publique `/projets/agricapital`
+Le périmètre demandé est très large. Je propose **5 lots livrables séquentiellement** pour garder qualité et stabilité.
 
-**Assets CDN (upload via lovable-assets)**
-- Logo officiel V2 (`Logo_AgriCapital_-V2.png`)
-- Poster plantation (`POSTER_AGRICAPITAL_Plantation.jpg`)
-- 3 flyers B5 (Verso, Recto promo -25%, Exclusif -35%)
-- Photo palmier (`fais_une_plantation_202604101808.png`)
-- Captures `agricapital.ci` et `app.agricapital.ci` (via fetch_website)
+## Lot A — Correction images (URGENT, rapide)
 
-**Page publique** `/projets/agricapital` (route non authentifiée)
-- Hero avec poster + logo + slogan « Investir la terre. Cultiver l'avenir. »
-- Section offres : PalmInvest / PalmInvest+ / TerraPalm / TerraPalm+ (tarifs des flyers)
-- Galerie flyers cliquables (lightbox)
-- Section « État des lieux 2026 » (extrait du PDF : valorisation, traction, pipeline)
-- Bloc partition financière (lecture seule des 125 opérations, solde = 0)
-- CTA : contact@agricapital.ci · 05 64 55 17 17 · agricapital.ci
-- SEO complet (head meta + og:image = poster)
+**Problème** : logo/cover/galerie cassés dans les cartes et le formulaire (cf. captures).
 
-**Publication automatique « site mère »** : la page est servie publiquement à `/projets/agricapital` sur le domaine du projet — aucune action manuelle requise.
+- Vérifier/créer le bucket `project-media` (public, 250 Mo) — migration déjà proposée, à confirmer ou recréer.
+- Composant `<SmartImage>` réutilisable : fallback élégant (initiales projet) si URL cassée, lazy loading, `object-cover`.
+- Brancher dans `MiProjetCard` (cover + logo) et dans le formulaire Visuels (preview logo, cover, galerie, vidéo).
+- Tester avec le projet AgriCapital existant.
 
-## Lot 2 — Formulaire PME/Startup enrichi
+## Lot B — Refonte formulaire « Nouveau projet » (parcours adaptatifs)
 
-Migration table `projects` (ajouts) :
-- `logo_url`, `cover_url`, `pitch`, `produit_service`, `commercialisation`, `cible_marche`, `suivi_evaluation`
-- Bucket Storage `project-media` (public, RLS owner-write)
-- Table `mp_invoices` rattachée à `mp_financial_records` (upload PDF/image facture)
+Avant le formulaire complet, **étape 0 = choix du parcours** (modal/wizard) :
 
-Composants formulaire :
-- Onglets : Identité · Pitch · Produit · Marché · Suivi · Documents
-- Upload logo + cover (drag & drop, prévisualisation)
-- Lien facture sur chaque ligne d'opération financière
+1. **Type d'activité** — liste déroulante :
+   - Micro-activité (vente au marché, vente ambulante, mototaxi, petit commerce…) → formulaire **léger** (5 champs)
+   - PME / Commerce / Coopérative / Association / Agriculteur → **Parcours 1** (formulaire complet, activité existante)
+   - Startup / Porteur de projet / Entrepreneur en création → **Parcours 2** (focus pitch + projet)
 
-## Lot 3 — Recalibrage score AgriCapital (cible 78–83 %)
+2. **Auto-détection** selon §3 du cahier des charges → active le bon `profile_kind` + `journey` en BDD.
 
-Lecture du PDF État des Lieux pour extraire les preuves (immatriculation, plantation pilote, contrats, équipe, traction commerciale, brand book, site web actif, app métier).
+3. **Champs conditionnels** :
+   - Micro : nom, secteur, ville, description courte, photo
+   - PME (existant) : tous les champs actuels + suivi financier au cœur
+   - Startup (projet) : pitch, problème, solution, marché, BMC, équipe — pas de suivi financier obligatoire
 
-Ajustement `src/lib/scoring.ts` :
-- Juridique 15 % → bonus immatriculation CCI + site `.ci` actif (≈ 95)
-- Financier 25 % → 125 opérations équilibrées + valorisation 72 M (≈ 75)
-- Technique 20 % → plantation pilote + app métier (≈ 85)
-- Marché 20 % → 4 offres produit + flyers + 2 sites live (≈ 80)
-- Impact 20 % → emplois ruraux + durabilité (≈ 80)
+**Réorganiser onglet Visuels** : grille 2 colonnes (logo+cover à gauche, galerie+vidéo à droite) pour supprimer l'espace vide rouge signalé.
 
-→ Score consolidé attendu : **~81 %** (cohérent avec 75–83 %).
+Migration : ajouter colonnes `profile_kind` (`micro|pme|startup`), `journey` (`existing|project`), `complexity_level` (`simple|intermediate|advanced`) sur `mp_projects`.
 
-## Technique
-- TanStack Start serverFn pour upload Storage signé
-- Route `/projets/$slug` publique (pas sous `_authenticated`)
-- Assets via `lovable-assets create` depuis `/mnt/user-uploads/`
-- `document--parse_document` sur les 2 PDF pour extraire chiffres réels
+## Lot C — Module suivi financier (3 niveaux + indicateurs auto)
+
+§4 du cahier :
+- 3 niveaux : **Simple** (recettes/dépenses), **Intermédiaire** (catégories, produits), **Avancé** (multi-produits, rentabilité par produit).
+- Indicateurs auto-calculés : CA, marge, bénéfice net, top/flop produit, capacité de remboursement.
+- Tableau de bord par projet : graphes mensuels + alertes.
+
+## Lot D — Score, Accompagnement, Certification, Écosystème
+
+- **§5 Score** : recalibrer barème (4 niveaux : Démarrage / En structuration / Solide / Excellent) avec couleurs Rouge/Orange/Bleu/Vert.
+- **§6 Accompagnement** : enrichir la page `/support` selon modèle hybride + 5 niveaux d'intervention (auto, guidé, expert, premium, partenaire).
+- **§7 Documents & Certification** : génération auto (fiche projet PDF, bilan simplifié, attestation MiProjet), conditions de certification, palier payant.
+- **§8 Écosystème** : Supabase partagée (déjà OK), visibilité auto au catalogue, profil économique public, matching investisseurs.
+
+## Lot E — CRUD complet & polish
+
+- Audit toutes les entités (projets, médias, opérations financières, tickets) → vérifier Create/Read/Update/**Delete** présents partout avec confirmation.
+- Cohérence UI, suppression espaces vides, responsive.
+
+---
 
 ## Ordre proposé
-1. Lot 1 (identité + page publique) — livrable visuel immédiat
-2. Lot 3 (recalibrage score) — court, basé sur lecture PDF
-3. Lot 2 (formulaire enrichi + factures) — plus lourd, migration + storage
 
-Confirmez l'ordre (ou dites « 1-2-3 » / « 1-3-2 ») et je lance.
+**A → B → C → D → E**
+
+Je commence par le **Lot A** dès validation (fix images, ~10 min) puis enchaîne sur le **Lot B** (refonte formulaire avec choix du parcours, ~30 min). Les lots C/D/E sont plus lourds et chacun mérite une validation intermédiaire.
+
+**Confirmez** : « go A+B » pour démarrer les deux premiers lots, ou ajustez l'ordre / le périmètre.
