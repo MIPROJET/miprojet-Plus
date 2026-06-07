@@ -300,12 +300,15 @@ function ProjectsPage() {
 function ProjectForm({
   userId,
   initial,
+  kind,
   onDone,
 }: {
   userId: string;
   initial?: any;
+  kind: ProfileKind;
   onDone: () => void;
 }) {
+  const preset = PROFILE_PRESETS[kind];
   const [form, setForm] = useState({
     title: initial?.title ?? "",
     description: initial?.description ?? "",
@@ -325,7 +328,11 @@ function ProjectForm({
     commercialization: initial?.commercialization ?? "",
     target_customers: initial?.target_customers ?? "",
     monitoring_evaluation: initial?.monitoring_evaluation ?? "",
+    profile_kind: (initial?.profile_kind as ProfileKind) ?? kind,
+    journey: (initial?.journey as Journey) ?? preset.journey,
+    complexity_level: initial?.complexity_level ?? preset.complexity,
   });
+
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
