@@ -160,14 +160,13 @@ function ProjectsPage() {
                     <Pencil className="h-3.5 w-3.5 mr-1.5" /> Enrichir
                   </Button>
                   {publicSlug && (
-                    <a
-                      href={`/projets/${publicSlug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setPreviewSlug(publicSlug)}
                       className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/25"
                     >
-                      Page publique <ExternalLink className="h-3 w-3" />
-                    </a>
+                      <Eye className="h-3 w-3" /> Page publique
+                    </button>
                   )}
                 </div>
               </div>
@@ -175,6 +174,46 @@ function ProjectsPage() {
           })}
         </div>
       )}
+
+      <Dialog open={!!previewSlug} onOpenChange={(o) => !o && setPreviewSlug(null)}>
+        <DialogContent
+          className="!max-w-[100vw] !w-screen !h-[100dvh] !p-0 !rounded-none !border-0 !bg-background sm:!max-w-[96vw] sm:!w-[96vw] sm:!h-[94vh] sm:!rounded-2xl sm:!border"
+          showCloseButton={false}
+        >
+          <DialogHeader className="flex flex-row items-center justify-between gap-3 border-b px-4 py-3 sm:px-6">
+            <DialogTitle className="truncate text-base sm:text-lg">
+              Aperçu page publique
+            </DialogTitle>
+            <div className="flex items-center gap-2">
+              {previewSlug && (
+                <a
+                  href={`/projets/${previewSlug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-accent"
+                >
+                  Ouvrir <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => setPreviewSlug(null)}
+                className="rounded-md p-2 hover:bg-accent"
+                aria-label="Fermer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </DialogHeader>
+          {previewSlug && (
+            <iframe
+              src={`/projets/${previewSlug}`}
+              className="h-full w-full flex-1 bg-background"
+              title="Page publique"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
