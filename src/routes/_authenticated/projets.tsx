@@ -58,9 +58,9 @@ const PROFILE_PRESETS: Record<
     label: "Startup / Porteur de projet",
     description: "Idée ou projet en création, entrepreneur en lancement, startup.",
     journey: "project",
-    complexity: "simple",
+    complexity: "intermediate",
     icon: Rocket,
-    examples: "Focus pitch, marché, équipe · score Startup",
+    examples: "Pitch · BMC · équipe · suivi financier obligatoire (prévisionnel + réel)",
   },
 };
 
