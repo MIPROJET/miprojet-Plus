@@ -1,0 +1,4 @@
+{
+  "framework": null,
+  "buildCommand": "bun run check:responsive && bun run build"
+}

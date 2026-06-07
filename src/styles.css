@@ -1,0 +1,205 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* MiProjet+ — Fintech africaine, inspiré du logo (rouge M, bleu PROJET, vert tagline) */
+/* Palette: vert profond (confiance, croissance) + or chaud (ambition) + bleu institutionnel */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --shadow-elevated: 0 20px 40px -16px color-mix(in oklab, var(--primary) 30%, transparent);
+  --shadow-glow: 0 0 60px -10px color-mix(in oklab, var(--gold) 60%, transparent);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.18 0.02 160);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 160);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 160);
+
+  /* Vert emerald MiProjet+ (≈ #06B36A) */
+  --primary: oklch(0.66 0.18 152);
+  --primary-foreground: oklch(0.99 0.01 95);
+
+  --secondary: oklch(0.42 0.13 245);
+  --secondary-foreground: oklch(0.98 0.01 95);
+
+  --muted: oklch(0.97 0.01 150);
+  --muted-foreground: oklch(0.48 0.02 160);
+
+  --accent: oklch(0.95 0.05 152);
+  --accent-foreground: oklch(0.3 0.12 152);
+
+  --gold: oklch(0.78 0.14 78);
+  --gold-foreground: oklch(0.2 0.05 60);
+
+  --success: oklch(0.66 0.18 152);
+  --success-foreground: oklch(0.98 0.01 95);
+
+  --warning: oklch(0.78 0.14 78);
+  --warning-foreground: oklch(0.2 0.05 60);
+
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(0.98 0.01 95);
+
+  --border: oklch(0.92 0.01 150);
+  --input: oklch(0.93 0.01 150);
+  --ring: oklch(0.66 0.18 152);
+
+  --sidebar: oklch(0.99 0.005 150);
+  --sidebar-foreground: oklch(0.25 0.03 160);
+  --sidebar-primary: oklch(0.66 0.18 152);
+  --sidebar-primary-foreground: oklch(0.99 0.01 95);
+  --sidebar-accent: oklch(0.95 0.05 152);
+  --sidebar-accent-foreground: oklch(0.3 0.12 152);
+  --sidebar-border: oklch(0.92 0.01 150);
+  --sidebar-ring: oklch(0.66 0.18 152);
+}
+
+.dark {
+  --background: oklch(0.16 0.02 160);
+  --foreground: oklch(0.96 0.01 150);
+
+  --card: oklch(0.21 0.025 160);
+  --card-foreground: oklch(0.96 0.01 150);
+  --popover: oklch(0.21 0.025 160);
+  --popover-foreground: oklch(0.96 0.01 150);
+
+  --primary: oklch(0.72 0.18 152);
+  --primary-foreground: oklch(0.15 0.03 160);
+
+  --secondary: oklch(0.55 0.14 245);
+  --secondary-foreground: oklch(0.98 0.01 95);
+
+  --muted: oklch(0.24 0.02 160);
+  --muted-foreground: oklch(0.72 0.02 150);
+
+  --accent: oklch(0.3 0.08 152);
+  --accent-foreground: oklch(0.95 0.05 150);
+
+  --gold: oklch(0.82 0.15 80);
+  --gold-foreground: oklch(0.18 0.05 60);
+
+  --success: oklch(0.72 0.18 152);
+  --success-foreground: oklch(0.15 0.03 160);
+  --warning: oklch(0.82 0.15 80);
+  --warning-foreground: oklch(0.18 0.05 60);
+  --destructive: oklch(0.65 0.22 27);
+  --destructive-foreground: oklch(0.98 0.01 95);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.72 0.18 152);
+
+  --sidebar: oklch(0.13 0.02 160);
+  --sidebar-foreground: oklch(0.92 0.02 150);
+  --sidebar-primary: oklch(0.72 0.18 152);
+  --sidebar-primary-foreground: oklch(0.15 0.03 160);
+  --sidebar-accent: oklch(0.24 0.05 152);
+  --sidebar-accent-foreground: oklch(0.95 0.04 150);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.72 0.18 152);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    width: 100%;
+    max-width: 100%;
+  }
+  body {
+    width: 100%;
+    min-width: 0;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@utility gradient-hero {
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      color-mix(in oklab, var(--gold) 25%, transparent),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 60%,
+      color-mix(in oklab, var(--secondary) 20%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(135deg, var(--primary), oklch(0.3 0.08 160));
+}
+
+@utility gradient-gold {
+  background-image: linear-gradient(135deg, var(--gold), oklch(0.72 0.16 60));
+}
+
+@utility text-gradient-gold {
+  background-image: linear-gradient(135deg, var(--gold), oklch(0.85 0.16 95));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
