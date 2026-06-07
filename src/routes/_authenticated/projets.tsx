@@ -400,6 +400,17 @@ function ProjectForm({
             onChange={(url) => set("cover_url", url)}
             aspect="wide"
           />
+          {initial?.id ? (
+            <>
+              <GalleryField userId={userId} projectId={initial.id} />
+              <VideoField userId={userId} projectId={initial.id} />
+            </>
+          ) : (
+            <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+              Galerie terrain & vidéo : enregistrez d'abord le projet pour
+              activer les uploads multiples.
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
