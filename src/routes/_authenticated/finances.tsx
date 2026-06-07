@@ -22,11 +22,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Paperclip, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useRef } from "react";
+import { uploadProjectMediaPath, publicUrlFor } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/finances")({
   head: () => ({ meta: [{ title: "Finances · MiProjet+" }] }),
@@ -194,13 +195,14 @@ function FinancesPage() {
               <th className="px-3 py-3 font-semibold sm:px-4">Description</th>
               <th className="hidden px-3 py-3 font-semibold lg:table-cell sm:px-4">Catégorie</th>
               <th className="w-28 px-3 py-3 text-right font-semibold sm:w-36 sm:px-4">Montant</th>
+              <th className="w-10 px-2 py-3" />
               <th className="w-9 px-2 py-3" />
             </tr>
           </thead>
           <tbody>
             {records.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
                   Aucune opération.
                 </td>
               </tr>
@@ -231,6 +233,9 @@ function FinancesPage() {
                       {isIn ? "+" : "−"} {formatXOF(Number(r.amount))}
                     </td>
                     <td className="px-2 py-3">
+                      <ReceiptCell record={r} userId={user.id} onChanged={() => qc.invalidateQueries({ queryKey: ["all-records"] })} />
+                    </td>
+                    <td className="px-2 py-3">
                       <button
                         onClick={() => {
                           if (confirm("Supprimer ?")) deleteM.mutate(r.id);
@@ -247,6 +252,72 @@ function FinancesPage() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+function ReceiptCell({
+  record,
+  userId,
+  onChanged,
+}: {
+  record: any;
+  userId: string;
+  onChanged: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const hasReceipt = !!record.receipt_path;
+  const url = hasReceipt ? publicUrlFor(record.receipt_path) : null;
+
+  const onFile = async (file: File) => {
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Max 8 Mo");
+      return;
+    }
+    setBusy(true);
+    try {
+      const path = await uploadProjectMediaPath(userId, `receipts/${record.project_id}`, file);
+      const { error } = await supabase
+        .from("mp_financial_records")
+        .update({ receipt_path: path })
+        .eq("id", record.id);
+      if (error) throw error;
+      toast.success("Facture liée");
+      onChanged();
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center">
+      {hasReceipt && url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Voir la facture"
+          className="text-primary hover:text-primary/70"
+        >
+          <FileText className="h-4 w-4" />
+        </a>
+      ) : (
+        <label
+          className={`cursor-pointer text-muted-foreground hover:text-primary ${busy ? "opacity-50" : ""}`}
+          title="Joindre une facture"
+        >
+          <Paperclip className="h-4 w-4" />
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            className="hidden"
+            disabled={busy}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); }}
+          />
+        </label>
+      )}
     </div>
   );
 }
