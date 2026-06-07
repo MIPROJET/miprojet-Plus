@@ -233,6 +233,9 @@ function FinancesPage() {
                       {isIn ? "+" : "−"} {formatXOF(Number(r.amount))}
                     </td>
                     <td className="px-2 py-3">
+                      <ReceiptCell record={r} userId={user.id} onChanged={() => qc.invalidateQueries({ queryKey: ["all-records"] })} />
+                    </td>
+                    <td className="px-2 py-3">
                       <button
                         onClick={() => {
                           if (confirm("Supprimer ?")) deleteM.mutate(r.id);
