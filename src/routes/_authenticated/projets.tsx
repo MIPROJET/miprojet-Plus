@@ -83,12 +83,20 @@ function ProjectsPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
+  const [pendingKind, setPendingKind] = useState<ProfileKind | null>(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
 
   const projectsQ = useQuery({
     queryKey: ["my-projects", user.id],
     queryFn: () => fetchMyProjects(user.id),
   });
+
+  const startNew = () => {
+    setEditing(null);
+    setPendingKind(null);
+    setWizardOpen(true);
+  };
 
   return (
     <div className="mx-auto w-full max-w-7xl min-w-0 space-y-6 overflow-x-clip p-3 sm:space-y-8 sm:p-6 lg:p-10">
@@ -99,28 +107,76 @@ function ProjectsPage() {
             Chaque activité que vous gérez sur MiProjet+.
           </p>
         </div>
-        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
-          <DialogTrigger asChild>
-            <Button className="w-full bg-primary hover:bg-primary/90 sm:w-auto" onClick={() => setEditing(null)}>
-              <Plus className="w-4 h-4 mr-1.5" /> Nouveau projet
-            </Button>
-          </DialogTrigger>
+        <Button className="w-full bg-primary hover:bg-primary/90 sm:w-auto" onClick={startNew}>
+          <Plus className="w-4 h-4 mr-1.5" /> Nouveau projet
+        </Button>
+
+        {/* Étape 0 : choix du type d'activité */}
+        <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Quel type d'activité enregistrez-vous ?</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">
+              Choisissez le profil le plus proche. Le formulaire, le tableau de bord
+              et le score s'adapteront automatiquement à votre réalité.
+            </p>
+            <div className="mt-3 grid gap-3">
+              {(Object.keys(PROFILE_PRESETS) as ProfileKind[]).map((k) => {
+                const p = PROFILE_PRESETS[k];
+                const Icon = p.icon;
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => {
+                      setPendingKind(k);
+                      setWizardOpen(false);
+                      setOpen(true);
+                    }}
+                    className="group flex items-start gap-3 rounded-2xl border bg-card p-4 text-left transition-all hover:border-primary hover:shadow-elevated"
+                  >
+                    <div className="shrink-0 rounded-xl bg-primary/10 p-2.5 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold">{p.label}</h3>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">{p.description}</p>
+                      <p className="mt-2 text-xs font-medium text-primary">{p.examples}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Formulaire (adapté au profil choisi) */}
+        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setEditing(null); setPendingKind(null); } }}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editing ? "Modifier le projet" : "Nouveau projet"}</DialogTitle>
+              <DialogTitle>
+                {editing ? "Modifier le projet" : `Nouveau projet · ${pendingKind ? PROFILE_PRESETS[pendingKind].label : ""}`}
+              </DialogTitle>
             </DialogHeader>
             <ProjectForm
               userId={user.id}
               initial={editing}
+              kind={editing ? ((editing.profile_kind as ProfileKind) ?? "pme") : (pendingKind ?? "pme")}
               onDone={() => {
                 setOpen(false);
                 setEditing(null);
+                setPendingKind(null);
                 qc.invalidateQueries({ queryKey: ["my-projects"] });
               }}
             />
           </DialogContent>
         </Dialog>
       </div>
+
 
       {projectsQ.isLoading ? (
         <div className="text-muted-foreground">Chargement…</div>
