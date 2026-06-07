@@ -195,6 +195,7 @@ function FinancesPage() {
               <th className="px-3 py-3 font-semibold sm:px-4">Description</th>
               <th className="hidden px-3 py-3 font-semibold lg:table-cell sm:px-4">Catégorie</th>
               <th className="w-28 px-3 py-3 text-right font-semibold sm:w-36 sm:px-4">Montant</th>
+              <th className="w-10 px-2 py-3" />
               <th className="w-9 px-2 py-3" />
             </tr>
           </thead>
