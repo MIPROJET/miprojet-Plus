@@ -360,20 +360,37 @@ function ProjectForm({
     onError: (e: any) => toast.error(e.message),
   });
 
+  // Onglets adaptatifs selon le profil
+  const showPitch = kind !== "micro";
+  const showProduit = true;
+  const showMarche = kind !== "micro";
+  const showSuivi = kind === "pme" || kind === "startup";
+  const tabs = [
+    { value: "identite", label: "Identité" },
+    showPitch && { value: "pitch", label: kind === "startup" ? "Pitch ★" : "Pitch" },
+    showProduit && { value: "produit", label: "Produit" },
+    showMarche && { value: "marche", label: "Marché" },
+    showSuivi && { value: "suivi", label: "Suivi" },
+    { value: "docs", label: "Visuels" },
+  ].filter(Boolean) as { value: string; label: string }[];
+
   return (
     <form
       onSubmit={(e) => { e.preventDefault(); m.mutate(); }}
       className="space-y-4"
     >
+      <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 text-xs">
+        <preset.icon className="h-4 w-4 text-primary" />
+        <span className="font-medium">{preset.label}</span>
+        <span className="text-muted-foreground">· {preset.examples}</span>
+      </div>
       <Tabs defaultValue="identite" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
-          <TabsTrigger value="identite">Identité</TabsTrigger>
-          <TabsTrigger value="pitch">Pitch</TabsTrigger>
-          <TabsTrigger value="produit">Produit</TabsTrigger>
-          <TabsTrigger value="marche">Marché</TabsTrigger>
-          <TabsTrigger value="suivi">Suivi</TabsTrigger>
-          <TabsTrigger value="docs">Visuels</TabsTrigger>
+        <TabsList className="grid w-full h-auto" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0,1fr))` }}>
+          {tabs.map((t) => (
+            <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>
+          ))}
         </TabsList>
+
 
         <TabsContent value="identite" className="space-y-4">
           <div>
