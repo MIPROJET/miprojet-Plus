@@ -560,16 +560,18 @@ function ImageField({
       <div className="mt-2 flex items-start gap-4">
         <div
           className={
-            "shrink-0 overflow-hidden rounded-xl border-2 border-dashed bg-muted/30 flex items-center justify-center " +
+            "shrink-0 overflow-hidden rounded-xl border bg-muted/30 " +
             (aspect === "square" ? "h-24 w-24" : "h-24 w-40")
           }
         >
-          {value ? (
-            <img src={value} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <ImageIcon className="h-6 w-6 text-muted-foreground" />
-          )}
+          <SmartImage
+            src={value}
+            alt={label}
+            fallbackText={label}
+            fit={aspect === "square" ? "cover" : "cover"}
+          />
         </div>
+
         <div className="flex-1 space-y-2">
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent">
             <Upload className="h-4 w-4" />
