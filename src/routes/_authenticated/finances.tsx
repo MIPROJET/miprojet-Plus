@@ -22,11 +22,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Paperclip, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useRef } from "react";
+import { uploadProjectMediaPath, publicUrlFor } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/finances")({
   head: () => ({ meta: [{ title: "Finances · MiProjet+" }] }),
