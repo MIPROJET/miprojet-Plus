@@ -25,10 +25,44 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload, ImageIcon,
-  X, Eye, Video as VideoIcon, Trash2,
+  Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload,
+  X, Eye, Video as VideoIcon, Trash2, Store, Building2, Rocket, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { SmartImage } from "@/components/SmartImage";
+
+type ProfileKind = "micro" | "pme" | "startup";
+type Journey = "existing" | "project";
+
+const PROFILE_PRESETS: Record<
+  ProfileKind,
+  { label: string; description: string; journey: Journey; complexity: "simple" | "intermediate" | "advanced"; icon: typeof Store; examples: string }
+> = {
+  micro: {
+    label: "Micro-activité",
+    description: "Vente au marché, vente ambulante, mototaxi, petit commerce, atelier informel…",
+    journey: "existing",
+    complexity: "simple",
+    icon: Store,
+    examples: "Formulaire ultra-court · suivi simple recettes/dépenses",
+  },
+  pme: {
+    label: "PME / Commerce / Coopérative",
+    description: "PME, commerce structuré, coopérative, association, agriculteur en activité.",
+    journey: "existing",
+    complexity: "intermediate",
+    icon: Building2,
+    examples: "Formulaire complet · suivi financier détaillé · score PME",
+  },
+  startup: {
+    label: "Startup / Porteur de projet",
+    description: "Idée ou projet en création, entrepreneur en lancement, startup.",
+    journey: "project",
+    complexity: "simple",
+    icon: Rocket,
+    examples: "Focus pitch, marché, équipe · score Startup",
+  },
+};
 
 export const Route = createFileRoute("/_authenticated/projets")({
   head: () => ({ meta: [{ title: "Mes projets · MiProjet+" }] }),
@@ -49,12 +83,20 @@ function ProjectsPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
+  const [pendingKind, setPendingKind] = useState<ProfileKind | null>(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
 
   const projectsQ = useQuery({
     queryKey: ["my-projects", user.id],
     queryFn: () => fetchMyProjects(user.id),
   });
+
+  const startNew = () => {
+    setEditing(null);
+    setPendingKind(null);
+    setWizardOpen(true);
+  };
 
   return (
     <div className="mx-auto w-full max-w-7xl min-w-0 space-y-6 overflow-x-clip p-3 sm:space-y-8 sm:p-6 lg:p-10">
@@ -65,28 +107,76 @@ function ProjectsPage() {
             Chaque activité que vous gérez sur MiProjet+.
           </p>
         </div>
-        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
-          <DialogTrigger asChild>
-            <Button className="w-full bg-primary hover:bg-primary/90 sm:w-auto" onClick={() => setEditing(null)}>
-              <Plus className="w-4 h-4 mr-1.5" /> Nouveau projet
-            </Button>
-          </DialogTrigger>
+        <Button className="w-full bg-primary hover:bg-primary/90 sm:w-auto" onClick={startNew}>
+          <Plus className="w-4 h-4 mr-1.5" /> Nouveau projet
+        </Button>
+
+        {/* Étape 0 : choix du type d'activité */}
+        <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Quel type d'activité enregistrez-vous ?</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">
+              Choisissez le profil le plus proche. Le formulaire, le tableau de bord
+              et le score s'adapteront automatiquement à votre réalité.
+            </p>
+            <div className="mt-3 grid gap-3">
+              {(Object.keys(PROFILE_PRESETS) as ProfileKind[]).map((k) => {
+                const p = PROFILE_PRESETS[k];
+                const Icon = p.icon;
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => {
+                      setPendingKind(k);
+                      setWizardOpen(false);
+                      setOpen(true);
+                    }}
+                    className="group flex items-start gap-3 rounded-2xl border bg-card p-4 text-left transition-all hover:border-primary hover:shadow-elevated"
+                  >
+                    <div className="shrink-0 rounded-xl bg-primary/10 p-2.5 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold">{p.label}</h3>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">{p.description}</p>
+                      <p className="mt-2 text-xs font-medium text-primary">{p.examples}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Formulaire (adapté au profil choisi) */}
+        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setEditing(null); setPendingKind(null); } }}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editing ? "Modifier le projet" : "Nouveau projet"}</DialogTitle>
+              <DialogTitle>
+                {editing ? "Modifier le projet" : `Nouveau projet · ${pendingKind ? PROFILE_PRESETS[pendingKind].label : ""}`}
+              </DialogTitle>
             </DialogHeader>
             <ProjectForm
               userId={user.id}
               initial={editing}
+              kind={editing ? ((editing.profile_kind as ProfileKind) ?? "pme") : (pendingKind ?? "pme")}
               onDone={() => {
                 setOpen(false);
                 setEditing(null);
+                setPendingKind(null);
                 qc.invalidateQueries({ queryKey: ["my-projects"] });
               }}
             />
           </DialogContent>
         </Dialog>
       </div>
+
 
       {projectsQ.isLoading ? (
         <div className="text-muted-foreground">Chargement…</div>
@@ -103,24 +193,29 @@ function ProjectsPage() {
                 key={p.id}
                 className="min-w-0 overflow-hidden rounded-2xl bg-card border transition-all hover:shadow-elevated hover:border-primary"
               >
-                {p.cover_url ? (
-                  <div className="h-32 w-full overflow-hidden bg-muted">
-                    <img src={p.cover_url} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ) : null}
+                <div className="h-32 w-full overflow-hidden bg-muted">
+                  <SmartImage
+                    src={p.cover_url}
+                    alt={p.title ?? ""}
+                    fallbackText={p.title ?? "Projet"}
+                    className="h-full w-full"
+                  />
+                </div>
                 <Link
                   to="/finances"
                   search={{ project: p.id } as any}
                   className="block p-4 sm:p-5"
                 >
                   <div className="flex min-w-0 items-start justify-between gap-3">
-                    {p.logo_url ? (
-                      <img src={p.logo_url} alt="" className="h-12 w-12 rounded-xl object-cover border" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                        <Briefcase className="w-5 h-5" />
-                      </div>
-                    )}
+                    <div className="h-12 w-12 overflow-hidden rounded-xl border bg-card">
+                      <SmartImage
+                        src={p.logo_url}
+                        alt={p.title ?? ""}
+                        fallbackText={p.title ?? "P"}
+                        rounded="rounded-xl"
+                      />
+                    </div>
+
                     {p.display_id && (
                       <span className="min-w-0 break-words text-right text-xs font-mono text-muted-foreground">
                         {p.display_id}
@@ -210,12 +305,15 @@ function ProjectsPage() {
 function ProjectForm({
   userId,
   initial,
+  kind,
   onDone,
 }: {
   userId: string;
   initial?: any;
+  kind: ProfileKind;
   onDone: () => void;
 }) {
+  const preset = PROFILE_PRESETS[kind];
   const [form, setForm] = useState({
     title: initial?.title ?? "",
     description: initial?.description ?? "",
@@ -235,7 +333,11 @@ function ProjectForm({
     commercialization: initial?.commercialization ?? "",
     target_customers: initial?.target_customers ?? "",
     monitoring_evaluation: initial?.monitoring_evaluation ?? "",
+    profile_kind: (initial?.profile_kind as ProfileKind) ?? kind,
+    journey: (initial?.journey as Journey) ?? preset.journey,
+    complexity_level: initial?.complexity_level ?? preset.complexity,
   });
+
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -258,20 +360,37 @@ function ProjectForm({
     onError: (e: any) => toast.error(e.message),
   });
 
+  // Onglets adaptatifs selon le profil
+  const showPitch = kind !== "micro";
+  const showProduit = true;
+  const showMarche = kind !== "micro";
+  const showSuivi = kind === "pme" || kind === "startup";
+  const tabs = [
+    { value: "identite", label: "Identité" },
+    showPitch && { value: "pitch", label: kind === "startup" ? "Pitch ★" : "Pitch" },
+    showProduit && { value: "produit", label: "Produit" },
+    showMarche && { value: "marche", label: "Marché" },
+    showSuivi && { value: "suivi", label: "Suivi" },
+    { value: "docs", label: "Visuels" },
+  ].filter(Boolean) as { value: string; label: string }[];
+
   return (
     <form
       onSubmit={(e) => { e.preventDefault(); m.mutate(); }}
       className="space-y-4"
     >
+      <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 text-xs">
+        <preset.icon className="h-4 w-4 text-primary" />
+        <span className="font-medium">{preset.label}</span>
+        <span className="text-muted-foreground">· {preset.examples}</span>
+      </div>
       <Tabs defaultValue="identite" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
-          <TabsTrigger value="identite">Identité</TabsTrigger>
-          <TabsTrigger value="pitch">Pitch</TabsTrigger>
-          <TabsTrigger value="produit">Produit</TabsTrigger>
-          <TabsTrigger value="marche">Marché</TabsTrigger>
-          <TabsTrigger value="suivi">Suivi</TabsTrigger>
-          <TabsTrigger value="docs">Visuels</TabsTrigger>
+        <TabsList className="grid w-full h-auto" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0,1fr))` }}>
+          {tabs.map((t) => (
+            <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>
+          ))}
         </TabsList>
+
 
         <TabsContent value="identite" className="space-y-4">
           <div>
@@ -320,98 +439,123 @@ function ProjectForm({
           </div>
         </TabsContent>
 
-        <TabsContent value="pitch" className="space-y-4">
-          <div>
-            <Label>Pitch (1–2 phrases percutantes) *</Label>
-            <Textarea
-              value={form.short_pitch}
-              onChange={(e) => set("short_pitch", e.target.value)}
-              className="mt-1.5"
-              rows={4}
-              placeholder="ex: AgriCapital reconnecte la finance à la terre — investissement nature à rendement durable."
-            />
-            <p className="mt-1 text-xs text-muted-foreground">Affiché en première ligne sur votre fiche projet et page publique.</p>
-          </div>
-        </TabsContent>
+        {showPitch && (
+          <TabsContent value="pitch" className="space-y-4">
+            <div>
+              <Label>Pitch (1–2 phrases percutantes) *</Label>
+              <Textarea
+                value={form.short_pitch}
+                onChange={(e) => set("short_pitch", e.target.value)}
+                className="mt-1.5"
+                rows={4}
+                placeholder="ex: AgriCapital reconnecte la finance à la terre — investissement nature à rendement durable."
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Affiché en première ligne sur votre fiche projet et page publique.</p>
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="produit" className="space-y-4">
-          <div>
-            <Label>Produit / Service proposé</Label>
-            <Textarea
-              value={form.product_description}
-              onChange={(e) => set("product_description", e.target.value)}
-              className="mt-1.5"
-              rows={5}
-              placeholder="Décrivez ce que vous vendez ou produisez : caractéristiques, prix, différenciation…"
-            />
-          </div>
-        </TabsContent>
+        {showProduit && (
+          <TabsContent value="produit" className="space-y-4">
+            <div>
+              <Label>{kind === "micro" ? "Que vendez-vous ?" : "Produit / Service proposé"}</Label>
+              <Textarea
+                value={form.product_description}
+                onChange={(e) => set("product_description", e.target.value)}
+                className="mt-1.5"
+                rows={kind === "micro" ? 3 : 5}
+                placeholder={kind === "micro"
+                  ? "ex: Vente de bissap, ngalakh et jus naturels au marché de Treichville."
+                  : "Décrivez ce que vous vendez ou produisez : caractéristiques, prix, différenciation…"}
+              />
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="marche" className="space-y-4">
-          <div>
-            <Label>Cible (marché et clients)</Label>
-            <Textarea
-              value={form.target_customers}
-              onChange={(e) => set("target_customers", e.target.value)}
-              className="mt-1.5"
-              rows={3}
-              placeholder="Qui sont vos clients ? Quelle taille de marché ?"
-            />
-          </div>
-          <div>
-            <Label>Commercialisation (canaux, distribution)</Label>
-            <Textarea
-              value={form.commercialization}
-              onChange={(e) => set("commercialization", e.target.value)}
-              className="mt-1.5"
-              rows={3}
-              placeholder="Comment atteignez-vous vos clients ? Boutique, en ligne, distributeurs, B2B…"
-            />
-          </div>
-        </TabsContent>
+        {showMarche && (
+          <TabsContent value="marche" className="space-y-4">
+            <div>
+              <Label>Cible (marché et clients)</Label>
+              <Textarea
+                value={form.target_customers}
+                onChange={(e) => set("target_customers", e.target.value)}
+                className="mt-1.5"
+                rows={3}
+                placeholder="Qui sont vos clients ? Quelle taille de marché ?"
+              />
+            </div>
+            <div>
+              <Label>Commercialisation (canaux, distribution)</Label>
+              <Textarea
+                value={form.commercialization}
+                onChange={(e) => set("commercialization", e.target.value)}
+                className="mt-1.5"
+                rows={3}
+                placeholder="Comment atteignez-vous vos clients ? Boutique, en ligne, distributeurs, B2B…"
+              />
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="suivi" className="space-y-4">
-          <div>
-            <Label>Suivi & Évaluation</Label>
-            <Textarea
-              value={form.monitoring_evaluation}
-              onChange={(e) => set("monitoring_evaluation", e.target.value)}
-              className="mt-1.5"
-              rows={5}
-              placeholder="Quels indicateurs suivez-vous ? Quelle fréquence ? Résultats récents…"
-            />
-          </div>
-        </TabsContent>
+        {showSuivi && (
+          <TabsContent value="suivi" className="space-y-4">
+            <div>
+              <Label>Suivi & Évaluation</Label>
+              <Textarea
+                value={form.monitoring_evaluation}
+                onChange={(e) => set("monitoring_evaluation", e.target.value)}
+                className="mt-1.5"
+                rows={5}
+                placeholder="Quels indicateurs suivez-vous ? Quelle fréquence ? Résultats récents…"
+              />
+            </div>
+          </TabsContent>
+        )}
+
 
         <TabsContent value="docs" className="space-y-6">
-          <ImageField
-            label="Logo du projet"
-            value={form.logo_url}
-            userId={userId}
-            folder="logos"
-            onChange={(url) => set("logo_url", url)}
-            aspect="square"
-          />
-          <ImageField
-            label="Image de couverture (bannière)"
-            value={form.cover_url}
-            userId={userId}
-            folder="covers"
-            onChange={(url) => set("cover_url", url)}
-            aspect="wide"
-          />
-          {initial?.id ? (
-            <>
-              <GalleryField userId={userId} projectId={initial.id} />
-              <VideoField userId={userId} projectId={initial.id} />
-            </>
-          ) : (
-            <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
-              Galerie terrain & vidéo : enregistrez d'abord le projet pour
-              activer les uploads multiples.
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Colonne 1 — identité visuelle */}
+            <div className="space-y-6">
+              <ImageField
+                label="Logo du projet"
+                value={form.logo_url}
+                userId={userId}
+                folder="logos"
+                onChange={(url) => set("logo_url", url)}
+                aspect="square"
+              />
+              <ImageField
+                label="Image de couverture (bannière)"
+                value={form.cover_url}
+                userId={userId}
+                folder="covers"
+                onChange={(url) => set("cover_url", url)}
+                aspect="wide"
+              />
             </div>
-          )}
+
+            {/* Colonne 2 — médias riches */}
+            <div className="space-y-6">
+              {initial?.id ? (
+                <>
+                  <GalleryField userId={userId} projectId={initial.id} />
+                  <VideoField userId={userId} projectId={initial.id} />
+                </>
+              ) : (
+                <div className="flex h-full min-h-48 flex-col items-center justify-center rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center">
+                  <VideoIcon className="mb-3 h-8 w-8 text-muted-foreground" />
+                  <p className="text-sm font-medium">Galerie terrain & vidéo</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Enregistrez d'abord le projet pour activer les uploads
+                    multiples (jusqu'à 25 photos · 1 vidéo 200 Mo).
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </TabsContent>
+
       </Tabs>
 
       <Button type="submit" disabled={m.isPending} className="w-full bg-primary hover:bg-primary/90">
@@ -458,16 +602,18 @@ function ImageField({
       <div className="mt-2 flex items-start gap-4">
         <div
           className={
-            "shrink-0 overflow-hidden rounded-xl border-2 border-dashed bg-muted/30 flex items-center justify-center " +
+            "shrink-0 overflow-hidden rounded-xl border bg-muted/30 " +
             (aspect === "square" ? "h-24 w-24" : "h-24 w-40")
           }
         >
-          {value ? (
-            <img src={value} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <ImageIcon className="h-6 w-6 text-muted-foreground" />
-          )}
+          <SmartImage
+            src={value}
+            alt={label}
+            fallbackText={label}
+            fit={aspect === "square" ? "cover" : "cover"}
+          />
         </div>
+
         <div className="flex-1 space-y-2">
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent">
             <Upload className="h-4 w-4" />
@@ -577,7 +723,7 @@ function GalleryField({ userId, projectId }: { userId: string; projectId: string
       <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
         {items.map((it: any) => (
           <div key={it.id} className="group relative aspect-square overflow-hidden rounded-lg border bg-muted">
-            <img src={publicUrlFor(it.storage_path)} alt="" className="h-full w-full object-cover" />
+            <SmartImage src={publicUrlFor(it.storage_path)} alt="" className="h-full w-full" />
             <button
               type="button"
               onClick={() => remove(it.id, it.storage_path)}

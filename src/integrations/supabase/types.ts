@@ -983,6 +983,7 @@ export type Database = {
           annual_revenue: number | null
           city: string | null
           commercialization: string | null
+          complexity_level: string
           country: string | null
           cover_url: string | null
           created_at: string
@@ -994,11 +995,13 @@ export type Database = {
           has_bank_account: boolean | null
           has_business_plan: boolean | null
           id: string
+          journey: string
           legal_status: string | null
           logo_url: string | null
           monitoring_evaluation: string | null
           monthly_expenses: number | null
           product_description: string | null
+          profile_kind: string
           project_type: string | null
           publish_when_eligible: boolean
           sector: string | null
@@ -1014,6 +1017,7 @@ export type Database = {
           annual_revenue?: number | null
           city?: string | null
           commercialization?: string | null
+          complexity_level?: string
           country?: string | null
           cover_url?: string | null
           created_at?: string
@@ -1025,11 +1029,13 @@ export type Database = {
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
           id?: string
+          journey?: string
           legal_status?: string | null
           logo_url?: string | null
           monitoring_evaluation?: string | null
           monthly_expenses?: number | null
           product_description?: string | null
+          profile_kind?: string
           project_type?: string | null
           publish_when_eligible?: boolean
           sector?: string | null
@@ -1045,6 +1051,7 @@ export type Database = {
           annual_revenue?: number | null
           city?: string | null
           commercialization?: string | null
+          complexity_level?: string
           country?: string | null
           cover_url?: string | null
           created_at?: string
@@ -1056,11 +1063,13 @@ export type Database = {
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
           id?: string
+          journey?: string
           legal_status?: string | null
           logo_url?: string | null
           monitoring_evaluation?: string | null
           monthly_expenses?: number | null
           product_description?: string | null
+          profile_kind?: string
           project_type?: string | null
           publish_when_eligible?: boolean
           sector?: string | null
