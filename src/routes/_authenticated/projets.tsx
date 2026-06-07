@@ -177,33 +177,22 @@ function ProjectsPage() {
 
       <Dialog open={!!previewSlug} onOpenChange={(o) => !o && setPreviewSlug(null)}>
         <DialogContent
-          className="!max-w-[100vw] !w-screen !h-[100dvh] !p-0 !rounded-none !border-0 !bg-background sm:!max-w-[96vw] sm:!w-[96vw] sm:!h-[94vh] sm:!rounded-2xl sm:!border"
-          showCloseButton={false}
+          className="!max-w-[100vw] !w-screen !h-[100dvh] !p-0 !rounded-none !border-0 !bg-background sm:!max-w-[96vw] sm:!w-[96vw] sm:!h-[94vh] sm:!rounded-2xl sm:!border flex flex-col gap-0"
         >
-          <DialogHeader className="flex flex-row items-center justify-between gap-3 border-b px-4 py-3 sm:px-6">
+          <DialogHeader className="flex flex-row items-center justify-between gap-3 border-b px-4 py-3 pr-12 sm:px-6 sm:pr-14 space-y-0">
             <DialogTitle className="truncate text-base sm:text-lg">
               Aperçu page publique
             </DialogTitle>
-            <div className="flex items-center gap-2">
-              {previewSlug && (
-                <a
-                  href={`/projets/${previewSlug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden sm:inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-accent"
-                >
-                  Ouvrir <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={() => setPreviewSlug(null)}
-                className="rounded-md p-2 hover:bg-accent"
-                aria-label="Fermer"
+            {previewSlug && (
+              <a
+                href={`/projets/${previewSlug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-accent"
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+                Nouvel onglet <ExternalLink className="h-3 w-3" />
+              </a>
+            )}
           </DialogHeader>
           {previewSlug && (
             <iframe
