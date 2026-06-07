@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchMyProjects } from "@/lib/data";
-import { uploadProjectMedia } from "@/lib/upload";
+import { uploadProjectMedia, uploadProjectMediaPath, publicUrlFor } from "@/lib/upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +26,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload, ImageIcon,
+  X, Eye, Video as VideoIcon, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
