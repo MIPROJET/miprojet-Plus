@@ -494,3 +494,232 @@ function ImageField({
     </div>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/*  Gallery (up to 25 images, 10MB each)                              */
+/* ------------------------------------------------------------------ */
+function GalleryField({ userId, projectId }: { userId: string; projectId: string }) {
+  const qc = useQueryClient();
+  const MAX_FILES = 25;
+  const MAX_SIZE = 10 * 1024 * 1024;
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+
+  const q = useQuery({
+    queryKey: ["mp_project_media", projectId, "gallery"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("mp_project_media")
+        .select("id, storage_path, caption, created_at")
+        .eq("project_id", projectId)
+        .eq("kind", "gallery")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const items = q.data ?? [];
+
+  const upload = async (files: FileList) => {
+    const remaining = MAX_FILES - items.length;
+    if (remaining <= 0) {
+      toast.error(`Maximum ${MAX_FILES} images`);
+      return;
+    }
+    const list = Array.from(files).slice(0, remaining);
+    setBusy(true);
+    setProgress({ done: 0, total: list.length });
+    let ok = 0;
+    for (const file of list) {
+      try {
+        if (!file.type.startsWith("image/")) {
+          toast.error(`${file.name} : image uniquement`);
+          continue;
+        }
+        if (file.size > MAX_SIZE) {
+          toast.error(`${file.name} : max 10 Mo`);
+          continue;
+        }
+        const path = await uploadProjectMediaPath(userId, "gallery", file);
+        const { error } = await supabase
+          .from("mp_project_media")
+          .insert({ user_id: userId, project_id: projectId, kind: "gallery", storage_path: path });
+        if (error) throw error;
+        ok++;
+        setProgress({ done: ok, total: list.length });
+      } catch (e: any) {
+        toast.error(e.message);
+      }
+    }
+    setBusy(false);
+    setProgress(null);
+    qc.invalidateQueries({ queryKey: ["mp_project_media", projectId, "gallery"] });
+    if (ok > 0) toast.success(`${ok} image${ok > 1 ? "s" : ""} ajoutée${ok > 1 ? "s" : ""}`);
+  };
+
+  const remove = async (id: string, path: string) => {
+    try {
+      await supabase.storage.from("project-media").remove([path]);
+      await supabase.from("mp_project_media").delete().eq("id", id);
+      qc.invalidateQueries({ queryKey: ["mp_project_media", projectId, "gallery"] });
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <Label>Galerie terrain ({items.length}/{MAX_FILES})</Label>
+        <span className="text-xs text-muted-foreground">JPG/PNG · 10 Mo max / image</span>
+      </div>
+      <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+        {items.map((it: any) => (
+          <div key={it.id} className="group relative aspect-square overflow-hidden rounded-lg border bg-muted">
+            <img src={publicUrlFor(it.storage_path)} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => remove(it.id, it.storage_path)}
+              className="absolute right-1 top-1 rounded-md bg-background/90 p-1 opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="Supprimer"
+            >
+              <Trash2 className="h-3.5 w-3.5 text-destructive" />
+            </button>
+          </div>
+        ))}
+        {items.length < MAX_FILES && (
+          <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-muted/30 text-xs text-muted-foreground hover:bg-muted/50">
+            {busy ? (
+              <span>{progress ? `${progress.done}/${progress.total}` : "…"}</span>
+            ) : (
+              <>
+                <Plus className="h-5 w-5" />
+                <span className="mt-1">Ajouter</span>
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              disabled={busy}
+              onChange={(e) => { if (e.target.files?.length) upload(e.target.files); e.currentTarget.value = ""; }}
+            />
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Video (1 file, 200 MB)                                            */
+/* ------------------------------------------------------------------ */
+function VideoField({ userId, projectId }: { userId: string; projectId: string }) {
+  const qc = useQueryClient();
+  const MAX_SIZE = 200 * 1024 * 1024;
+  const [busy, setBusy] = useState(false);
+
+  const q = useQuery({
+    queryKey: ["mp_project_media", projectId, "video"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("mp_project_media")
+        .select("id, storage_path, created_at")
+        .eq("project_id", projectId)
+        .eq("kind", "video")
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (error) throw error;
+      return data?.[0] ?? null;
+    },
+  });
+
+  const upload = async (file: File) => {
+    if (!file.type.startsWith("video/")) {
+      toast.error("Vidéo uniquement");
+      return;
+    }
+    if (file.size > MAX_SIZE) {
+      toast.error("Max 200 Mo");
+      return;
+    }
+    setBusy(true);
+    try {
+      // remove existing
+      if (q.data) {
+        await supabase.storage.from("project-media").remove([q.data.storage_path]);
+        await supabase.from("mp_project_media").delete().eq("id", q.data.id);
+      }
+      const path = await uploadProjectMediaPath(userId, "videos", file);
+      const { error } = await supabase
+        .from("mp_project_media")
+        .insert({ user_id: userId, project_id: projectId, kind: "video", storage_path: path });
+      if (error) throw error;
+      toast.success("Vidéo téléversée");
+      qc.invalidateQueries({ queryKey: ["mp_project_media", projectId, "video"] });
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async () => {
+    if (!q.data) return;
+    try {
+      await supabase.storage.from("project-media").remove([q.data.storage_path]);
+      await supabase.from("mp_project_media").delete().eq("id", q.data.id);
+      qc.invalidateQueries({ queryKey: ["mp_project_media", projectId, "video"] });
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <Label>Vidéo de présentation</Label>
+        <span className="text-xs text-muted-foreground">MP4/WEBM/MOV · 200 Mo max</span>
+      </div>
+      <div className="mt-2 space-y-3">
+        {q.data ? (
+          <div className="overflow-hidden rounded-xl border bg-muted">
+            <video
+              src={publicUrlFor(q.data.storage_path)}
+              controls
+              className="aspect-video w-full bg-black"
+            />
+          </div>
+        ) : (
+          <div className="flex aspect-video w-full items-center justify-center rounded-xl border-2 border-dashed bg-muted/30 text-muted-foreground">
+            <VideoIcon className="h-8 w-8" />
+          </div>
+        )}
+        <div className="flex items-center gap-2">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent">
+            <Upload className="h-4 w-4" />
+            {busy ? "Téléversement…" : q.data ? "Remplacer la vidéo" : "Téléverser une vidéo"}
+            <input
+              type="file"
+              accept="video/*"
+              className="hidden"
+              disabled={busy}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.currentTarget.value = ""; }}
+            />
+          </label>
+          {q.data && (
+            <button
+              type="button"
+              onClick={remove}
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5" /> Supprimer
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
