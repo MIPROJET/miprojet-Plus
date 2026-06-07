@@ -439,68 +439,79 @@ function ProjectForm({
           </div>
         </TabsContent>
 
-        <TabsContent value="pitch" className="space-y-4">
-          <div>
-            <Label>Pitch (1–2 phrases percutantes) *</Label>
-            <Textarea
-              value={form.short_pitch}
-              onChange={(e) => set("short_pitch", e.target.value)}
-              className="mt-1.5"
-              rows={4}
-              placeholder="ex: AgriCapital reconnecte la finance à la terre — investissement nature à rendement durable."
-            />
-            <p className="mt-1 text-xs text-muted-foreground">Affiché en première ligne sur votre fiche projet et page publique.</p>
-          </div>
-        </TabsContent>
+        {showPitch && (
+          <TabsContent value="pitch" className="space-y-4">
+            <div>
+              <Label>Pitch (1–2 phrases percutantes) *</Label>
+              <Textarea
+                value={form.short_pitch}
+                onChange={(e) => set("short_pitch", e.target.value)}
+                className="mt-1.5"
+                rows={4}
+                placeholder="ex: AgriCapital reconnecte la finance à la terre — investissement nature à rendement durable."
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Affiché en première ligne sur votre fiche projet et page publique.</p>
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="produit" className="space-y-4">
-          <div>
-            <Label>Produit / Service proposé</Label>
-            <Textarea
-              value={form.product_description}
-              onChange={(e) => set("product_description", e.target.value)}
-              className="mt-1.5"
-              rows={5}
-              placeholder="Décrivez ce que vous vendez ou produisez : caractéristiques, prix, différenciation…"
-            />
-          </div>
-        </TabsContent>
+        {showProduit && (
+          <TabsContent value="produit" className="space-y-4">
+            <div>
+              <Label>{kind === "micro" ? "Que vendez-vous ?" : "Produit / Service proposé"}</Label>
+              <Textarea
+                value={form.product_description}
+                onChange={(e) => set("product_description", e.target.value)}
+                className="mt-1.5"
+                rows={kind === "micro" ? 3 : 5}
+                placeholder={kind === "micro"
+                  ? "ex: Vente de bissap, ngalakh et jus naturels au marché de Treichville."
+                  : "Décrivez ce que vous vendez ou produisez : caractéristiques, prix, différenciation…"}
+              />
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="marche" className="space-y-4">
-          <div>
-            <Label>Cible (marché et clients)</Label>
-            <Textarea
-              value={form.target_customers}
-              onChange={(e) => set("target_customers", e.target.value)}
-              className="mt-1.5"
-              rows={3}
-              placeholder="Qui sont vos clients ? Quelle taille de marché ?"
-            />
-          </div>
-          <div>
-            <Label>Commercialisation (canaux, distribution)</Label>
-            <Textarea
-              value={form.commercialization}
-              onChange={(e) => set("commercialization", e.target.value)}
-              className="mt-1.5"
-              rows={3}
-              placeholder="Comment atteignez-vous vos clients ? Boutique, en ligne, distributeurs, B2B…"
-            />
-          </div>
-        </TabsContent>
+        {showMarche && (
+          <TabsContent value="marche" className="space-y-4">
+            <div>
+              <Label>Cible (marché et clients)</Label>
+              <Textarea
+                value={form.target_customers}
+                onChange={(e) => set("target_customers", e.target.value)}
+                className="mt-1.5"
+                rows={3}
+                placeholder="Qui sont vos clients ? Quelle taille de marché ?"
+              />
+            </div>
+            <div>
+              <Label>Commercialisation (canaux, distribution)</Label>
+              <Textarea
+                value={form.commercialization}
+                onChange={(e) => set("commercialization", e.target.value)}
+                className="mt-1.5"
+                rows={3}
+                placeholder="Comment atteignez-vous vos clients ? Boutique, en ligne, distributeurs, B2B…"
+              />
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="suivi" className="space-y-4">
-          <div>
-            <Label>Suivi & Évaluation</Label>
-            <Textarea
-              value={form.monitoring_evaluation}
-              onChange={(e) => set("monitoring_evaluation", e.target.value)}
-              className="mt-1.5"
-              rows={5}
-              placeholder="Quels indicateurs suivez-vous ? Quelle fréquence ? Résultats récents…"
-            />
-          </div>
-        </TabsContent>
+        {showSuivi && (
+          <TabsContent value="suivi" className="space-y-4">
+            <div>
+              <Label>Suivi & Évaluation</Label>
+              <Textarea
+                value={form.monitoring_evaluation}
+                onChange={(e) => set("monitoring_evaluation", e.target.value)}
+                className="mt-1.5"
+                rows={5}
+                placeholder="Quels indicateurs suivez-vous ? Quelle fréquence ? Résultats récents…"
+              />
+            </div>
+          </TabsContent>
+        )}
+
 
         <TabsContent value="docs" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
