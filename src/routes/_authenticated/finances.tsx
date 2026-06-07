@@ -202,7 +202,7 @@ function FinancesPage() {
           <tbody>
             {records.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
                   Aucune opération.
                 </td>
               </tr>
