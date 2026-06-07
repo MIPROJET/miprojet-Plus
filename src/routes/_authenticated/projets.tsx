@@ -193,24 +193,29 @@ function ProjectsPage() {
                 key={p.id}
                 className="min-w-0 overflow-hidden rounded-2xl bg-card border transition-all hover:shadow-elevated hover:border-primary"
               >
-                {p.cover_url ? (
-                  <div className="h-32 w-full overflow-hidden bg-muted">
-                    <img src={p.cover_url} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ) : null}
+                <div className="h-32 w-full overflow-hidden bg-muted">
+                  <SmartImage
+                    src={p.cover_url}
+                    alt={p.title ?? ""}
+                    fallbackText={p.title ?? "Projet"}
+                    className="h-full w-full"
+                  />
+                </div>
                 <Link
                   to="/finances"
                   search={{ project: p.id } as any}
                   className="block p-4 sm:p-5"
                 >
                   <div className="flex min-w-0 items-start justify-between gap-3">
-                    {p.logo_url ? (
-                      <img src={p.logo_url} alt="" className="h-12 w-12 rounded-xl object-cover border" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                        <Briefcase className="w-5 h-5" />
-                      </div>
-                    )}
+                    <div className="h-12 w-12 overflow-hidden rounded-xl border bg-card">
+                      <SmartImage
+                        src={p.logo_url}
+                        alt={p.title ?? ""}
+                        fallbackText={p.title ?? "P"}
+                        rounded="rounded-xl"
+                      />
+                    </div>
+
                     {p.display_id && (
                       <span className="min-w-0 break-words text-right text-xs font-mono text-muted-foreground">
                         {p.display_id}
