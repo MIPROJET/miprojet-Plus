@@ -25,10 +25,44 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload, ImageIcon,
-  X, Eye, Video as VideoIcon, Trash2,
+  Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload,
+  X, Eye, Video as VideoIcon, Trash2, Store, Building2, Rocket, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { SmartImage } from "@/components/SmartImage";
+
+type ProfileKind = "micro" | "pme" | "startup";
+type Journey = "existing" | "project";
+
+const PROFILE_PRESETS: Record<
+  ProfileKind,
+  { label: string; description: string; journey: Journey; complexity: "simple" | "intermediate" | "advanced"; icon: typeof Store; examples: string }
+> = {
+  micro: {
+    label: "Micro-activité",
+    description: "Vente au marché, vente ambulante, mototaxi, petit commerce, atelier informel…",
+    journey: "existing",
+    complexity: "simple",
+    icon: Store,
+    examples: "Formulaire ultra-court · suivi simple recettes/dépenses",
+  },
+  pme: {
+    label: "PME / Commerce / Coopérative",
+    description: "PME, commerce structuré, coopérative, association, agriculteur en activité.",
+    journey: "existing",
+    complexity: "intermediate",
+    icon: Building2,
+    examples: "Formulaire complet · suivi financier détaillé · score PME",
+  },
+  startup: {
+    label: "Startup / Porteur de projet",
+    description: "Idée ou projet en création, entrepreneur en lancement, startup.",
+    journey: "project",
+    complexity: "simple",
+    icon: Rocket,
+    examples: "Focus pitch, marché, équipe · score Startup",
+  },
+};
 
 export const Route = createFileRoute("/_authenticated/projets")({
   head: () => ({ meta: [{ title: "Mes projets · MiProjet+" }] }),
