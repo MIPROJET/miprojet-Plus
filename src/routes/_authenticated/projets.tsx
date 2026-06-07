@@ -486,34 +486,48 @@ function ProjectForm({
         </TabsContent>
 
         <TabsContent value="docs" className="space-y-6">
-          <ImageField
-            label="Logo du projet"
-            value={form.logo_url}
-            userId={userId}
-            folder="logos"
-            onChange={(url) => set("logo_url", url)}
-            aspect="square"
-          />
-          <ImageField
-            label="Image de couverture (bannière)"
-            value={form.cover_url}
-            userId={userId}
-            folder="covers"
-            onChange={(url) => set("cover_url", url)}
-            aspect="wide"
-          />
-          {initial?.id ? (
-            <>
-              <GalleryField userId={userId} projectId={initial.id} />
-              <VideoField userId={userId} projectId={initial.id} />
-            </>
-          ) : (
-            <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
-              Galerie terrain & vidéo : enregistrez d'abord le projet pour
-              activer les uploads multiples.
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Colonne 1 — identité visuelle */}
+            <div className="space-y-6">
+              <ImageField
+                label="Logo du projet"
+                value={form.logo_url}
+                userId={userId}
+                folder="logos"
+                onChange={(url) => set("logo_url", url)}
+                aspect="square"
+              />
+              <ImageField
+                label="Image de couverture (bannière)"
+                value={form.cover_url}
+                userId={userId}
+                folder="covers"
+                onChange={(url) => set("cover_url", url)}
+                aspect="wide"
+              />
             </div>
-          )}
+
+            {/* Colonne 2 — médias riches */}
+            <div className="space-y-6">
+              {initial?.id ? (
+                <>
+                  <GalleryField userId={userId} projectId={initial.id} />
+                  <VideoField userId={userId} projectId={initial.id} />
+                </>
+              ) : (
+                <div className="flex h-full min-h-48 flex-col items-center justify-center rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center">
+                  <VideoIcon className="mb-3 h-8 w-8 text-muted-foreground" />
+                  <p className="text-sm font-medium">Galerie terrain & vidéo</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Enregistrez d'abord le projet pour activer les uploads
+                    multiples (jusqu'à 25 photos · 1 vidéo 200 Mo).
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </TabsContent>
+
       </Tabs>
 
       <Button type="submit" disabled={m.isPending} className="w-full bg-primary hover:bg-primary/90">
