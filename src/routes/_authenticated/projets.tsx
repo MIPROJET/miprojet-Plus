@@ -281,18 +281,8 @@ function ProjectsPage() {
         >
           <DialogHeader className="flex flex-row items-center justify-between gap-3 border-b px-4 py-3 pr-12 sm:px-6 sm:pr-14 space-y-0">
             <DialogTitle className="truncate text-base sm:text-lg">
-              Aperçu page publique
+              Aperçu vitrine publique
             </DialogTitle>
-            {previewSlug && (
-              <a
-                href={`/projets/${previewSlug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-accent"
-              >
-                Nouvel onglet <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
           </DialogHeader>
           {previewSlug && (
             <iframe
