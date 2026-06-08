@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload,
+  Plus, MapPin, Briefcase, Calendar, Pencil, Upload,
   X, Eye, Video as VideoIcon, Trash2, Store, Building2, Rocket, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
