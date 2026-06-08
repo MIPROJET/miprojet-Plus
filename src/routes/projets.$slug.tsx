@@ -2,6 +2,8 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getAgriCapitalPartition } from "@/lib/agricapital-public.functions";
+import { getPublicProject } from "@/lib/public-project.functions";
+import { PublicProjectView } from "@/components/PublicProjectView";
 import logoAsset from "@/assets/agricapital/agricapital-logo.png.asset.json";
 import posterAsset from "@/assets/agricapital/agricapital-poster.jpg.asset.json";
 import flyerVerso from "@/assets/agricapital/agricapital-flyer-verso.png.asset.json";
@@ -11,29 +13,64 @@ import palmierAsset from "@/assets/agricapital/agricapital-palmier.png.asset.jso
 import { formatXOF, recordLabel, recordFlow } from "@/lib/financial-types";
 import { CheckCircle2, Phone, Mail, Globe, MapPin, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-type SlugData = { slug: string; isAgriCapital: boolean };
-
 export const Route = createFileRoute("/projets/$slug")({
-  loader: ({ params }) => {
-    if (params.slug !== "agricapital") throw notFound();
-    return { slug: params.slug, isAgriCapital: true } satisfies SlugData;
+  loader: async ({ params }) => {
+    if (params.slug === "agricapital") {
+      return { kind: "agricapital" as const, project: null };
+    }
+    const project = await getPublicProject({ data: { slug: params.slug } });
+    if (!project) throw notFound();
+    return { kind: "generic" as const, project };
   },
-  head: ({ params }) => ({
-    meta: [
-      { title: "AgriCapital — Investir la terre. Cultiver l'avenir." },
-      { name: "description", content: "AgriCapital SARL : plantations de palmier à huile clé en main en Côte d'Ivoire. Offres PalmInvest & TerraPalm, paiement sur 34 mois." },
-      { property: "og:title", content: "AgriCapital — Plantations de palmier à huile clé en main" },
-      { property: "og:description", content: "Bâtissons ensemble votre patrimoine agricole durable. RCCM CI-DAL-01-2025-B12-13435." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: `/projets/${params.slug}` },
-      { property: "og:image", content: posterAsset.url },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: posterAsset.url },
-    ],
-    links: [{ rel: "canonical", href: `/projets/${params.slug}` }],
-  }),
-  component: AgriCapitalPage,
+  head: ({ loaderData, params }) => {
+    if (loaderData?.kind === "generic" && loaderData.project) {
+      const p = loaderData.project;
+      const desc = p.short_pitch || p.description?.slice(0, 160) || `${p.title} — vitrine MiProjet+`;
+      return {
+        meta: [
+          { title: `${p.title} — MiProjet+` },
+          { name: "description", content: desc },
+          { property: "og:title", content: p.title },
+          { property: "og:description", content: desc },
+          ...(p.cover_url ? [{ property: "og:image", content: p.cover_url }] : []),
+        ],
+      };
+    }
+    return {
+      meta: [
+        { title: "AgriCapital — Investir la terre. Cultiver l'avenir." },
+        { name: "description", content: "AgriCapital SARL : plantations de palmier à huile clé en main en Côte d'Ivoire." },
+        { property: "og:title", content: "AgriCapital — Plantations clé en main" },
+        { property: "og:image", content: posterAsset.url },
+        { property: "og:url", content: `/projets/${params.slug}` },
+      ],
+      links: [{ rel: "canonical", href: `/projets/${params.slug}` }],
+    };
+  },
+  errorComponent: ({ error }) => (
+    <div className="container mx-auto px-4 py-20 text-center">
+      <h1 className="text-2xl font-bold">Erreur</h1>
+      <p className="mt-2 text-muted-foreground">{error.message}</p>
+      <Link to="/" className="mt-6 inline-block text-primary hover:underline">← Retour à l'accueil</Link>
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="container mx-auto px-4 py-20 text-center">
+      <h1 className="text-2xl font-bold">Projet introuvable</h1>
+      <p className="mt-2 text-muted-foreground">Ce projet n'existe pas ou n'est pas encore public.</p>
+      <Link to="/" className="mt-6 inline-block text-primary hover:underline">← Retour à l'accueil</Link>
+    </div>
+  ),
+  component: ProjectPublicPage,
 });
+
+function ProjectPublicPage() {
+  const data = Route.useLoaderData();
+  if (data.kind === "generic" && data.project) {
+    return <PublicProjectView project={data.project} />;
+  }
+  return <AgriCapitalPage />;
+}
 
 const OFFERS = [
   { name: "PalmInvest", desc: "Plantation clé en main, sans terre préalable, remise après 36 mois — propriété 28 ans.", base: "5 587 600", promo: "4 190 700", exclusive: "3 631 940" },
