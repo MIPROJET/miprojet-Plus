@@ -45,6 +45,8 @@ function SupportPage() {
   const qc = useQueryClient();
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   const ticketsQ = useQuery({
     queryKey: ["mp-tickets", user.id],
@@ -68,6 +70,49 @@ function SupportPage() {
   const quotaReached =
     features.ticketsPerMonth !== -1 && thisMonth.length >= features.ticketsPerMonth;
 
+  const MAX_FILES = 8;
+  const MAX_SIZE = 25 * 1024 * 1024; // 25 MB per file
+
+  const onPickFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
+    const remaining = MAX_FILES - attachments.length;
+    if (remaining <= 0) {
+      toast.error(`Maximum ${MAX_FILES} pièces jointes`);
+      return;
+    }
+    setUploading(true);
+    const next: Attachment[] = [];
+    for (const file of Array.from(files).slice(0, remaining)) {
+      if (file.size > MAX_SIZE) {
+        toast.error(`${file.name} : max 25 Mo`);
+        continue;
+      }
+      try {
+        const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `mp/${user.id}/tickets/${Date.now()}-${safe}`;
+        const { error } = await supabase.storage
+          .from("documents")
+          .upload(path, file, { upsert: false, contentType: file.type });
+        if (error) throw error;
+        const { data: signed } = await supabase.storage
+          .from("documents")
+          .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year
+        next.push({
+          url: signed?.signedUrl ?? path,
+          name: file.name,
+          mime: file.type || "application/octet-stream",
+          size: file.size,
+          kind: detectKind(file.type || ""),
+        });
+      } catch (e: any) {
+        toast.error(`${file.name} : ${e.message}`);
+      }
+    }
+    setAttachments((a) => [...a, ...next]);
+    setUploading(false);
+    if (next.length) toast.success(`${next.length} fichier(s) ajouté(s)`);
+  };
+
   const create = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("mp_support_tickets").insert({
@@ -76,6 +121,7 @@ function SupportPage() {
         message: message.trim(),
         plan_at_creation: tier,
         priority: tier === "free" ? "normal" : "high",
+        attachments: attachments as any,
       });
       if (error) throw error;
     },
@@ -83,6 +129,7 @@ function SupportPage() {
       toast.success("Demande envoyée. Nous revenons vers vous rapidement.");
       setSubject("");
       setMessage("");
+      setAttachments([]);
       qc.invalidateQueries({ queryKey: ["mp-tickets", user.id] });
     },
     onError: (e: Error) => toast.error(e.message),
