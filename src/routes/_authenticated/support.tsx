@@ -8,9 +8,31 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { LifeBuoy, MessageCircle, Sparkles, CheckCircle2, Clock } from "lucide-react";
+import {
+  LifeBuoy, MessageCircle, Sparkles, CheckCircle2, Clock,
+  Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon, File as FileIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+
+type Attachment = {
+  url: string;
+  name: string;
+  mime: string;
+  size: number;
+  kind: "image" | "video" | "document";
+};
+
+function detectKind(mime: string): Attachment["kind"] {
+  if (mime.startsWith("image/")) return "image";
+  if (mime.startsWith("video/")) return "video";
+  return "document";
+}
+
+function AttachmentIcon({ kind, className }: { kind: Attachment["kind"]; className?: string }) {
+  const Icon = kind === "image" ? ImageIcon : kind === "video" ? VideoIcon : FileText;
+  return <Icon className={className} />;
+}
 
 export const Route = createFileRoute("/_authenticated/support")({
   head: () => ({ meta: [{ title: "Accompagnement · MiProjet+" }] }),
