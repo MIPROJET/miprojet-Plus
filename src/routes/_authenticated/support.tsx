@@ -303,6 +303,22 @@ function SupportPage() {
                     )}
                   </Badge>
                 </div>
+                {Array.isArray((t as any).attachments) && (t as any).attachments.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {((t as any).attachments as Attachment[]).map((a, i) => (
+                      <a
+                        key={i}
+                        href={a.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-md border bg-muted/40 px-2 py-1 text-xs hover:bg-accent"
+                      >
+                        <AttachmentIcon kind={a.kind} className="h-3.5 w-3.5 text-primary" />
+                        <span className="max-w-[180px] truncate">{a.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
                 {t.admin_response && (
                   <p className="mt-2 text-sm bg-accent/40 rounded-lg p-3 whitespace-pre-wrap">
                     {t.admin_response}
