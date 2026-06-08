@@ -8,9 +8,31 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { LifeBuoy, MessageCircle, Sparkles, CheckCircle2, Clock } from "lucide-react";
+import {
+  LifeBuoy, MessageCircle, Sparkles, CheckCircle2, Clock,
+  Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+
+type Attachment = {
+  url: string;
+  name: string;
+  mime: string;
+  size: number;
+  kind: "image" | "video" | "document";
+};
+
+function detectKind(mime: string): Attachment["kind"] {
+  if (mime.startsWith("image/")) return "image";
+  if (mime.startsWith("video/")) return "video";
+  return "document";
+}
+
+function AttachmentIcon({ kind, className }: { kind: Attachment["kind"]; className?: string }) {
+  const Icon = kind === "image" ? ImageIcon : kind === "video" ? VideoIcon : FileText;
+  return <Icon className={className} />;
+}
 
 export const Route = createFileRoute("/_authenticated/support")({
   head: () => ({ meta: [{ title: "Accompagnement · MiProjet+" }] }),
@@ -23,6 +45,8 @@ function SupportPage() {
   const qc = useQueryClient();
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   const ticketsQ = useQuery({
     queryKey: ["mp-tickets", user.id],
@@ -46,6 +70,49 @@ function SupportPage() {
   const quotaReached =
     features.ticketsPerMonth !== -1 && thisMonth.length >= features.ticketsPerMonth;
 
+  const MAX_FILES = 8;
+  const MAX_SIZE = 25 * 1024 * 1024; // 25 MB per file
+
+  const onPickFiles = async (files: FileList | null) => {
+    if (!files?.length) return;
+    const remaining = MAX_FILES - attachments.length;
+    if (remaining <= 0) {
+      toast.error(`Maximum ${MAX_FILES} pièces jointes`);
+      return;
+    }
+    setUploading(true);
+    const next: Attachment[] = [];
+    for (const file of Array.from(files).slice(0, remaining)) {
+      if (file.size > MAX_SIZE) {
+        toast.error(`${file.name} : max 25 Mo`);
+        continue;
+      }
+      try {
+        const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `mp/${user.id}/tickets/${Date.now()}-${safe}`;
+        const { error } = await supabase.storage
+          .from("documents")
+          .upload(path, file, { upsert: false, contentType: file.type });
+        if (error) throw error;
+        const { data: signed } = await supabase.storage
+          .from("documents")
+          .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year
+        next.push({
+          url: signed?.signedUrl ?? path,
+          name: file.name,
+          mime: file.type || "application/octet-stream",
+          size: file.size,
+          kind: detectKind(file.type || ""),
+        });
+      } catch (e: any) {
+        toast.error(`${file.name} : ${e.message}`);
+      }
+    }
+    setAttachments((a) => [...a, ...next]);
+    setUploading(false);
+    if (next.length) toast.success(`${next.length} fichier(s) ajouté(s)`);
+  };
+
   const create = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("mp_support_tickets").insert({
@@ -54,6 +121,7 @@ function SupportPage() {
         message: message.trim(),
         plan_at_creation: tier,
         priority: tier === "free" ? "normal" : "high",
+        attachments: attachments as any,
       });
       if (error) throw error;
     },
@@ -61,6 +129,7 @@ function SupportPage() {
       toast.success("Demande envoyée. Nous revenons vers vous rapidement.");
       setSubject("");
       setMessage("");
+      setAttachments([]);
       qc.invalidateQueries({ queryKey: ["mp-tickets", user.id] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -146,7 +215,42 @@ function SupportPage() {
                   required
                 />
               </div>
-              <Button type="submit" disabled={create.isPending} className="bg-primary hover:bg-primary/90">
+              {/* Pièces jointes */}
+              <div>
+                <Label>Pièces jointes <span className="text-xs text-muted-foreground font-normal">(images, vidéos, documents — 25 Mo max / fichier, jusqu'à {MAX_FILES})</span></Label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {attachments.map((a, i) => (
+                    <div key={i} className="group flex items-center gap-2 rounded-lg border bg-muted/40 py-1.5 pl-2 pr-1 text-xs">
+                      <AttachmentIcon kind={a.kind} className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <span className="max-w-[160px] truncate">{a.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachments((arr) => arr.filter((_, j) => j !== i))}
+                        className="rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Retirer"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {attachments.length < MAX_FILES && (
+                    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed bg-background px-3 py-1.5 text-xs hover:bg-accent">
+                      <Paperclip className="h-3.5 w-3.5" />
+                      {uploading ? "Envoi…" : "Joindre un fichier"}
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+                        className="hidden"
+                        disabled={uploading}
+                        onChange={(e) => { onPickFiles(e.target.files); e.currentTarget.value = ""; }}
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <Button type="submit" disabled={create.isPending || uploading} className="bg-primary hover:bg-primary/90">
                 {create.isPending ? "Envoi…" : "Envoyer la demande"}
               </Button>
             </form>
@@ -199,6 +303,22 @@ function SupportPage() {
                     )}
                   </Badge>
                 </div>
+                {Array.isArray((t as any).attachments) && (t as any).attachments.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {((t as any).attachments as Attachment[]).map((a, i) => (
+                      <a
+                        key={i}
+                        href={a.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-md border bg-muted/40 px-2 py-1 text-xs hover:bg-accent"
+                      >
+                        <AttachmentIcon kind={a.kind} className="h-3.5 w-3.5 text-primary" />
+                        <span className="max-w-[180px] truncate">{a.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
                 {t.admin_response && (
                   <p className="mt-2 text-sm bg-accent/40 rounded-lg p-3 whitespace-pre-wrap">
                     {t.admin_response}

@@ -995,6 +995,7 @@ export type Database = {
           has_bank_account: boolean | null
           has_business_plan: boolean | null
           id: string
+          is_public: boolean
           journey: string
           legal_status: string | null
           logo_url: string | null
@@ -1029,6 +1030,7 @@ export type Database = {
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
           id?: string
+          is_public?: boolean
           journey?: string
           legal_status?: string | null
           logo_url?: string | null
@@ -1063,6 +1065,7 @@ export type Database = {
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
           id?: string
+          is_public?: boolean
           journey?: string
           legal_status?: string | null
           logo_url?: string | null
@@ -1153,6 +1156,7 @@ export type Database = {
       mp_support_tickets: {
         Row: {
           admin_response: string | null
+          attachments: Json
           category: string
           created_at: string
           id: string
@@ -1166,6 +1170,7 @@ export type Database = {
         }
         Insert: {
           admin_response?: string | null
+          attachments?: Json
           category?: string
           created_at?: string
           id?: string
@@ -1179,6 +1184,7 @@ export type Database = {
         }
         Update: {
           admin_response?: string | null
+          attachments?: Json
           category?: string
           created_at?: string
           id?: string

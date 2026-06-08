@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Plus, MapPin, Briefcase, Calendar, ExternalLink, Pencil, Upload,
+  Plus, MapPin, Briefcase, Calendar, Pencil, Upload,
   X, Eye, Video as VideoIcon, Trash2, Store, Building2, Rocket, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -187,7 +187,8 @@ function ProjectsPage() {
       ) : (
         <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           {projectsQ.data!.map((p: any) => {
-            const publicSlug = /agri.?capital/i.test(p.title ?? "") ? "agricapital" : null;
+            const isAgri = /agri.?capital/i.test(p.title ?? "");
+            const publicSlug = isAgri ? "agricapital" : (p.is_public ? (p.display_id ?? p.id) : null);
             return (
               <div
                 key={p.id}
@@ -254,7 +255,7 @@ function ProjectsPage() {
                   >
                     <Pencil className="h-3.5 w-3.5 mr-1.5" /> Enrichir
                   </Button>
-                  {publicSlug && (
+                  {publicSlug ? (
                     <button
                       type="button"
                       onClick={() => setPreviewSlug(publicSlug)}
@@ -262,6 +263,10 @@ function ProjectsPage() {
                     >
                       <Eye className="h-3 w-3" /> Page publique
                     </button>
+                  ) : (
+                    <span className="ml-auto text-xs text-muted-foreground italic">
+                      Vitrine privée — activez la visibilité dans « Enrichir » → Visuels
+                    </span>
                   )}
                 </div>
               </div>
@@ -276,18 +281,8 @@ function ProjectsPage() {
         >
           <DialogHeader className="flex flex-row items-center justify-between gap-3 border-b px-4 py-3 pr-12 sm:px-6 sm:pr-14 space-y-0">
             <DialogTitle className="truncate text-base sm:text-lg">
-              Aperçu page publique
+              Aperçu vitrine publique
             </DialogTitle>
-            {previewSlug && (
-              <a
-                href={`/projets/${previewSlug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-accent"
-              >
-                Nouvel onglet <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
           </DialogHeader>
           {previewSlug && (
             <iframe
@@ -336,6 +331,7 @@ function ProjectForm({
     profile_kind: (initial?.profile_kind as ProfileKind) ?? kind,
     journey: (initial?.journey as Journey) ?? preset.journey,
     complexity_level: initial?.complexity_level ?? preset.complexity,
+    is_public: (initial?.is_public as boolean) ?? false,
   });
 
 
@@ -553,6 +549,26 @@ function ProjectForm({
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Toggle visibilité publique */}
+          <div className="rounded-xl border bg-muted/30 p-4">
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={form.is_public}
+                onCheckedChange={(c) => set("is_public", !!c)}
+                className="mt-0.5"
+              />
+              <span>
+                <span className="font-medium">Rendre la page publique accessible</span>
+                <span className="block text-xs text-muted-foreground mt-0.5">
+                  La vitrine professionnelle de ce projet sera consultable par tout visiteur
+                  (logo, couverture, pitch, galerie, vidéo). Aucune donnée financière,
+                  ni offre commerciale n'est exposée — elles restent strictement réservées
+                  à vous et à l'équipe MiProjet+.
+                </span>
+              </span>
+            </label>
           </div>
         </TabsContent>
 
