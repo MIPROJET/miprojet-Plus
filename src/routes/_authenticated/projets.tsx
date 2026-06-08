@@ -336,6 +336,7 @@ function ProjectForm({
     profile_kind: (initial?.profile_kind as ProfileKind) ?? kind,
     journey: (initial?.journey as Journey) ?? preset.journey,
     complexity_level: initial?.complexity_level ?? preset.complexity,
+    is_public: (initial?.is_public as boolean) ?? false,
   });
 
 
