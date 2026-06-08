@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
   LifeBuoy, MessageCircle, Sparkles, CheckCircle2, Clock,
-  Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon, File as FileIcon,
+  Paperclip, X, FileText, Image as ImageIcon, Video as VideoIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
