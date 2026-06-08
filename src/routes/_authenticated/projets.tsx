@@ -187,7 +187,8 @@ function ProjectsPage() {
       ) : (
         <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           {projectsQ.data!.map((p: any) => {
-            const publicSlug = /agri.?capital/i.test(p.title ?? "") ? "agricapital" : null;
+            const isAgri = /agri.?capital/i.test(p.title ?? "");
+            const publicSlug = isAgri ? "agricapital" : (p.is_public ? (p.display_id ?? p.id) : null);
             return (
               <div
                 key={p.id}
@@ -254,7 +255,7 @@ function ProjectsPage() {
                   >
                     <Pencil className="h-3.5 w-3.5 mr-1.5" /> Enrichir
                   </Button>
-                  {publicSlug && (
+                  {publicSlug ? (
                     <button
                       type="button"
                       onClick={() => setPreviewSlug(publicSlug)}
@@ -262,6 +263,10 @@ function ProjectsPage() {
                     >
                       <Eye className="h-3 w-3" /> Page publique
                     </button>
+                  ) : (
+                    <span className="ml-auto text-xs text-muted-foreground italic">
+                      Vitrine privée — activez la visibilité dans « Enrichir » → Visuels
+                    </span>
                   )}
                 </div>
               </div>
