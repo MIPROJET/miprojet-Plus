@@ -555,6 +555,26 @@ function ProjectForm({
               )}
             </div>
           </div>
+
+          {/* Toggle visibilité publique */}
+          <div className="rounded-xl border bg-muted/30 p-4">
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={form.is_public}
+                onCheckedChange={(c) => set("is_public", !!c)}
+                className="mt-0.5"
+              />
+              <span>
+                <span className="font-medium">Rendre la page publique accessible</span>
+                <span className="block text-xs text-muted-foreground mt-0.5">
+                  La vitrine professionnelle de ce projet sera consultable par tout visiteur
+                  (logo, couverture, pitch, galerie, vidéo). Aucune donnée financière,
+                  ni offre commerciale n'est exposée — elles restent strictement réservées
+                  à vous et à l'équipe MiProjet+.
+                </span>
+              </span>
+            </label>
+          </div>
         </TabsContent>
 
       </Tabs>
