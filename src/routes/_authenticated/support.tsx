@@ -215,7 +215,42 @@ function SupportPage() {
                   required
                 />
               </div>
-              <Button type="submit" disabled={create.isPending} className="bg-primary hover:bg-primary/90">
+              {/* Pièces jointes */}
+              <div>
+                <Label>Pièces jointes <span className="text-xs text-muted-foreground font-normal">(images, vidéos, documents — 25 Mo max / fichier, jusqu'à {MAX_FILES})</span></Label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {attachments.map((a, i) => (
+                    <div key={i} className="group flex items-center gap-2 rounded-lg border bg-muted/40 py-1.5 pl-2 pr-1 text-xs">
+                      <AttachmentIcon kind={a.kind} className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <span className="max-w-[160px] truncate">{a.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachments((arr) => arr.filter((_, j) => j !== i))}
+                        className="rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Retirer"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {attachments.length < MAX_FILES && (
+                    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed bg-background px-3 py-1.5 text-xs hover:bg-accent">
+                      <Paperclip className="h-3.5 w-3.5" />
+                      {uploading ? "Envoi…" : "Joindre un fichier"}
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+                        className="hidden"
+                        disabled={uploading}
+                        onChange={(e) => { onPickFiles(e.target.files); e.currentTarget.value = ""; }}
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <Button type="submit" disabled={create.isPending || uploading} className="bg-primary hover:bg-primary/90">
                 {create.isPending ? "Envoi…" : "Envoyer la demande"}
               </Button>
             </form>
