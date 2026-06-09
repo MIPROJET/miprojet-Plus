@@ -70,8 +70,7 @@ export async function compressVideoToFHD(
 
     // Tente d'ajouter l'audio
     try {
-      // @ts-expect-error captureStream non typé partout
-      const v: MediaStream | undefined = (video as any).captureStream?.();
+      const v: MediaStream | undefined = (video as unknown as { captureStream?: () => MediaStream }).captureStream?.();
       v?.getAudioTracks().forEach((t) => stream.addTrack(t));
     } catch {
       /* ignore */
