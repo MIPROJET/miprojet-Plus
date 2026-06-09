@@ -10,6 +10,7 @@ import flyerVerso from "@/assets/agricapital/agricapital-flyer-verso.png.asset.j
 import flyerRecto from "@/assets/agricapital/agricapital-flyer-recto.png.asset.json";
 import flyerExclusif from "@/assets/agricapital/agricapital-flyer-exclusif.png.asset.json";
 import palmierAsset from "@/assets/agricapital/agricapital-palmier.png.asset.json";
+import { EquipeAgriCapital } from "@/components/agricapital/EquipeAgriCapital";
 import { formatXOF, recordLabel, recordFlow } from "@/lib/financial-types";
 import { CheckCircle2, Phone, Mail, Globe, MapPin, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
@@ -313,6 +314,9 @@ function AgriCapitalPage() {
           </div>
         </div>
       </section>
+
+      <EquipeAgriCapital />
+
 
       <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
         AgriCapital SARL · RCCM CI-DAL-01-2025-B12-13435 · Promotion Agricole & Services Intégrés
