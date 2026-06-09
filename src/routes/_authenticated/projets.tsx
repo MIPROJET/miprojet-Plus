@@ -780,8 +780,10 @@ function GalleryField({ userId, projectId }: { userId: string; projectId: string
 /* ------------------------------------------------------------------ */
 function VideoField({ userId, projectId }: { userId: string; projectId: string }) {
   const qc = useQueryClient();
-  const MAX_SIZE = 200 * 1024 * 1024;
+  const MAX_SIZE = 400 * 1024 * 1024;
   const [busy, setBusy] = useState(false);
+  const [phase, setPhase] = useState<string>("");
+  const [progress, setProgress] = useState(0);
 
   const q = useQuery({
     queryKey: ["mp_project_media", projectId, "video"],
@@ -804,27 +806,50 @@ function VideoField({ userId, projectId }: { userId: string; projectId: string }
       return;
     }
     if (file.size > MAX_SIZE) {
-      toast.error("Max 200 Mo");
+      toast.error("Max 400 Mo");
       return;
     }
     setBusy(true);
+    setProgress(0);
     try {
-      // remove existing
+      setPhase("Optimisation FHD…");
+      const { compressVideoToFHD } = await import("@/lib/video-compress");
+      const optimized = await compressVideoToFHD(file, ({ phase, ratio }) => {
+        setPhase(
+          phase === "preparing"
+            ? "Préparation…"
+            : phase === "encoding"
+            ? `Optimisation FHD ${Math.round(ratio * 100)}%`
+            : "Finalisation…",
+        );
+        setProgress(ratio);
+      });
+
       if (q.data) {
         await supabase.storage.from("project-media").remove([q.data.storage_path]);
         await supabase.from("mp_project_media").delete().eq("id", q.data.id);
       }
-      const path = await uploadProjectMediaPath(userId, "videos", file);
+
+      setPhase(`Téléversement (${(optimized.size / 1024 / 1024).toFixed(1)} Mo)…`);
+      setProgress(0);
+      const path = await uploadProjectMediaPath(userId, "videos", optimized);
       const { error } = await supabase
         .from("mp_project_media")
         .insert({ user_id: userId, project_id: projectId, kind: "video", storage_path: path });
       if (error) throw error;
-      toast.success("Vidéo téléversée");
+      const saved = file.size - optimized.size;
+      toast.success(
+        saved > 1024 * 1024
+          ? `Vidéo téléversée — ${(saved / 1024 / 1024).toFixed(1)} Mo économisés`
+          : "Vidéo téléversée",
+      );
       qc.invalidateQueries({ queryKey: ["mp_project_media", projectId, "video"] });
     } catch (e: any) {
-      toast.error(e.message);
+      toast.error(e?.message ?? "Erreur lors du téléversement");
     } finally {
       setBusy(false);
+      setPhase("");
+      setProgress(0);
     }
   };
 
@@ -843,7 +868,7 @@ function VideoField({ userId, projectId }: { userId: string; projectId: string }
     <div>
       <div className="flex items-center justify-between">
         <Label>Vidéo de présentation</Label>
-        <span className="text-xs text-muted-foreground">MP4/WEBM/MOV · 200 Mo max</span>
+        <span className="text-xs text-muted-foreground">MP4/WEBM/MOV · 400 Mo · auto-compressé FHD</span>
       </div>
       <div className="mt-2 space-y-3">
         {q.data ? (
@@ -859,10 +884,24 @@ function VideoField({ userId, projectId }: { userId: string; projectId: string }
             <VideoIcon className="h-8 w-8" />
           </div>
         )}
+        {busy && (
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>{phase}</span>
+              {progress > 0 && <span>{Math.round(progress * 100)}%</span>}
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full bg-primary transition-all"
+                style={{ width: `${Math.max(5, progress * 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent">
             <Upload className="h-4 w-4" />
-            {busy ? "Téléversement…" : q.data ? "Remplacer la vidéo" : "Téléverser une vidéo"}
+            {busy ? "Traitement…" : q.data ? "Remplacer la vidéo" : "Téléverser une vidéo"}
             <input
               type="file"
               accept="video/*"
@@ -871,7 +910,7 @@ function VideoField({ userId, projectId }: { userId: string; projectId: string }
               onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.currentTarget.value = ""; }}
             />
           </label>
-          {q.data && (
+          {q.data && !busy && (
             <button
               type="button"
               onClick={remove}
