@@ -56,6 +56,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "access_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       connection_requests: {
@@ -156,6 +163,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contributions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
             referencedColumns: ["id"]
           },
         ]
@@ -465,6 +479,78 @@ export type Database = {
         }
         Relationships: []
       }
+      entity_governance: {
+        Row: {
+          bio: string | null
+          created_at: string
+          full_name: string
+          id: string
+          is_strategic: boolean | null
+          linkedin_url: string | null
+          project_id: string | null
+          role_title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          is_strategic?: boolean | null
+          linkedin_url?: string | null
+          project_id?: string | null
+          role_title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          is_strategic?: boolean | null
+          linkedin_url?: string | null
+          project_id?: string | null
+          role_title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      entity_products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          market: string | null
+          name: string
+          project_id: string | null
+          revenue_share_pct: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          market?: string | null
+          name: string
+          project_id?: string | null
+          revenue_share_pct?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          market?: string | null
+          name?: string
+          project_id?: string | null
+          revenue_share_pct?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       faqs: {
         Row: {
           answer: string
@@ -528,6 +614,69 @@ export type Database = {
           is_completed?: boolean | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      investor_prospects: {
+        Row: {
+          admin_notes: string | null
+          country: string | null
+          created_at: string
+          email: string
+          engagement_type: string[] | null
+          equity_share_pct: number | null
+          expected_return_pct: number | null
+          full_name: string
+          id: string
+          investment_capacity: string | null
+          message: string | null
+          phone: string | null
+          project_id: string
+          status: string | null
+          time_horizon: string | null
+          updated_at: string
+          user_id: string | null
+          wants_equity: boolean | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          engagement_type?: string[] | null
+          equity_share_pct?: number | null
+          expected_return_pct?: number | null
+          full_name: string
+          id?: string
+          investment_capacity?: string | null
+          message?: string | null
+          phone?: string | null
+          project_id: string
+          status?: string | null
+          time_horizon?: string | null
+          updated_at?: string
+          user_id?: string | null
+          wants_equity?: boolean | null
+        }
+        Update: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          engagement_type?: string[] | null
+          equity_share_pct?: number | null
+          expected_return_pct?: number | null
+          full_name?: string
+          id?: string
+          investment_capacity?: string | null
+          message?: string | null
+          phone?: string | null
+          project_id?: string
+          status?: string | null
+          time_horizon?: string | null
+          updated_at?: string
+          user_id?: string | null
+          wants_equity?: boolean | null
         }
         Relationships: []
       }
@@ -1555,10 +1704,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "payments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payments_project_id_projects_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_project_id_projects_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
             referencedColumns: ["id"]
           },
           {
@@ -1684,22 +1847,29 @@ export type Database = {
       profiles: {
         Row: {
           account_status: string | null
+          annual_revenue: number | null
           avatar_url: string | null
           bio: string | null
+          business_model: string | null
           city: string | null
           company_name: string | null
           country: string | null
           created_at: string
           email: string | null
+          employees_count: number | null
           first_name: string | null
+          founding_year: number | null
           id: string
           is_verified: boolean | null
           last_name: string | null
+          legal_form: string | null
           mp_onboarded_at: string | null
           phone: string | null
           referral_code: string | null
           referred_by_code: string | null
           referred_by_user_id: string | null
+          sector: string | null
+          share_capital: number | null
           suspended_at: string | null
           suspended_reason: string | null
           total_commissions: number | null
@@ -1707,26 +1877,34 @@ export type Database = {
           unsubscribe_token: string | null
           updated_at: string
           user_type: string
+          website: string | null
           whatsapp: string | null
         }
         Insert: {
           account_status?: string | null
+          annual_revenue?: number | null
           avatar_url?: string | null
           bio?: string | null
+          business_model?: string | null
           city?: string | null
           company_name?: string | null
           country?: string | null
           created_at?: string
           email?: string | null
+          employees_count?: number | null
           first_name?: string | null
+          founding_year?: number | null
           id: string
           is_verified?: boolean | null
           last_name?: string | null
+          legal_form?: string | null
           mp_onboarded_at?: string | null
           phone?: string | null
           referral_code?: string | null
           referred_by_code?: string | null
           referred_by_user_id?: string | null
+          sector?: string | null
+          share_capital?: number | null
           suspended_at?: string | null
           suspended_reason?: string | null
           total_commissions?: number | null
@@ -1734,26 +1912,34 @@ export type Database = {
           unsubscribe_token?: string | null
           updated_at?: string
           user_type?: string
+          website?: string | null
           whatsapp?: string | null
         }
         Update: {
           account_status?: string | null
+          annual_revenue?: number | null
           avatar_url?: string | null
           bio?: string | null
+          business_model?: string | null
           city?: string | null
           company_name?: string | null
           country?: string | null
           created_at?: string
           email?: string | null
+          employees_count?: number | null
           first_name?: string | null
+          founding_year?: number | null
           id?: string
           is_verified?: boolean | null
           last_name?: string | null
+          legal_form?: string | null
           mp_onboarded_at?: string | null
           phone?: string | null
           referral_code?: string | null
           referred_by_code?: string | null
           referred_by_user_id?: string | null
+          sector?: string | null
+          share_capital?: number | null
           suspended_at?: string | null
           suspended_reason?: string | null
           total_commissions?: number | null
@@ -1761,6 +1947,7 @@ export type Database = {
           unsubscribe_token?: string | null
           updated_at?: string
           user_type?: string
+          website?: string | null
           whatsapp?: string | null
         }
         Relationships: []
@@ -1870,6 +2057,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "project_evaluations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       project_updates: {
@@ -1905,74 +2099,120 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "project_updates_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       projects: {
         Row: {
+          amount_requested: number | null
           category: string | null
           city: string | null
           country: string | null
+          cover_url: string | null
           created_at: string
+          currency: string | null
           current_funding: number | null
           description: string | null
           display_id: string | null
           documents: Json | null
+          expected_roi: number | null
           fonds_disponibles: string | null
           funding_goal: number | null
+          funding_types: string[] | null
           funds_raised: number | null
+          gallery_urls: string[] | null
           id: string
           image_url: string | null
+          is_public: boolean | null
+          logo_url: string | null
+          mp_score: number | null
           owner_id: string
+          public_summary: string | null
+          recommendation_level: string | null
+          repayment_capacity: string | null
           risk_score: string | null
           sector: string | null
           short_slug: string | null
           status: string | null
           title: string
           updated_at: string
+          website_url: string | null
         }
         Insert: {
+          amount_requested?: number | null
           category?: string | null
           city?: string | null
           country?: string | null
+          cover_url?: string | null
           created_at?: string
+          currency?: string | null
           current_funding?: number | null
           description?: string | null
           display_id?: string | null
           documents?: Json | null
+          expected_roi?: number | null
           fonds_disponibles?: string | null
           funding_goal?: number | null
+          funding_types?: string[] | null
           funds_raised?: number | null
+          gallery_urls?: string[] | null
           id?: string
           image_url?: string | null
+          is_public?: boolean | null
+          logo_url?: string | null
+          mp_score?: number | null
           owner_id: string
+          public_summary?: string | null
+          recommendation_level?: string | null
+          repayment_capacity?: string | null
           risk_score?: string | null
           sector?: string | null
           short_slug?: string | null
           status?: string | null
           title: string
           updated_at?: string
+          website_url?: string | null
         }
         Update: {
+          amount_requested?: number | null
           category?: string | null
           city?: string | null
           country?: string | null
+          cover_url?: string | null
           created_at?: string
+          currency?: string | null
           current_funding?: number | null
           description?: string | null
           display_id?: string | null
           documents?: Json | null
+          expected_roi?: number | null
           fonds_disponibles?: string | null
           funding_goal?: number | null
+          funding_types?: string[] | null
           funds_raised?: number | null
+          gallery_urls?: string[] | null
           id?: string
           image_url?: string | null
+          is_public?: boolean | null
+          logo_url?: string | null
+          mp_score?: number | null
           owner_id?: string
+          public_summary?: string | null
+          recommendation_level?: string | null
+          repayment_capacity?: string | null
           risk_score?: string | null
           sector?: string | null
           short_slug?: string | null
           status?: string | null
           title?: string
           updated_at?: string
+          website_url?: string | null
         }
         Relationships: [
           {
@@ -2469,6 +2709,72 @@ export type Database = {
       }
     }
     Views: {
+      public_projects: {
+        Row: {
+          amount_requested: number | null
+          city: string | null
+          country: string | null
+          cover_url: string | null
+          created_at: string | null
+          currency: string | null
+          display_id: string | null
+          expected_roi: number | null
+          funding_types: string[] | null
+          id: string | null
+          logo_url: string | null
+          mp_score: number | null
+          public_summary: string | null
+          recommendation_level: string | null
+          repayment_capacity: string | null
+          sector: string | null
+          short_slug: string | null
+          status: string | null
+          title: string | null
+        }
+        Insert: {
+          amount_requested?: number | null
+          city?: string | null
+          country?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          display_id?: string | null
+          expected_roi?: number | null
+          funding_types?: string[] | null
+          id?: string | null
+          logo_url?: string | null
+          mp_score?: number | null
+          public_summary?: string | null
+          recommendation_level?: string | null
+          repayment_capacity?: string | null
+          sector?: string | null
+          short_slug?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Update: {
+          amount_requested?: number | null
+          city?: string | null
+          country?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          display_id?: string | null
+          expected_roi?: number | null
+          funding_types?: string[] | null
+          id?: string | null
+          logo_url?: string | null
+          mp_score?: number | null
+          public_summary?: string | null
+          recommendation_level?: string | null
+          repayment_capacity?: string | null
+          sector?: string | null
+          short_slug?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       tenders_public: {
         Row: {
           country: string | null
