@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useRef } from "react";
-import { uploadProjectMediaPath, publicUrlFor } from "@/lib/upload";
+import { publicUrlFor } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/finances")({
   head: () => ({ meta: [{ title: "Finances · MiProjet+" }] }),
