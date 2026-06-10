@@ -193,7 +193,71 @@ export function PublicProjectView({ project }: { project: PublicProject }) {
         </section>
       )}
 
-      {/* CONTACT */}
+      {/* ÉQUIPE */}
+      {project.team.length > 0 && (
+        <section className="container mx-auto px-4 py-14">
+          <header className="mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 text-primary">
+              <Users className="h-5 w-5" />
+              <span className="text-sm font-semibold uppercase tracking-wide">Équipe</span>
+            </div>
+            <h2 className="mt-2 text-2xl font-bold md:text-3xl">
+              Les expertises qui portent le projet
+            </h2>
+          </header>
+          <div className="mx-auto mt-8 grid max-w-5xl gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {project.team.map((m) => (
+              <article
+                key={m.full_name}
+                className="rounded-2xl border bg-card p-5 shadow-sm transition hover:shadow-md"
+              >
+                <div className="flex items-start gap-3">
+                  {m.photo_url ? (
+                    <SmartImage src={m.photo_url} alt={m.full_name} className="h-14 w-14 rounded-full" rounded="rounded-full" />
+                  ) : (
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-base font-bold text-primary">
+                      {m.full_name.split(" ").slice(0, 2).map((s) => s[0]).join("")}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <h3 className="truncate font-semibold">{m.full_name}</h3>
+                    {m.role_title && <p className="text-sm font-medium text-primary">{m.role_title}</p>}
+                    {m.is_external && m.organization && (
+                      <span className="mt-1 inline-block rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        {m.organization}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {m.bio && <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* GOUVERNANCE */}
+      {project.governance && Object.keys(project.governance).length > 0 && (
+        <section className="bg-muted/30 py-12">
+          <div className="container mx-auto max-w-4xl px-4">
+            <h2 className="text-center text-2xl font-bold md:text-3xl">Gouvernance</h2>
+            <dl className="mx-auto mt-8 grid gap-4 md:grid-cols-2">
+              {Object.entries(project.governance)
+                .filter(([, v]) => v !== null && v !== "" && v !== undefined)
+                .map(([k, v]) => (
+                  <div key={k} className="rounded-xl border bg-card p-4 shadow-sm">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {k.replace(/_/g, " ")}
+                    </dt>
+                    <dd className="mt-1 text-sm text-foreground">{String(v)}</dd>
+                  </div>
+                ))}
+            </dl>
+          </div>
+        </section>
+      )}
+
+
       <section className="container mx-auto px-4 py-16">
         <div className="rounded-3xl border bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground shadow-xl md:p-12">
           <h2 className="text-2xl font-bold md:text-3xl">Intéressé par ce projet ?</h2>
