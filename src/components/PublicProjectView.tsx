@@ -1,6 +1,13 @@
 import { SmartImage } from "@/components/SmartImage";
 import type { PublicProject } from "@/lib/public-project.functions";
-import { Briefcase, MapPin, Calendar, ShieldCheck, Sparkles } from "lucide-react";
+import { Briefcase, MapPin, Calendar, ShieldCheck, Sparkles, Target, TrendingUp, Users } from "lucide-react";
+
+const MATURITE_LABELS: Record<string, { label: string; color: string }> = {
+  idee: { label: "Idée", color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
+  en_developpement: { label: "En développement", color: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
+  actif: { label: "Activité en cours", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
+  structure: { label: "Structuré", color: "bg-primary/10 text-primary border-primary/30" },
+};
 
 /**
  * Présentation publique d'un projet — pensée comme une vitrine professionnelle.
