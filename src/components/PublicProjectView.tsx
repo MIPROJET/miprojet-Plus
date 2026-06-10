@@ -132,17 +132,6 @@ export function PublicProjectView({ project }: { project: PublicProject }) {
         </section>
       )}
 
-      {/* MODÈLE & CIBLE */}
-      {(project.target_customers || project.commercialization) && (
-        <section className="bg-muted/30 py-12">
-          <div className="container mx-auto grid gap-6 px-4 md:grid-cols-2">
-            {project.target_customers && (
-              <div className="rounded-2xl border bg-card p-6 shadow-sm">
-                <h3 className="text-lg font-semibold">Notre clientèle</h3>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* MODÈLE & CIBLE */}
       {(project.target_customers || project.commercialization) && (
