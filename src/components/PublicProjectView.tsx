@@ -102,6 +102,48 @@ export function PublicProjectView({ project }: { project: PublicProject }) {
         </section>
       )}
 
+      {/* OBJECTIF & MATURITÉ */}
+      {(project.objectif || project.maturite) && (
+        <section className="container mx-auto px-4 py-8">
+          <div className="mx-auto grid max-w-3xl gap-5 md:grid-cols-2">
+            {project.objectif && (
+              <div className="rounded-2xl border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-2 text-primary">
+                  <Target className="h-5 w-5" />
+                  <h3 className="text-lg font-semibold">Objectif</h3>
+                </div>
+                <p className="mt-3 whitespace-pre-line text-sm text-muted-foreground">{project.objectif}</p>
+              </div>
+            )}
+            {project.maturite && MATURITE_LABELS[project.maturite] && (
+              <div className="rounded-2xl border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-2 text-primary">
+                  <TrendingUp className="h-5 w-5" />
+                  <h3 className="text-lg font-semibold">Maturité du projet</h3>
+                </div>
+                <span
+                  className={`mt-3 inline-flex rounded-full border px-3 py-1 text-sm font-semibold ${MATURITE_LABELS[project.maturite].color}`}
+                >
+                  {MATURITE_LABELS[project.maturite].label}
+                </span>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* MODÈLE & CIBLE */}
+      {(project.target_customers || project.commercialization) && (
+        <section className="bg-muted/30 py-12">
+          <div className="container mx-auto grid gap-6 px-4 md:grid-cols-2">
+            {project.target_customers && (
+              <div className="rounded-2xl border bg-card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold">Notre clientèle</h3>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* MODÈLE & CIBLE */}
       {(project.target_customers || project.commercialization) && (
         <section className="bg-muted/30 py-12">
