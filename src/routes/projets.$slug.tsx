@@ -317,6 +317,76 @@ function AgriCapitalPage() {
 
       <EquipeAgriCapital />
 
+      {/* Note stratégique — Juin 2026 */}
+      <section className="bg-gradient-to-b from-background to-emerald-50/40 dark:to-emerald-950/20 py-16">
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="text-center">
+            <span className="inline-block rounded-full border border-emerald-600/30 bg-emerald-600/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+              Note stratégique · Juin 2026
+            </span>
+            <h2 className="mt-3 text-3xl font-bold text-foreground">État d'avancement & démarche</h2>
+            <p className="mt-2 text-muted-foreground">
+              Où en sommes-nous, ce que nous avons appris, et ce que nous recherchons aujourd'hui.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <article className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground">1. Où en sommes-nous aujourd'hui ?</h3>
+              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                <li>▸ Formalisation juridique complète de l'entreprise.</li>
+                <li>▸ Modèle économique et opérationnel conçu et structuré.</li>
+                <li>▸ Architecture contractuelle et outils de gestion en place.</li>
+                <li>▸ Écosystème numérique dédié (plateforme métier, portail de paiement, site web, outils digitaux).</li>
+                <li>▸ Identité visuelle et premiers supports de communication institutionnelle.</li>
+                <li>▸ Réseau de ressources techniques, foncières et opérationnelles constitué.</li>
+                <li>▸ Plus de <strong className="text-foreground">100 hectares de pépinières de palmier à huile</strong> en phase de développement.</li>
+                <li>▸ Identification et sécurisation progressive d'opportunités foncières pour le déploiement futur.</li>
+              </ul>
+            </article>
+
+            <article className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground">2. Ce que nous avons appris</h3>
+              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                <li>▸ Le potentiel du secteur agricole demeure considérable.</li>
+                <li>▸ Les besoins en structuration et en professionnalisation restent importants.</li>
+                <li>▸ Les investisseurs recherchent des modèles plus sécurisés, transparents et mieux encadrés.</li>
+                <li>▸ La réussite repose autant sur l'exécution commerciale que sur la solidité technique et organisationnelle.</li>
+              </ul>
+            </article>
+
+            <article className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground">3. Étape actuelle</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                AgriCapital entre dans une phase déterminante : le <strong className="text-foreground">déploiement commercial et organisationnel</strong>.
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                <li>▸ Structuration et exécution du plan de développement commercial.</li>
+                <li>▸ Acquisition des premiers souscripteurs et consolidation du portefeuille.</li>
+                <li>▸ Mise en place d'un cadre administratif adapté à la croissance.</li>
+                <li>▸ Renforcement des partenariats stratégiques et des capacités d'exécution.</li>
+                <li>▸ Passage d'un projet structuré à une entreprise en phase de croissance.</li>
+              </ul>
+            </article>
+
+            <article className="rounded-2xl border border-emerald-600/30 bg-emerald-600/5 p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground">4. Objet de notre démarche</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Au-delà d'un besoin de financement, notre priorité est de bénéficier d'un
+                <strong className="text-foreground"> regard expérimenté</strong> capable d'apporter des orientations stratégiques sur les prochaines étapes.
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Nous souhaitons bénéficier de l'expérience, des orientations et de l'accompagnement de
+                <strong className="text-foreground"> personnes ressources </strong>
+                dont la contribution favoriserait la structuration, le développement et la réussite durable d'AgriCapital.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+
+
 
       <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
         AgriCapital SARL · RCCM CI-DAL-01-2025-B12-13435 · Promotion Agricole & Services Intégrés
