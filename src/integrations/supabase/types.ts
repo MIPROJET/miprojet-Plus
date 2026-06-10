@@ -1085,6 +1085,59 @@ export type Database = {
           },
         ]
       }
+      mp_introductions: {
+        Row: {
+          admin_notes: string | null
+          amount_requested: number | null
+          created_at: string
+          id: string
+          needs: string
+          project_id: string
+          status: string
+          target_name: string | null
+          target_sector: string | null
+          target_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount_requested?: number | null
+          created_at?: string
+          id?: string
+          needs: string
+          project_id: string
+          status?: string
+          target_name?: string | null
+          target_sector?: string | null
+          target_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount_requested?: number | null
+          created_at?: string
+          id?: string
+          needs?: string
+          project_id?: string
+          status?: string
+          target_name?: string | null
+          target_sector?: string | null
+          target_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_introductions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mp_project_media: {
         Row: {
           caption: string | null
@@ -1126,10 +1179,73 @@ export type Database = {
           },
         ]
       }
+      mp_project_team: {
+        Row: {
+          bio: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          expertise: string | null
+          full_name: string
+          id: string
+          is_external: boolean
+          organization: string | null
+          photo_url: string | null
+          project_id: string
+          role_title: string | null
+          sort_order: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          expertise?: string | null
+          full_name: string
+          id?: string
+          is_external?: boolean
+          organization?: string | null
+          photo_url?: string | null
+          project_id: string
+          role_title?: string | null
+          sort_order?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          expertise?: string | null
+          full_name?: string
+          id?: string
+          is_external?: boolean
+          organization?: string | null
+          photo_url?: string | null
+          project_id?: string
+          role_title?: string | null
+          sort_order?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_project_team_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mp_projects: {
         Row: {
           activity_type: string | null
           annual_revenue: number | null
+          budget_initial: number | null
           city: string | null
           commercialization: string | null
           complexity_level: string
@@ -1140,6 +1256,7 @@ export type Database = {
           description: string | null
           display_id: string | null
           employees_count: number | null
+          governance: Json | null
           has_accounting: boolean | null
           has_bank_account: boolean | null
           has_business_plan: boolean | null
@@ -1148,8 +1265,10 @@ export type Database = {
           journey: string
           legal_status: string | null
           logo_url: string | null
+          maturite: string | null
           monitoring_evaluation: string | null
           monthly_expenses: number | null
+          objectif: string | null
           product_description: string | null
           profile_kind: string
           project_type: string | null
@@ -1165,6 +1284,7 @@ export type Database = {
         Insert: {
           activity_type?: string | null
           annual_revenue?: number | null
+          budget_initial?: number | null
           city?: string | null
           commercialization?: string | null
           complexity_level?: string
@@ -1175,6 +1295,7 @@ export type Database = {
           description?: string | null
           display_id?: string | null
           employees_count?: number | null
+          governance?: Json | null
           has_accounting?: boolean | null
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
@@ -1183,8 +1304,10 @@ export type Database = {
           journey?: string
           legal_status?: string | null
           logo_url?: string | null
+          maturite?: string | null
           monitoring_evaluation?: string | null
           monthly_expenses?: number | null
+          objectif?: string | null
           product_description?: string | null
           profile_kind?: string
           project_type?: string | null
@@ -1200,6 +1323,7 @@ export type Database = {
         Update: {
           activity_type?: string | null
           annual_revenue?: number | null
+          budget_initial?: number | null
           city?: string | null
           commercialization?: string | null
           complexity_level?: string
@@ -1210,6 +1334,7 @@ export type Database = {
           description?: string | null
           display_id?: string | null
           employees_count?: number | null
+          governance?: Json | null
           has_accounting?: boolean | null
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
@@ -1218,8 +1343,10 @@ export type Database = {
           journey?: string
           legal_status?: string | null
           logo_url?: string | null
+          maturite?: string | null
           monitoring_evaluation?: string | null
           monthly_expenses?: number | null
+          objectif?: string | null
           product_description?: string | null
           profile_kind?: string
           project_type?: string | null
@@ -1233,6 +1360,65 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      mp_recommendations: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          done_at: string | null
+          id: string
+          project_id: string
+          recommended_action: string | null
+          related_service_code: string | null
+          severity: string
+          source: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          done_at?: string | null
+          id?: string
+          project_id: string
+          recommended_action?: string | null
+          related_service_code?: string | null
+          severity?: string
+          source?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          done_at?: string | null
+          id?: string
+          project_id?: string
+          recommended_action?: string | null
+          related_service_code?: string | null
+          severity?: string
+          source?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_recommendations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mp_scoring_results: {
         Row: {
@@ -1301,6 +1487,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mp_service_catalog: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          currency: string
+          description: string | null
+          duration: string | null
+          id: string
+          is_active: boolean
+          level_required: string | null
+          price: number
+          short_description: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          is_active?: boolean
+          level_required?: string | null
+          price?: number
+          short_description?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          is_active?: boolean
+          level_required?: string | null
+          price?: number
+          short_description?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       mp_support_tickets: {
         Row: {
@@ -1373,6 +1610,66 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      mp_user_service_requests: {
+        Row: {
+          admin_notes: string | null
+          amount_quoted: number | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          message: string | null
+          project_id: string | null
+          scheduled_at: string | null
+          service_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount_quoted?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          project_id?: string | null
+          scheduled_at?: string | null
+          service_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount_quoted?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          project_id?: string | null
+          scheduled_at?: string | null
+          service_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_user_service_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_user_service_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "mp_service_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mp_voice_usage: {
         Row: {
