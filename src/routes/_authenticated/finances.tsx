@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useRef } from "react";
-import { uploadProjectMediaPath, publicUrlFor } from "@/lib/upload";
+import { publicUrlFor } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/finances")({
   head: () => ({ meta: [{ title: "Finances · MiProjet+" }] }),
@@ -266,8 +266,32 @@ function ReceiptCell({
   onChanged: () => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
   const hasReceipt = !!record.receipt_path;
-  const url = hasReceipt ? publicUrlFor(record.receipt_path) : null;
+
+  // Receipts now live in the private `documents` bucket and are served via
+  // short-lived signed URLs. Legacy receipts saved in `project-media` keep
+  // working through the public URL fallback.
+  const ensureUrl = async (): Promise<string | null> => {
+    if (!hasReceipt) return null;
+    if (signedUrl) return signedUrl;
+    const path: string = record.receipt_path;
+    const isLegacyPublic = !path.startsWith("mp/");
+    if (isLegacyPublic) {
+      const u = publicUrlFor(path);
+      setSignedUrl(u);
+      return u;
+    }
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .createSignedUrl(path, 3600);
+    if (error) {
+      toast.error("Impossible d'ouvrir la facture");
+      return null;
+    }
+    setSignedUrl(data.signedUrl);
+    return data.signedUrl;
+  };
 
   const onFile = async (file: File) => {
     if (file.size > 8 * 1024 * 1024) {
@@ -276,13 +300,19 @@ function ReceiptCell({
     }
     setBusy(true);
     try {
-      const path = await uploadProjectMediaPath(userId, `receipts/${record.project_id}`, file);
+      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `mp/${userId}/receipts/${record.project_id}/${Date.now()}-${safe}`;
+      const { error: upErr } = await supabase.storage
+        .from("documents")
+        .upload(path, file, { upsert: false, contentType: file.type });
+      if (upErr) throw upErr;
       const { error } = await supabase
         .from("mp_financial_records")
         .update({ receipt_path: path })
         .eq("id", record.id);
       if (error) throw error;
       toast.success("Facture liée");
+      setSignedUrl(null);
       onChanged();
     } catch (e: any) {
       toast.error(e.message);
@@ -293,16 +323,18 @@ function ReceiptCell({
 
   return (
     <div className="flex items-center justify-center">
-      {hasReceipt && url ? (
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
+      {hasReceipt ? (
+        <button
+          type="button"
+          onClick={async () => {
+            const u = await ensureUrl();
+            if (u) window.open(u, "_blank", "noopener,noreferrer");
+          }}
           title="Voir la facture"
           className="text-primary hover:text-primary/70"
         >
           <FileText className="h-4 w-4" />
-        </a>
+        </button>
       ) : (
         <label
           className={`cursor-pointer text-muted-foreground hover:text-primary ${busy ? "opacity-50" : ""}`}
