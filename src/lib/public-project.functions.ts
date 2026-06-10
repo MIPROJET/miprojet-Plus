@@ -30,7 +30,7 @@ export type PublicProject = {
   // v1.1 enrichments
   objectif: string | null;
   maturite: string | null;
-  governance: Record<string, unknown> | null;
+  governance: Record<string, string | number | boolean | null> | null;
   // Media + team
   gallery: { url: string; caption: string | null }[];
   video_url: string | null;
@@ -116,7 +116,7 @@ export const getPublicProject = createServerFn({ method: "GET" })
       monitoring_evaluation: p.monitoring_evaluation,
       objectif: p.objectif ?? null,
       maturite: p.maturite ?? null,
-      governance: (p.governance ?? null) as Record<string, unknown> | null,
+      governance: (p.governance ?? null) as Record<string, string | number | boolean | null> | null,
       gallery,
       video_url,
       team,
