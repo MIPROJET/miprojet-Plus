@@ -354,6 +354,12 @@ function ProjectForm({
     mutationFn: async () => {
       const payload: any = { user_id: userId, ...form };
       if (!payload.creation_date) delete payload.creation_date;
+      if (payload.budget_initial === "" || payload.budget_initial === null) {
+        payload.budget_initial = null;
+      } else {
+        payload.budget_initial = Number(payload.budget_initial);
+      }
+      if (!payload.maturite) payload.maturite = null;
       if (initial?.id) {
         const { error } = await supabase.from("mp_projects").update(payload).eq("id", initial.id);
         if (error) throw error;
@@ -374,12 +380,15 @@ function ProjectForm({
   const showProduit = true;
   const showMarche = kind !== "micro";
   const showSuivi = kind === "pme" || kind === "startup";
+  const showEquipe = kind !== "micro";
   const tabs = [
     { value: "identite", label: "Identité" },
     showPitch && { value: "pitch", label: kind === "startup" ? "Pitch ★" : "Pitch" },
     showProduit && { value: "produit", label: "Produit" },
     showMarche && { value: "marche", label: "Marché" },
     showSuivi && { value: "suivi", label: "Suivi" },
+    showEquipe && { value: "equipe", label: "Équipe" },
+    showEquipe && { value: "gouvernance", label: "Gouvernance" },
     { value: "docs", label: "Visuels" },
   ].filter(Boolean) as { value: string; label: string }[];
 
