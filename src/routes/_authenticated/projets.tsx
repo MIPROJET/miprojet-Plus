@@ -30,6 +30,15 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { SmartImage } from "@/components/SmartImage";
+import { TeamManager } from "@/components/projets/TeamManager";
+import { GovernanceEditor, emptyGovernance, type Governance } from "@/components/projets/GovernanceEditor";
+
+const MATURITE_OPTIONS = [
+  { value: "idee", label: "Idée" },
+  { value: "en_developpement", label: "En développement" },
+  { value: "actif", label: "Actif" },
+  { value: "structure", label: "Structuré" },
+];
 
 type ProfileKind = "micro" | "pme" | "startup";
 type Journey = "existing" | "project";
