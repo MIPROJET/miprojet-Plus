@@ -30,6 +30,15 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { SmartImage } from "@/components/SmartImage";
+import { TeamManager } from "@/components/projets/TeamManager";
+import { GovernanceEditor, emptyGovernance, type Governance } from "@/components/projets/GovernanceEditor";
+
+const MATURITE_OPTIONS = [
+  { value: "idee", label: "Idée" },
+  { value: "en_developpement", label: "En développement" },
+  { value: "actif", label: "Actif" },
+  { value: "structure", label: "Structuré" },
+];
 
 type ProfileKind = "micro" | "pme" | "startup";
 type Journey = "existing" | "project";
@@ -332,6 +341,10 @@ function ProjectForm({
     journey: (initial?.journey as Journey) ?? preset.journey,
     complexity_level: initial?.complexity_level ?? preset.complexity,
     is_public: (initial?.is_public as boolean) ?? false,
+    budget_initial: initial?.budget_initial ?? "",
+    objectif: initial?.objectif ?? "",
+    maturite: initial?.maturite ?? "",
+    governance: emptyGovernance(initial?.governance) as Governance,
   });
 
 
@@ -341,6 +354,12 @@ function ProjectForm({
     mutationFn: async () => {
       const payload: any = { user_id: userId, ...form };
       if (!payload.creation_date) delete payload.creation_date;
+      if (payload.budget_initial === "" || payload.budget_initial === null) {
+        payload.budget_initial = null;
+      } else {
+        payload.budget_initial = Number(payload.budget_initial);
+      }
+      if (!payload.maturite) payload.maturite = null;
       if (initial?.id) {
         const { error } = await supabase.from("mp_projects").update(payload).eq("id", initial.id);
         if (error) throw error;
@@ -361,12 +380,15 @@ function ProjectForm({
   const showProduit = true;
   const showMarche = kind !== "micro";
   const showSuivi = kind === "pme" || kind === "startup";
+  const showEquipe = kind !== "micro";
   const tabs = [
     { value: "identite", label: "Identité" },
     showPitch && { value: "pitch", label: kind === "startup" ? "Pitch ★" : "Pitch" },
     showProduit && { value: "produit", label: "Produit" },
     showMarche && { value: "marche", label: "Marché" },
     showSuivi && { value: "suivi", label: "Suivi" },
+    showEquipe && { value: "equipe", label: "Équipe" },
+    showEquipe && { value: "gouvernance", label: "Gouvernance" },
     { value: "docs", label: "Visuels" },
   ].filter(Boolean) as { value: string; label: string }[];
 
@@ -420,6 +442,40 @@ function ProjectForm({
           <div className="grid gap-3 sm:grid-cols-2">
             <div><Label>Date de création</Label><Input type="date" value={form.creation_date} onChange={(e) => set("creation_date", e.target.value)} className="mt-1.5" /></div>
             <div><Label>Nombre d'employés</Label><Input type="number" min={0} value={form.employees_count} onChange={(e) => set("employees_count", Number(e.target.value))} className="mt-1.5" /></div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t">
+            <div>
+              <Label>Budget initial (XOF)</Label>
+              <Input
+                type="number"
+                min={0}
+                value={form.budget_initial}
+                onChange={(e) => set("budget_initial", e.target.value)}
+                placeholder="ex: 5000000"
+                className="mt-1.5"
+              />
+            </div>
+            <div>
+              <Label>Maturité</Label>
+              <Select value={form.maturite} onValueChange={(v) => set("maturite", v)}>
+                <SelectTrigger className="mt-1.5"><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {MATURITE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <Label>Objectif principal</Label>
+            <Textarea
+              value={form.objectif}
+              onChange={(e) => set("objectif", e.target.value)}
+              rows={2}
+              className="mt-1.5"
+              placeholder="ex: Devenir le 1er fournisseur durable de café en CI d'ici 3 ans."
+            />
           </div>
           <div className="space-y-2 pt-2 border-t">
             {[
@@ -505,6 +561,27 @@ function ProjectForm({
                 placeholder="Quels indicateurs suivez-vous ? Quelle fréquence ? Résultats récents…"
               />
             </div>
+          </TabsContent>
+        )}
+
+        {showEquipe && (
+          <TabsContent value="equipe" className="space-y-4">
+            {initial?.id ? (
+              <TeamManager userId={userId} projectId={initial.id} />
+            ) : (
+              <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+                Enregistrez d'abord le projet pour gérer l'équipe.
+              </div>
+            )}
+          </TabsContent>
+        )}
+
+        {showEquipe && (
+          <TabsContent value="gouvernance" className="space-y-4">
+            <GovernanceEditor
+              value={form.governance}
+              onChange={(g) => set("governance", g)}
+            />
           </TabsContent>
         )}
 
