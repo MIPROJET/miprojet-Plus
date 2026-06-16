@@ -36,7 +36,7 @@ const NAV = [
   { to: "/projets", icon: FolderKanban, label: "Mes projets" },
   { to: "/finances", icon: Wallet, label: "Finances" },
   { to: "/score", icon: Gauge, label: "MiProjet Score" },
-  { to: "/support", icon: LifeBuoy, label: "Accompagnement" },
+  { to: "/accompagnement", icon: LifeBuoy, label: "Accompagnement" },
 ];
 
 function AuthLayout() {
