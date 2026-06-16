@@ -341,6 +341,10 @@ function ProjectForm({
     journey: (initial?.journey as Journey) ?? preset.journey,
     complexity_level: initial?.complexity_level ?? preset.complexity,
     is_public: (initial?.is_public as boolean) ?? false,
+    budget_initial: initial?.budget_initial ?? "",
+    objectif: initial?.objectif ?? "",
+    maturite: initial?.maturite ?? "",
+    governance: emptyGovernance(initial?.governance) as Governance,
   });
 
 
