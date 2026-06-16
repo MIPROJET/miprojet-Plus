@@ -564,6 +564,27 @@ function ProjectForm({
           </TabsContent>
         )}
 
+        {showEquipe && (
+          <TabsContent value="equipe" className="space-y-4">
+            {initial?.id ? (
+              <TeamManager userId={userId} projectId={initial.id} />
+            ) : (
+              <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+                Enregistrez d'abord le projet pour gérer l'équipe.
+              </div>
+            )}
+          </TabsContent>
+        )}
+
+        {showEquipe && (
+          <TabsContent value="gouvernance" className="space-y-4">
+            <GovernanceEditor
+              value={form.governance}
+              onChange={(g) => set("governance", g)}
+            />
+          </TabsContent>
+        )}
+
 
         <TabsContent value="docs" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
