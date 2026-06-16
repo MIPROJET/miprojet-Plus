@@ -443,6 +443,40 @@ function ProjectForm({
             <div><Label>Date de création</Label><Input type="date" value={form.creation_date} onChange={(e) => set("creation_date", e.target.value)} className="mt-1.5" /></div>
             <div><Label>Nombre d'employés</Label><Input type="number" min={0} value={form.employees_count} onChange={(e) => set("employees_count", Number(e.target.value))} className="mt-1.5" /></div>
           </div>
+          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t">
+            <div>
+              <Label>Budget initial (XOF)</Label>
+              <Input
+                type="number"
+                min={0}
+                value={form.budget_initial}
+                onChange={(e) => set("budget_initial", e.target.value)}
+                placeholder="ex: 5000000"
+                className="mt-1.5"
+              />
+            </div>
+            <div>
+              <Label>Maturité</Label>
+              <Select value={form.maturite} onValueChange={(v) => set("maturite", v)}>
+                <SelectTrigger className="mt-1.5"><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {MATURITE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <Label>Objectif principal</Label>
+            <Textarea
+              value={form.objectif}
+              onChange={(e) => set("objectif", e.target.value)}
+              rows={2}
+              className="mt-1.5"
+              placeholder="ex: Devenir le 1er fournisseur durable de café en CI d'ici 3 ans."
+            />
+          </div>
           <div className="space-y-2 pt-2 border-t">
             {[
               ["has_accounting", "Comptabilité tenue"],
