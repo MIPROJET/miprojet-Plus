@@ -1,4 +1,4 @@
-import logoUrl from "@/assets/miprojet-logo.png";
+import logo from "@/assets/miprojet-logo.png.asset.json";
 
 export function Logo({
   className = "h-10 w-auto",
@@ -9,11 +9,9 @@ export function Logo({
 }) {
   return (
     <img
-      src={logoUrl}
-      alt="MiProjet+"
+      src={logo.url}
+      alt="MiProjet+ — Entrepreneuriat jeune"
       className={`${className} object-contain shrink-0 select-none`}
-      width={414}
-      height={134}
       decoding="async"
       loading="eager"
       draggable={false}
