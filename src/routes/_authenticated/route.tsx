@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { MobileOnboarding } from "@/components/MobileOnboarding";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -77,11 +78,14 @@ function AuthLayout() {
           })}
         </nav>
         <div className="p-4 border-t border-sidebar-border">
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
-              <User2 className="w-4 h-4" />
+          <div className="mb-2 flex items-center justify-between gap-2 px-1">
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground">
+                <User2 className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 truncate text-xs">{user.email}</div>
             </div>
-            <div className="text-xs truncate">{user.email}</div>
+            <NotificationsBell />
           </div>
           <Button
             onClick={logout}
@@ -96,9 +100,12 @@ function AuthLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b bg-card px-3 lg:hidden">
           <Logo className="h-7 w-auto" plus={false} />
-          <Button onClick={logout} variant="ghost" size="sm">
-            <LogOut className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <NotificationsBell />
+            <Button onClick={logout} variant="ghost" size="sm">
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
         </header>
         <nav className="grid grid-cols-5 gap-1 border-b bg-card px-2 py-2 lg:hidden">
           {NAV.map((item) => {
