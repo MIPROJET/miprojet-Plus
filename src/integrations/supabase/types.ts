@@ -3434,6 +3434,16 @@ export type Database = {
       pick_email_provider: { Args: never; Returns: string }
       unaccent: { Args: { "": string }; Returns: string }
       user_profile_type: { Args: { _user_id: string }; Returns: string }
+      verify_certificate_public: {
+        Args: { _short_id: string }
+        Returns: {
+          certified_at: string
+          content_hash: string
+          short_id: string
+          signed_payload: Json
+          status: string
+        }[]
+      }
     }
     Enums: {
       mp_plan_tier: "free" | "growth" | "partner"
