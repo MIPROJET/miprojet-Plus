@@ -20,6 +20,7 @@ import { Route as AuthenticatedProjetsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedFinancesRouteImport } from './routes/_authenticated/finances'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
+import { Route as ApiPublicHooksProcessEmailQueueRouteImport } from './routes/api/public/hooks/process-email-queue'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -76,6 +77,12 @@ const AuthenticatedAccompagnementRoute =
     path: '/accompagnement',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicHooksProcessEmailQueueRoute =
+  ApiPublicHooksProcessEmailQueueRouteImport.update({
+    id: '/api/public/hooks/process-email-queue',
+    path: '/api/public/hooks/process-email-queue',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -100,6 +108,7 @@ export interface FileRoutesByTo {
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -114,6 +123,7 @@ export interface FileRoutesById {
   '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/api/public/hooks/process-email-queue'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/api/public/hooks/process-email-queue'
   id:
     | '__root__'
     | '/'
@@ -153,6 +165,7 @@ export interface FileRouteTypes {
     | '/_authenticated/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/api/public/hooks/process-email-queue'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -161,6 +174,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CertificatShortIdRoute: typeof CertificatShortIdRoute
   ProjetsSlugRoute: typeof ProjetsSlugRoute
+  ApiPublicHooksProcessEmailQueueRoute: typeof ApiPublicHooksProcessEmailQueueRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -242,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccompagnementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/process-email-queue': {
+      id: '/api/public/hooks/process-email-queue'
+      path: '/api/public/hooks/process-email-queue'
+      fullPath: '/api/public/hooks/process-email-queue'
+      preLoaderRoute: typeof ApiPublicHooksProcessEmailQueueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -272,6 +293,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CertificatShortIdRoute: CertificatShortIdRoute,
   ProjetsSlugRoute: ProjetsSlugRoute,
+  ApiPublicHooksProcessEmailQueueRoute: ApiPublicHooksProcessEmailQueueRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

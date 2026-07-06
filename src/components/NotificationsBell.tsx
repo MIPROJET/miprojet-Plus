@@ -42,28 +42,33 @@ export function NotificationsBell() {
   }
 
   useEffect(() => {
-    load();
+    let cancelled = false;
     let channel: ReturnType<typeof supabase.channel> | null = null;
+    load();
     (async () => {
       const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return;
-      channel = supabase
-        .channel(`notif-${u.user.id}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "notifications",
-            filter: `user_id=eq.${u.user.id}`,
-          },
-          (payload) => {
-            setItems((prev) => [payload.new as Notif, ...prev].slice(0, 20));
-          },
-        )
-        .subscribe();
+      if (!u.user || cancelled) return;
+      // unique per-mount name avoids reusing a cached (already-subscribed) channel in StrictMode
+      const ch = supabase.channel(`notif-${u.user.id}-${Math.random().toString(36).slice(2, 8)}`);
+      ch.on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${u.user.id}`,
+        },
+        (payload) => {
+          setItems((prev) => [payload.new as Notif, ...prev].slice(0, 20));
+        },
+      );
+      if (cancelled) return;
+      ch.subscribe();
+      channel = ch;
+      if (cancelled) supabase.removeChannel(ch);
     })();
     return () => {
+      cancelled = true;
       if (channel) supabase.removeChannel(channel);
     };
   }, []);

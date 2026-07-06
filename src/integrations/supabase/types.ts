@@ -485,6 +485,48 @@ export type Database = {
         }
         Relationships: []
       }
+      email_send_history: {
+        Row: {
+          category: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json
+          queue_id: string | null
+          recipient_email: string
+          status: string
+          subject: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json
+          queue_id?: string | null
+          recipient_email: string
+          status?: string
+          subject: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json
+          queue_id?: string | null
+          recipient_email?: string
+          status?: string
+          subject?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           created_at: string
@@ -3389,11 +3431,33 @@ export type Database = {
     }
     Functions: {
       archive_expired_tenders: { Args: never; Returns: undefined }
+      build_email_html: {
+        Args: {
+          _body_html: string
+          _cta_label?: string
+          _cta_url?: string
+          _title: string
+        }
+        Returns: string
+      }
       build_short_slug: {
         Args: { _prefix: string; _rank: number; _ts: string }
         Returns: string
       }
       current_user_has_role: { Args: { _role: string }; Returns: boolean }
+      enqueue_user_email: {
+        Args: {
+          _category: string
+          _entity_id?: string
+          _entity_type?: string
+          _html: string
+          _metadata?: Json
+          _subject: string
+          _text?: string
+          _user_id: string
+        }
+        Returns: string
+      }
       get_admin_payments: {
         Args: never
         Returns: {
@@ -3431,6 +3495,14 @@ export type Database = {
       increment_tender_views: { Args: { _id: string }; Returns: undefined }
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
       is_email_unsubscribed: { Args: { _email: string }; Returns: boolean }
+      mark_email_failed: {
+        Args: { _error: string; _id: string }
+        Returns: undefined
+      }
+      mark_email_sent: {
+        Args: { _id: string; _provider: string }
+        Returns: undefined
+      }
       pick_email_provider: { Args: never; Returns: string }
       unaccent: { Args: { "": string }; Returns: string }
       user_profile_type: { Args: { _user_id: string }; Returns: string }
