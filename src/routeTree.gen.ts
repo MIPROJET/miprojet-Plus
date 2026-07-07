@@ -20,6 +20,7 @@ import { Route as AuthenticatedProjetsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedFinancesRouteImport } from './routes/_authenticated/finances'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
+import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as ApiPublicHooksProcessEmailQueueRouteImport } from './routes/api/public/hooks/process-email-queue'
 
 const AuthRoute = AuthRouteImport.update({
@@ -77,6 +78,11 @@ const AuthenticatedAccompagnementRoute =
     path: '/accompagnement',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
+  id: '/api/public/unsubscribe',
+  path: '/api/public/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksProcessEmailQueueRoute =
   ApiPublicHooksProcessEmailQueueRouteImport.update({
     id: '/api/public/hooks/process-email-queue',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
 export interface FileRoutesByTo {
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
 export interface FileRoutesById {
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
 export interface FileRouteTypes {
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   id:
     | '__root__'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   fileRoutesById: FileRoutesById
 }
@@ -174,6 +186,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CertificatShortIdRoute: typeof CertificatShortIdRoute
   ProjetsSlugRoute: typeof ProjetsSlugRoute
+  ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicHooksProcessEmailQueueRoute: typeof ApiPublicHooksProcessEmailQueueRoute
 }
 
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccompagnementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/unsubscribe': {
+      id: '/api/public/unsubscribe'
+      path: '/api/public/unsubscribe'
+      fullPath: '/api/public/unsubscribe'
+      preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/process-email-queue': {
       id: '/api/public/hooks/process-email-queue'
       path: '/api/public/hooks/process-email-queue'
@@ -293,6 +313,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CertificatShortIdRoute: CertificatShortIdRoute,
   ProjetsSlugRoute: ProjetsSlugRoute,
+  ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicHooksProcessEmailQueueRoute: ApiPublicHooksProcessEmailQueueRoute,
 }
 export const routeTree = rootRouteImport
