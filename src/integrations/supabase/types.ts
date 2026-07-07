@@ -2371,6 +2371,48 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_sync_signals: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          handled_at: string | null
+          handled_by_note: string | null
+          id: string
+          payload: Json
+          severity: string
+          signal_type: string
+          source_id: string | null
+          source_table: string | null
+          status: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          handled_at?: string | null
+          handled_by_note?: string | null
+          id?: string
+          payload?: Json
+          severity?: string
+          signal_type: string
+          source_id?: string | null
+          source_table?: string | null
+          status?: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          handled_at?: string | null
+          handled_by_note?: string | null
+          id?: string
+          payload?: Json
+          severity?: string
+          signal_type?: string
+          source_id?: string | null
+          source_table?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_status: string | null
@@ -3293,6 +3335,18 @@ export type Database = {
       }
     }
     Views: {
+      email_ops_overview: {
+        Row: {
+          brevo_sent_today: number | null
+          failed_total: number | null
+          pending_count: number | null
+          pending_signals: number | null
+          resend_sent_today: number | null
+          sent_24h: number | null
+          unsubscribes_total: number | null
+        }
+        Relationships: []
+      }
       public_projects: {
         Row: {
           amount_requested: number | null
@@ -3445,6 +3499,17 @@ export type Database = {
         Returns: string
       }
       current_user_has_role: { Args: { _role: string }; Returns: boolean }
+      emit_sync_signal: {
+        Args: {
+          _actor: string
+          _payload?: Json
+          _severity?: string
+          _source_id: string
+          _source_table: string
+          _type: string
+        }
+        Returns: string
+      }
       enqueue_user_email: {
         Args: {
           _category: string
@@ -3505,6 +3570,7 @@ export type Database = {
       }
       pick_email_provider: { Args: never; Returns: string }
       unaccent: { Args: { "": string }; Returns: string }
+      unsubscribe_by_token: { Args: { _token: string }; Returns: Json }
       user_profile_type: { Args: { _user_id: string }; Returns: string }
       verify_certificate_public: {
         Args: { _short_id: string }
