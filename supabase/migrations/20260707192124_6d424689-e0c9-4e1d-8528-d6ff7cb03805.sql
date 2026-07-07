@@ -1,0 +1,1 @@
+ALTER FUNCTION public.build_email_html(text, text, text, text) SET search_path = public;
