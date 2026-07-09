@@ -22,11 +22,30 @@ function AuthPage() {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  async function routeAfterAuth() {
+    // Redirige vers /organisation si aucune org, sinon dashboard maturité
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (!uid) return navigate({ to: "/dashboard" });
+      const { data: orgs } = await supabase
+        .from("mp_org_members" as any)
+        .select("org_id")
+        .eq("user_id", uid)
+        .limit(1);
+      if (!orgs || orgs.length === 0) navigate({ to: "/organisation" });
+      else navigate({ to: "/dashboard" });
+    } catch {
+      navigate({ to: "/dashboard" });
+    }
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
+      if (data.session) routeAfterAuth();
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,18 +55,18 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            emailRedirectTo: `${window.location.origin}/organisation`,
             data: { first_name: firstName.trim(), last_name: lastName.trim() },
           },
         });
         if (error) throw error;
-        toast.success("Compte créé ! Connexion en cours…");
+        toast.success("Compte créé ! Bienvenue.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bienvenue !");
       }
-      navigate({ to: "/dashboard" });
+      await routeAfterAuth();
     } catch (err: any) {
       toast.error(err.message || "Erreur d'authentification");
     } finally {
