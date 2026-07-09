@@ -17,7 +17,10 @@ import { Route as CertificatShortIdRouteImport } from './routes/certificat.$shor
 import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
 import { Route as AuthenticatedScoreRouteImport } from './routes/_authenticated/score'
 import { Route as AuthenticatedProjetsRouteImport } from './routes/_authenticated/projets'
+import { Route as AuthenticatedOrganisationRouteImport } from './routes/_authenticated/organisation'
 import { Route as AuthenticatedFinancesRouteImport } from './routes/_authenticated/finances'
+import { Route as AuthenticatedEvaluationRouteImport } from './routes/_authenticated/evaluation'
+import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
@@ -62,9 +65,25 @@ const AuthenticatedProjetsRoute = AuthenticatedProjetsRouteImport.update({
   path: '/projets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOrganisationRoute =
+  AuthenticatedOrganisationRouteImport.update({
+    id: '/organisation',
+    path: '/organisation',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedFinancesRoute = AuthenticatedFinancesRouteImport.update({
   id: '/finances',
   path: '/finances',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEvaluationRoute = AuthenticatedEvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -95,7 +114,10 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/accompagnement': typeof AuthenticatedAccompagnementRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/documents': typeof AuthenticatedDocumentsRoute
+  '/evaluation': typeof AuthenticatedEvaluationRoute
   '/finances': typeof AuthenticatedFinancesRoute
+  '/organisation': typeof AuthenticatedOrganisationRoute
   '/projets': typeof AuthenticatedProjetsRoute
   '/score': typeof AuthenticatedScoreRoute
   '/support': typeof AuthenticatedSupportRoute
@@ -109,7 +131,10 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/accompagnement': typeof AuthenticatedAccompagnementRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/documents': typeof AuthenticatedDocumentsRoute
+  '/evaluation': typeof AuthenticatedEvaluationRoute
   '/finances': typeof AuthenticatedFinancesRoute
+  '/organisation': typeof AuthenticatedOrganisationRoute
   '/projets': typeof AuthenticatedProjetsRoute
   '/score': typeof AuthenticatedScoreRoute
   '/support': typeof AuthenticatedSupportRoute
@@ -125,7 +150,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/accompagnement': typeof AuthenticatedAccompagnementRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
+  '/_authenticated/evaluation': typeof AuthenticatedEvaluationRoute
   '/_authenticated/finances': typeof AuthenticatedFinancesRoute
+  '/_authenticated/organisation': typeof AuthenticatedOrganisationRoute
   '/_authenticated/projets': typeof AuthenticatedProjetsRoute
   '/_authenticated/score': typeof AuthenticatedScoreRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
@@ -141,7 +169,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/accompagnement'
     | '/dashboard'
+    | '/documents'
+    | '/evaluation'
     | '/finances'
+    | '/organisation'
     | '/projets'
     | '/score'
     | '/support'
@@ -155,7 +186,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/accompagnement'
     | '/dashboard'
+    | '/documents'
+    | '/evaluation'
     | '/finances'
+    | '/organisation'
     | '/projets'
     | '/score'
     | '/support'
@@ -170,7 +204,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/accompagnement'
     | '/_authenticated/dashboard'
+    | '/_authenticated/documents'
+    | '/_authenticated/evaluation'
     | '/_authenticated/finances'
+    | '/_authenticated/organisation'
     | '/_authenticated/projets'
     | '/_authenticated/score'
     | '/_authenticated/support'
@@ -248,11 +285,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjetsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/organisation': {
+      id: '/_authenticated/organisation'
+      path: '/organisation'
+      fullPath: '/organisation'
+      preLoaderRoute: typeof AuthenticatedOrganisationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/finances': {
       id: '/_authenticated/finances'
       path: '/finances'
       fullPath: '/finances'
       preLoaderRoute: typeof AuthenticatedFinancesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/evaluation': {
+      id: '/_authenticated/evaluation'
+      path: '/evaluation'
+      fullPath: '/evaluation'
+      preLoaderRoute: typeof AuthenticatedEvaluationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -289,7 +347,10 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccompagnementRoute: typeof AuthenticatedAccompagnementRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
+  AuthenticatedEvaluationRoute: typeof AuthenticatedEvaluationRoute
   AuthenticatedFinancesRoute: typeof AuthenticatedFinancesRoute
+  AuthenticatedOrganisationRoute: typeof AuthenticatedOrganisationRoute
   AuthenticatedProjetsRoute: typeof AuthenticatedProjetsRoute
   AuthenticatedScoreRoute: typeof AuthenticatedScoreRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
@@ -298,7 +359,10 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccompagnementRoute: AuthenticatedAccompagnementRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
+  AuthenticatedEvaluationRoute: AuthenticatedEvaluationRoute,
   AuthenticatedFinancesRoute: AuthenticatedFinancesRoute,
+  AuthenticatedOrganisationRoute: AuthenticatedOrganisationRoute,
   AuthenticatedProjetsRoute: AuthenticatedProjetsRoute,
   AuthenticatedScoreRoute: AuthenticatedScoreRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
@@ -319,13 +383,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
