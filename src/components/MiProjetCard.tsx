@@ -89,31 +89,45 @@ export function MiProjetCard({
                   </div>
                 </div>
 
+                <div className="min-w-0">
+                  <div className="text-[9px] uppercase tracking-[0.18em] text-white/70">
+                    Chiffre d'affaires cumulé
+                  </div>
+                  <div className="mt-0.5 truncate text-xl font-bold text-white sm:text-2xl">
+                    {formatXOF(incomes)}
+                  </div>
+                  <div className="mt-0.5 text-[10px] text-white/70">
+                    Solde&nbsp;: <span className="font-semibold text-gold">{formatXOF(balance)}</span>
+                    <span className="mx-1.5 opacity-40">•</span>
+                    {operationsCount} opé.
+                  </div>
+                </div>
+
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-[9px] uppercase tracking-[0.16em] text-primary-foreground/60">
+                    <div className="text-[9px] uppercase tracking-[0.16em] text-white/60">
                       Titulaire
                     </div>
-                    <div className="truncate text-sm font-semibold sm:text-base">{ownerName}</div>
-                    <div className="truncate text-[11px] text-primary-foreground/70">
+                    <div className="truncate text-sm font-semibold text-white sm:text-base">{ownerName}</div>
+                    <div className="truncate text-[11px] text-white/70">
                       {projectName || "Organisation"}
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <div className="text-[9px] uppercase tracking-[0.16em] text-primary-foreground/60">Score</div>
+                    <div className="text-[9px] uppercase tracking-[0.16em] text-white/60">Score</div>
                     <div className="text-2xl font-bold text-gold sm:text-3xl leading-none">
                       {score ? String(scoreValue).padStart(2, "0") : "--"}
                     </div>
-                    <div className="text-[10px] text-primary-foreground/70">{safeLevel}</div>
+                    <div className="text-[10px] text-white/80">{safeLevel}</div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 border-t border-primary-foreground/15 pt-2">
+                <div className="flex items-center justify-between gap-2 border-t border-white/20 pt-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <Cpu className="h-4 w-4 shrink-0 text-gold" />
-                    <span className="truncate text-[11px] tracking-[0.14em] font-mono">{cardId}</span>
+                    <span className="truncate text-[11px] tracking-[0.14em] font-mono text-white/90">{cardId}</span>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0 text-primary-foreground/80">
+                  <div className="flex items-center gap-1 shrink-0 text-white/90">
                     <WalletCards className="h-3.5 w-3.5" />
                     <span className="text-[11px] font-medium">{health}</span>
                   </div>
