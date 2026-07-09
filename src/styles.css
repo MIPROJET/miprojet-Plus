@@ -71,11 +71,12 @@
   --secondary: oklch(0.6 0.19 145);
   --secondary-foreground: oklch(0.99 0.01 95);
 
-  --muted: oklch(0.97 0.01 60);
-  --muted-foreground: oklch(0.48 0.02 60);
+  --muted: oklch(0.97 0.008 60);
+  --muted-foreground: oklch(0.45 0.02 60);
 
-  --accent: oklch(0.96 0.04 60);
-  --accent-foreground: oklch(0.35 0.15 50);
+  --accent: oklch(0.95 0.03 55);
+  --accent-foreground: oklch(0.38 0.12 45);
+
 
   /* Gold conservé pour rappels chaleureux */
   --gold: oklch(0.78 0.17 75);
