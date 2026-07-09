@@ -84,22 +84,32 @@ export function NotificationsBell() {
     setItems((prev) => prev.map((n) => ({ ...n, is_read: true })));
   }
 
+  function normalizeLink(raw: string | null): string {
+    if (!raw) return "/dashboard";
+    if (raw.startsWith("/project-evaluation/")) return "/evaluation";
+    const map: Record<string, string> = {
+      "/miprojet-plus/app": "/dashboard",
+      "/dashboard/invoices": "/dashboard",
+      "/coaching": "/accompagnement",
+      "/reco": "/accompagnement",
+    };
+    if (map[raw]) return map[raw];
+    const known = ["/dashboard","/projets","/finances","/score","/accompagnement","/support","/organisation","/documents","/evaluation"];
+    if (known.some((k) => raw === k || raw.startsWith(k + "/") || raw.startsWith(k + "?"))) return raw;
+    return "/dashboard";
+  }
+
   async function onClick(n: Notif) {
     if (!n.is_read) {
       await supabase.from("notifications").update({ is_read: true }).eq("id", n.id);
-      setItems((prev) =>
-        prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)),
-      );
+      setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)));
     }
-    if (n.link) {
-      setOpen(false);
-      // Utilise navigation native pour supporter les liens dynamiques
-      // (services, tickets…) sans échouer sur le typage strict du routeur.
-      try {
-        navigate({ to: n.link as never });
-      } catch {
-        window.location.href = n.link;
-      }
+    setOpen(false);
+    const target = normalizeLink(n.link);
+    try {
+      navigate({ to: target as never });
+    } catch {
+      window.location.href = target;
     }
   }
 

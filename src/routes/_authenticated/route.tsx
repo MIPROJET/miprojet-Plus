@@ -16,6 +16,9 @@ import {
   LogOut,
   User2,
   LifeBuoy,
+  Building2,
+  FileText,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -34,11 +37,14 @@ export const Route = createFileRoute("/_authenticated")({
 
 const NAV = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Accueil" },
-  { to: "/projets", icon: FolderKanban, label: "Mes projets" },
+  { to: "/organisation", icon: Building2, label: "Organisation" },
+  { to: "/projets", icon: FolderKanban, label: "Projets" },
   { to: "/finances", icon: Wallet, label: "Finances" },
-  { to: "/score", icon: Gauge, label: "MiProjet Score" },
+  { to: "/documents", icon: FileText, label: "Documents" },
+  { to: "/evaluation", icon: TrendingUp, label: "Maturité" },
+  { to: "/score", icon: Gauge, label: "Score" },
   { to: "/accompagnement", icon: LifeBuoy, label: "Accompagnement" },
-];
+] as const;
 
 function AuthLayout() {
   const { user } = Route.useRouteContext();
@@ -107,7 +113,7 @@ function AuthLayout() {
             </Button>
           </div>
         </header>
-        <nav className="grid grid-cols-5 gap-1 border-b bg-card px-2 py-2 lg:hidden">
+        <nav className="flex gap-1 overflow-x-auto border-b bg-card px-2 py-2 lg:hidden">
           {NAV.map((item) => {
             const active = location.pathname.startsWith(item.to);
             return (
@@ -115,7 +121,7 @@ function AuthLayout() {
                 key={item.to}
                 to={item.to}
                 aria-label={item.label}
-                className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-md px-1 py-1.5 text-[10px] font-semibold leading-tight ${active ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+                className={`flex min-w-[68px] shrink-0 flex-col items-center justify-center gap-1 rounded-md px-2 py-1.5 text-[10px] font-semibold leading-tight ${active ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
               >
                 <item.icon className="h-4 w-4 shrink-0" />
                 <span className="w-full truncate text-center">{item.label}</span>
