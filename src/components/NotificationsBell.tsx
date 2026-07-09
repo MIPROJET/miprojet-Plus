@@ -93,7 +93,13 @@ export function NotificationsBell() {
     }
     if (n.link) {
       setOpen(false);
-      navigate({ to: n.link });
+      // Utilise navigation native pour supporter les liens dynamiques
+      // (services, tickets…) sans échouer sur le typage strict du routeur.
+      try {
+        navigate({ to: n.link as never });
+      } catch {
+        window.location.href = n.link;
+      }
     }
   }
 
