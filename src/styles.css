@@ -85,9 +85,11 @@
   --success: oklch(0.6 0.19 145);
   --success-foreground: oklch(0.99 0.01 95);
 
-  /* Textes verts posés sur aplat orange (--primary) — charte MiPROJET */
-  --on-primary: oklch(0.92 0.16 145);
-  --on-primary-muted: oklch(0.82 0.14 145);
+  /* Texte principal sur aplat orange (--primary) : blanc lisible.
+     Les valeurs mises en avant (score, solde) utilisent --on-primary-accent (vert). */
+  --on-primary: oklch(0.99 0.005 95);
+  --on-primary-muted: oklch(0.94 0.01 95 / 0.82);
+  --on-primary-accent: oklch(0.88 0.18 148);
 
   --warning: oklch(0.78 0.17 75);
   --warning-foreground: oklch(0.2 0.05 40);
