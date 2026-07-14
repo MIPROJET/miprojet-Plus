@@ -115,7 +115,7 @@ export function MiProjetCard({
                   </div>
                   <div className="shrink-0 text-right">
                     <div className="text-[9px] uppercase tracking-[0.16em] text-on-primary-muted">Score</div>
-                    <div className="text-2xl font-bold text-gold sm:text-3xl leading-none">
+                    <div className="text-2xl font-bold text-on-primary-accent sm:text-3xl leading-none">
                       {score ? String(scoreValue).padStart(2, "0") : "--"}
                     </div>
                     <div className="text-[10px] text-on-primary-muted">{safeLevel}</div>
