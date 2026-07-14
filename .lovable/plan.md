@@ -377,3 +377,108 @@ VALUES (
   )
 );
 ```
+
+---
+
+## 6. Module Analyse Financière — Vues, colonnes, index (v1.2)
+
+Ces objets ne sont pas obligatoires pour que le module `/finances/analyse`
+fonctionne (l'agrégation est faite côté client à partir de `mp_financial_records`),
+mais ils accélèrent les rapports côté écosystème (MiPROJET Invest / Admin).
+
+```sql
+-- Nouvelles colonnes structurantes sur les opérations financières
+ALTER TABLE public.mp_financial_records
+  ADD COLUMN IF NOT EXISTS party_name text,
+  ADD COLUMN IF NOT EXISTS funding_source text,
+  ADD COLUMN IF NOT EXISTS budget_line text,
+  ADD COLUMN IF NOT EXISTS is_in_kind boolean NOT NULL DEFAULT false;
+
+CREATE INDEX IF NOT EXISTS idx_mp_fin_party    ON public.mp_financial_records(party_name);
+CREATE INDEX IF NOT EXISTS idx_mp_fin_source   ON public.mp_financial_records(funding_source);
+CREATE INDEX IF NOT EXISTS idx_mp_fin_category ON public.mp_financial_records(category);
+CREATE INDEX IF NOT EXISTS idx_mp_fin_project_date ON public.mp_financial_records(project_id, record_date);
+
+-- Backfill : extraire "Source : Nom" depuis les descriptions historiques
+UPDATE public.mp_financial_records
+   SET party_name = trim(substring(description from 'Source\s*:\s*([^—\n]+)'))
+ WHERE party_name IS NULL
+   AND description ~* 'Source\s*:';
+
+-- Backfill : source de financement standardisée à partir du record_type
+UPDATE public.mp_financial_records SET funding_source = CASE record_type
+  WHEN 'apport_associe'  THEN 'Associés'
+  WHEN 'investissement'  THEN 'Investisseurs'
+  WHEN 'don'             THEN 'Dons/Subventions'
+  WHEN 'pret'            THEN 'Prêts/Banque'
+  WHEN 'vente'           THEN 'Ventes/Clients'
+  WHEN 'encaissement'    THEN 'Encaissements'
+  ELSE NULL END
+WHERE funding_source IS NULL
+  AND record_type IN ('apport_associe','investissement','don','pret','vente','encaissement');
+
+-- Vue agrégée par contributeur (associés, banques, partenaires)
+CREATE OR REPLACE VIEW public.v_mp_financial_by_party AS
+SELECT
+  project_id,
+  COALESCE(party_name, funding_source, 'Non identifié') AS contributor,
+  count(*) AS operations,
+  sum(amount) FILTER (WHERE record_type IN ('vente','encaissement','apport_associe','pret','don','investissement')) AS total_in,
+  sum(amount) FILTER (WHERE record_type NOT IN ('vente','encaissement','apport_associe','pret','don','investissement')) AS total_out
+FROM public.mp_financial_records
+GROUP BY project_id, COALESCE(party_name, funding_source, 'Non identifié');
+
+-- Vue agrégée par catégorie de dépenses
+CREATE OR REPLACE VIEW public.v_mp_financial_by_category AS
+SELECT
+  project_id,
+  COALESCE(category, 'Non classé') AS category,
+  count(*) AS operations,
+  sum(amount) AS total
+FROM public.mp_financial_records
+WHERE record_type NOT IN ('vente','encaissement','apport_associe','pret','don','investissement')
+GROUP BY project_id, COALESCE(category, 'Non classé');
+
+-- Vue agrégée par mois (pour dashboards écosystème)
+CREATE OR REPLACE VIEW public.v_mp_financial_by_month AS
+SELECT
+  project_id,
+  date_trunc('month', record_date)::date AS period,
+  sum(amount) FILTER (WHERE record_type IN ('vente','encaissement','apport_associe','pret','don','investissement')) AS total_in,
+  sum(amount) FILTER (WHERE record_type NOT IN ('vente','encaissement','apport_associe','pret','don','investissement')) AS total_out,
+  count(*) AS operations
+FROM public.mp_financial_records
+GROUP BY project_id, date_trunc('month', record_date);
+
+GRANT SELECT ON public.v_mp_financial_by_party TO authenticated, service_role;
+GRANT SELECT ON public.v_mp_financial_by_category TO authenticated, service_role;
+GRANT SELECT ON public.v_mp_financial_by_month TO authenticated, service_role;
+
+-- Fonction : pourcentages d'apport par contributeur (utilisable par MiPROJET Invest)
+CREATE OR REPLACE FUNCTION public.mp_contributor_shares(_project_id uuid)
+RETURNS TABLE(contributor text, total_in numeric, share_percent numeric)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  WITH base AS (
+    SELECT contributor, COALESCE(total_in,0) AS total_in
+    FROM public.v_mp_financial_by_party
+    WHERE project_id = _project_id
+  ), tot AS (SELECT NULLIF(sum(total_in),0) AS s FROM base)
+  SELECT b.contributor, b.total_in,
+         ROUND((b.total_in / (SELECT s FROM tot)) * 100, 2)
+  FROM base b
+  WHERE b.total_in > 0
+  ORDER BY b.total_in DESC;
+$$;
+
+-- Signal écosystème
+INSERT INTO public.platform_sync_signals
+  (signal_type, severity, source_table, source_id, actor_user_id, payload)
+VALUES (
+  'miprojet_plus.v1_2_financial_analytics', 'notice', 'mp_financial_records',
+  gen_random_uuid(), NULL,
+  jsonb_build_object(
+    'views', jsonb_build_array('v_mp_financial_by_party','v_mp_financial_by_category','v_mp_financial_by_month'),
+    'functions', jsonb_build_array('mp_contributor_shares')
+  )
+);
+```
