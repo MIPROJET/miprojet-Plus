@@ -24,6 +24,7 @@ import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
+import { Route as AuthenticatedFinancesAnalyseRouteImport } from './routes/_authenticated/finances.analyse'
 import { Route as ApiPublicHooksProcessEmailQueueRouteImport } from './routes/api/public/hooks/process-email-queue'
 
 const AuthRoute = AuthRouteImport.update({
@@ -102,6 +103,12 @@ const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
   path: '/api/public/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedFinancesAnalyseRoute =
+  AuthenticatedFinancesAnalyseRouteImport.update({
+    id: '/analyse',
+    path: '/analyse',
+    getParentRoute: () => AuthenticatedFinancesRoute,
+  } as any)
 const ApiPublicHooksProcessEmailQueueRoute =
   ApiPublicHooksProcessEmailQueueRouteImport.update({
     id: '/api/public/hooks/process-email-queue',
@@ -116,13 +123,14 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/evaluation': typeof AuthenticatedEvaluationRoute
-  '/finances': typeof AuthenticatedFinancesRoute
+  '/finances': typeof AuthenticatedFinancesRouteWithChildren
   '/organisation': typeof AuthenticatedOrganisationRoute
   '/projets': typeof AuthenticatedProjetsRoute
   '/score': typeof AuthenticatedScoreRoute
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
@@ -133,13 +141,14 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/evaluation': typeof AuthenticatedEvaluationRoute
-  '/finances': typeof AuthenticatedFinancesRoute
+  '/finances': typeof AuthenticatedFinancesRouteWithChildren
   '/organisation': typeof AuthenticatedOrganisationRoute
   '/projets': typeof AuthenticatedProjetsRoute
   '/score': typeof AuthenticatedScoreRoute
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
@@ -152,13 +161,14 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/evaluation': typeof AuthenticatedEvaluationRoute
-  '/_authenticated/finances': typeof AuthenticatedFinancesRoute
+  '/_authenticated/finances': typeof AuthenticatedFinancesRouteWithChildren
   '/_authenticated/organisation': typeof AuthenticatedOrganisationRoute
   '/_authenticated/projets': typeof AuthenticatedProjetsRoute
   '/_authenticated/score': typeof AuthenticatedScoreRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/_authenticated/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/finances/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   fileRoutesByTo: FileRoutesByTo
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/finances/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   id:
@@ -213,6 +225,7 @@ export interface FileRouteTypes {
     | '/_authenticated/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/_authenticated/finances/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   fileRoutesById: FileRoutesById
@@ -334,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/finances/analyse': {
+      id: '/_authenticated/finances/analyse'
+      path: '/analyse'
+      fullPath: '/finances/analyse'
+      preLoaderRoute: typeof AuthenticatedFinancesAnalyseRouteImport
+      parentRoute: typeof AuthenticatedFinancesRoute
+    }
     '/api/public/hooks/process-email-queue': {
       id: '/api/public/hooks/process-email-queue'
       path: '/api/public/hooks/process-email-queue'
@@ -344,12 +364,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedFinancesRouteChildren {
+  AuthenticatedFinancesAnalyseRoute: typeof AuthenticatedFinancesAnalyseRoute
+}
+
+const AuthenticatedFinancesRouteChildren: AuthenticatedFinancesRouteChildren = {
+  AuthenticatedFinancesAnalyseRoute: AuthenticatedFinancesAnalyseRoute,
+}
+
+const AuthenticatedFinancesRouteWithChildren =
+  AuthenticatedFinancesRoute._addFileChildren(
+    AuthenticatedFinancesRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccompagnementRoute: typeof AuthenticatedAccompagnementRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEvaluationRoute: typeof AuthenticatedEvaluationRoute
-  AuthenticatedFinancesRoute: typeof AuthenticatedFinancesRoute
+  AuthenticatedFinancesRoute: typeof AuthenticatedFinancesRouteWithChildren
   AuthenticatedOrganisationRoute: typeof AuthenticatedOrganisationRoute
   AuthenticatedProjetsRoute: typeof AuthenticatedProjetsRoute
   AuthenticatedScoreRoute: typeof AuthenticatedScoreRoute
@@ -361,7 +394,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEvaluationRoute: AuthenticatedEvaluationRoute,
-  AuthenticatedFinancesRoute: AuthenticatedFinancesRoute,
+  AuthenticatedFinancesRoute: AuthenticatedFinancesRouteWithChildren,
   AuthenticatedOrganisationRoute: AuthenticatedOrganisationRoute,
   AuthenticatedProjetsRoute: AuthenticatedProjetsRoute,
   AuthenticatedScoreRoute: AuthenticatedScoreRoute,
