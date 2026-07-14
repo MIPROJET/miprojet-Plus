@@ -71,7 +71,7 @@ export function MiProjetCard({
         <TabsContent value="front" className="mt-4">
           <div className="mx-auto w-full max-w-md">
             <div
-              className="relative w-full overflow-hidden rounded-2xl border border-primary/20 bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+              className="relative w-full overflow-hidden rounded-2xl border border-primary/20 bg-primary shadow-lg shadow-primary/20"
               style={{ aspectRatio: "1.586 / 1" }}
             >
               <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-5">
@@ -80,7 +80,7 @@ export function MiProjetCard({
                     <div className="rounded-md bg-white/95 px-2 py-1 inline-block">
                       <Logo className="h-5 w-auto sm:h-6" />
                     </div>
-                    <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-primary-foreground/70">
+                    <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-on-primary-muted">
                       Carte organisation
                     </div>
                   </div>
@@ -90,13 +90,13 @@ export function MiProjetCard({
                 </div>
 
                 <div className="min-w-0">
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-white/70">
+                  <div className="text-[9px] uppercase tracking-[0.18em] text-on-primary-muted">
                     Chiffre d'affaires cumulé
                   </div>
-                  <div className="mt-0.5 truncate text-xl font-bold text-white sm:text-2xl">
+                  <div className="mt-0.5 truncate text-xl font-bold text-on-primary sm:text-2xl">
                     {formatXOF(incomes)}
                   </div>
-                  <div className="mt-0.5 text-[10px] text-white/70">
+                  <div className="mt-0.5 text-[10px] text-on-primary-muted">
                     Solde&nbsp;: <span className="font-semibold text-gold">{formatXOF(balance)}</span>
                     <span className="mx-1.5 opacity-40">•</span>
                     {operationsCount} opé.
@@ -105,29 +105,29 @@ export function MiProjetCard({
 
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-[9px] uppercase tracking-[0.16em] text-white/60">
+                    <div className="text-[9px] uppercase tracking-[0.16em] text-on-primary-muted">
                       Titulaire
                     </div>
-                    <div className="truncate text-sm font-semibold text-white sm:text-base">{ownerName}</div>
-                    <div className="truncate text-[11px] text-white/70">
+                    <div className="truncate text-sm font-semibold text-on-primary sm:text-base">{ownerName}</div>
+                    <div className="truncate text-[11px] text-on-primary-muted">
                       {projectName || "Organisation"}
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <div className="text-[9px] uppercase tracking-[0.16em] text-white/60">Score</div>
+                    <div className="text-[9px] uppercase tracking-[0.16em] text-on-primary-muted">Score</div>
                     <div className="text-2xl font-bold text-gold sm:text-3xl leading-none">
                       {score ? String(scoreValue).padStart(2, "0") : "--"}
                     </div>
-                    <div className="text-[10px] text-white/80">{safeLevel}</div>
+                    <div className="text-[10px] text-on-primary-muted">{safeLevel}</div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 border-t border-white/20 pt-2">
+                <div className="flex items-center justify-between gap-2 border-t border-on-primary/20 pt-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <Cpu className="h-4 w-4 shrink-0 text-gold" />
-                    <span className="truncate text-[11px] tracking-[0.14em] font-mono text-white/90">{cardId}</span>
+                    <span className="truncate text-[11px] tracking-[0.14em] font-mono text-on-primary">{cardId}</span>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0 text-white/90">
+                  <div className="flex items-center gap-1 shrink-0 text-on-primary">
                     <WalletCards className="h-3.5 w-3.5" />
                     <span className="text-[11px] font-medium">{health}</span>
                   </div>
