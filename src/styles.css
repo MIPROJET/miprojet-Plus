@@ -219,4 +219,9 @@
   color: var(--on-primary-muted);
 }
 
+@utility text-on-primary-accent {
+  color: var(--on-primary-accent);
+}
+
+
 
