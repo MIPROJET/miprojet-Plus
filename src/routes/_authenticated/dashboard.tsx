@@ -158,26 +158,26 @@ function Dashboard() {
               )}
             </div>
 
-            <div className="flex min-w-0 flex-col overflow-hidden rounded-2xl gradient-hero p-4 text-white sm:p-6">
-              <div className="text-xs uppercase tracking-[0.16em] text-white/70">
+            <div className="flex min-w-0 flex-col overflow-hidden rounded-2xl gradient-hero p-4 sm:p-6">
+              <div className="text-xs uppercase tracking-[0.16em] text-on-primary-muted">
                 MiProjet Score
               </div>
               <div className="mt-3 text-5xl font-bold text-gradient-gold sm:text-6xl">
                 {score?.score_global ?? "—"}
               </div>
               <div
-                className={`mt-3 inline-flex w-fit px-3 py-1 rounded-full text-xs font-bold ${score ? "bg-gold text-gold-foreground" : "bg-white/15"}`}
+                className={`mt-3 inline-flex w-fit px-3 py-1 rounded-full text-xs font-bold ${score ? "bg-gold text-gold-foreground" : "bg-on-primary/15 text-on-primary"}`}
               >
                 {score?.niveau ?? "En attente"}
               </div>
-              <div className="mt-6 min-w-0 break-words text-sm text-white/80">
+              <div className="mt-6 min-w-0 break-words text-sm text-on-primary-muted">
                 {activeProject?.title ?? "Créez un projet pour calculer votre score"}
               </div>
               <Link to="/score" className="mt-auto pt-6">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="w-full bg-on-primary/10 border-on-primary/30 text-on-primary hover:bg-on-primary/20 hover:text-on-primary"
                 >
                   Voir le détail
                 </Button>
