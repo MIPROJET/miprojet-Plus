@@ -1171,6 +1171,195 @@ export type Database = {
           },
         ]
       }
+      mp_document_folders: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          org_id: string | null
+          owner_id: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          org_id?: string | null
+          owner_id: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          org_id?: string | null
+          owner_id?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_document_folders_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "mp_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_document_folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "mp_document_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_documents: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          folder_id: string | null
+          id: string
+          mime_type: string | null
+          min_role: Database["public"]["Enums"]["org_role"]
+          name: string
+          org_id: string | null
+          owner_id: string
+          size_bytes: number | null
+          storage_path: string
+          tags: string[] | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          folder_id?: string | null
+          id?: string
+          mime_type?: string | null
+          min_role?: Database["public"]["Enums"]["org_role"]
+          name: string
+          org_id?: string | null
+          owner_id: string
+          size_bytes?: number | null
+          storage_path: string
+          tags?: string[] | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          folder_id?: string | null
+          id?: string
+          mime_type?: string | null
+          min_role?: Database["public"]["Enums"]["org_role"]
+          name?: string
+          org_id?: string | null
+          owner_id?: string
+          size_bytes?: number | null
+          storage_path?: string
+          tags?: string[] | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_documents_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "mp_document_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_documents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "mp_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_evaluations: {
+        Row: {
+          created_at: string
+          equipe: number
+          finance: number
+          gouvernance: number
+          id: string
+          marche: number
+          niveau: string | null
+          notes: string | null
+          org_id: string | null
+          organisation: number
+          potentiel_croissance: number
+          project_id: string | null
+          published_at: string | null
+          published_to_invest: boolean
+          score_global: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          equipe?: number
+          finance?: number
+          gouvernance?: number
+          id?: string
+          marche?: number
+          niveau?: string | null
+          notes?: string | null
+          org_id?: string | null
+          organisation?: number
+          potentiel_croissance?: number
+          project_id?: string | null
+          published_at?: string | null
+          published_to_invest?: boolean
+          score_global?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          equipe?: number
+          finance?: number
+          gouvernance?: number
+          id?: string
+          marche?: number
+          niveau?: string | null
+          notes?: string | null
+          org_id?: string | null
+          organisation?: number
+          potentiel_croissance?: number
+          project_id?: string | null
+          published_at?: string | null
+          published_to_invest?: boolean
+          score_global?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_evaluations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "mp_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_evaluations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mp_financial_records: {
         Row: {
           amount: number
@@ -1329,6 +1518,116 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mp_org_members: {
+        Row: {
+          created_at: string
+          id: string
+          invited_email: string | null
+          org_id: string
+          role: Database["public"]["Enums"]["org_role"]
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_email?: string | null
+          org_id: string
+          role?: Database["public"]["Enums"]["org_role"]
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_email?: string | null
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_role"]
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_org_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "mp_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_organizations: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          employees_count: number | null
+          founded_year: number | null
+          id: string
+          legal_form: string | null
+          logo_url: string | null
+          metadata: Json | null
+          name: string
+          owner_id: string
+          phone: string | null
+          registration_number: string | null
+          sector: string | null
+          tax_number: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          employees_count?: number | null
+          founded_year?: number | null
+          id?: string
+          legal_form?: string | null
+          logo_url?: string | null
+          metadata?: Json | null
+          name: string
+          owner_id: string
+          phone?: string | null
+          registration_number?: string | null
+          sector?: string | null
+          tax_number?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          employees_count?: number | null
+          founded_year?: number | null
+          id?: string
+          legal_form?: string | null
+          logo_url?: string | null
+          metadata?: Json | null
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          registration_number?: string | null
+          sector?: string | null
+          tax_number?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
       }
       mp_project_media: {
         Row: {
@@ -3498,6 +3797,11 @@ export type Database = {
         Args: { _prefix: string; _rank: number; _ts: string }
         Returns: string
       }
+      can_manage_org: { Args: { _org_id: string }; Returns: boolean }
+      current_org_role: {
+        Args: { _org_id: string }
+        Returns: Database["public"]["Enums"]["org_role"]
+      }
       current_user_has_role: { Args: { _role: string }; Returns: boolean }
       emit_sync_signal: {
         Args: {
@@ -3560,6 +3864,7 @@ export type Database = {
       increment_tender_views: { Args: { _id: string }; Returns: undefined }
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
       is_email_unsubscribed: { Args: { _email: string }; Returns: boolean }
+      is_org_member: { Args: { _org_id: string }; Returns: boolean }
       mark_email_failed: {
         Args: { _error: string; _id: string }
         Returns: undefined
@@ -3568,7 +3873,16 @@ export type Database = {
         Args: { _id: string; _provider: string }
         Returns: undefined
       }
+      mp_valid_notification_link: { Args: { _link: string }; Returns: string }
+      org_role_at_least: {
+        Args: { _min: Database["public"]["Enums"]["org_role"]; _org: string }
+        Returns: boolean
+      }
       pick_email_provider: { Args: never; Returns: string }
+      role_rank: {
+        Args: { _r: Database["public"]["Enums"]["org_role"] }
+        Returns: number
+      }
       unaccent: { Args: { "": string }; Returns: string }
       unsubscribe_by_token: { Args: { _token: string }; Returns: Json }
       user_profile_type: { Args: { _user_id: string }; Returns: string }
@@ -3585,6 +3899,7 @@ export type Database = {
     }
     Enums: {
       mp_plan_tier: "free" | "growth" | "partner"
+      org_role: "owner" | "admin" | "manager" | "member" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3713,6 +4028,7 @@ export const Constants = {
   public: {
     Enums: {
       mp_plan_tier: ["free", "growth", "partner"],
+      org_role: ["owner", "admin", "manager", "member", "viewer"],
     },
   },
 } as const
