@@ -482,3 +482,201 @@ VALUES (
   )
 );
 ```
+
+---
+
+## §7 — Automatisation Scoring & Maturité + Sync Écosystème
+
+Objectif : mettre à jour automatiquement `mp_project_score` et le niveau
+de maturité dès qu'une donnée source change (profil projet, équipe,
+gouvernance, finances, documents, évaluation), exposer les mêmes agrégats
+en lecture à l'écosystème MiPROJET Invest, et rendre l'édition
+disponible depuis l'espace admin ET l'espace équipe (membres du projet).
+
+À exécuter manuellement dans Supabase SQL editor.
+
+```sql
+-- 7.1 Fonction canonique de recomputation
+create or replace function public.mp_recompute_score(_project_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_juridique int := 0;
+  v_financier int := 0;
+  v_technique int := 0;
+  v_marche    int := 0;
+  v_equipe    int := 0;
+  v_impact    int := 0;
+  v_global    int;
+  v_niveau    text;
+  v_has_docs  boolean;
+  v_has_team  int;
+  v_has_gov   int;
+  v_has_ops   int;
+  v_balance   numeric;
+  v_incomes   numeric;
+  v_maturity  text;
+begin
+  -- Juridique (docs légaux)
+  select count(*) > 0 into v_has_docs
+    from public.mp_documents where project_id = _project_id and category in ('juridique','legal','statuts');
+  v_juridique := case when v_has_docs then 15 else 5 end;
+
+  -- Financier (opérations et solde)
+  select coalesce(sum(case when type='income' then amount else 0 end),0),
+         coalesce(sum(case when type='income' then amount else -amount end),0),
+         count(*)
+    into v_incomes, v_balance, v_has_ops
+    from public.mp_financial_operations where project_id = _project_id;
+  v_financier := least(25, (case when v_has_ops>0 then 10 else 0 end)
+                            + (case when v_incomes>0 then 10 else 0 end)
+                            + (case when v_balance>=0 then 5 else 0 end));
+
+  -- Technique (documents techniques + description)
+  v_technique := 10 + (select case when char_length(coalesce(description,''))>200 then 10 else 0 end
+                        from public.mp_projects where id=_project_id);
+
+  -- Marché (pitch, marché renseignés)
+  select case when coalesce(char_length(market),0)>100 then 15 else 5 end
+    into v_marche from public.mp_projects where id=_project_id;
+
+  -- Équipe & gouvernance
+  select count(*) into v_has_team from public.mp_project_team where project_id=_project_id;
+  select count(*) into v_has_gov  from public.mp_project_governance where project_id=_project_id;
+  v_equipe := least(10, v_has_team*2 + v_has_gov);
+
+  -- Impact (évaluation maturité renseignée)
+  v_impact := coalesce((select round(avg(score)::int/2)
+                          from public.mp_maturity_evaluation where project_id=_project_id), 5);
+
+  v_global := least(100, v_juridique + v_financier + v_technique + v_marche + v_equipe + v_impact);
+
+  v_niveau := case
+    when v_global >= 80 then 'Finançable'
+    when v_global >= 60 then 'Prometteur'
+    when v_global >= 40 then 'En consolidation'
+    else 'Émergent'
+  end;
+
+  v_maturity := case
+    when v_global >= 80 then 'Mature'
+    when v_global >= 60 then 'Structuré'
+    when v_global >= 40 then 'En structuration'
+    else 'Idée'
+  end;
+
+  insert into public.mp_project_score
+    (project_id, score_juridique, score_financier, score_technique,
+     score_marche, score_equipe, score_impact, score_global, niveau, maturite, updated_at)
+  values (_project_id, v_juridique, v_financier, v_technique,
+          v_marche, v_equipe, v_impact, v_global, v_niveau, v_maturity, now())
+  on conflict (project_id) do update set
+    score_juridique = excluded.score_juridique,
+    score_financier = excluded.score_financier,
+    score_technique = excluded.score_technique,
+    score_marche    = excluded.score_marche,
+    score_equipe    = excluded.score_equipe,
+    score_impact    = excluded.score_impact,
+    score_global    = excluded.score_global,
+    niveau          = excluded.niveau,
+    maturite        = excluded.maturite,
+    updated_at      = now();
+end;
+$$;
+
+-- Ajout de la colonne maturité si manquante
+alter table public.mp_project_score
+  add column if not exists maturite text;
+
+-- 7.2 Trigger générique pour recalculer à chaque changement source
+create or replace function public.mp_trigger_recompute()
+returns trigger language plpgsql security definer set search_path=public as $$
+declare _pid uuid;
+begin
+  _pid := coalesce(new.project_id, old.project_id);
+  if _pid is not null then perform public.mp_recompute_score(_pid); end if;
+  return coalesce(new, old);
+end;$$;
+
+do $$
+declare t text;
+begin
+  for t in select unnest(array[
+    'mp_projects','mp_financial_operations','mp_project_team',
+    'mp_project_governance','mp_documents','mp_maturity_evaluation'
+  ]) loop
+    execute format('drop trigger if exists trg_recompute_%1$s on public.%1$s;', t);
+    execute format($f$
+      create trigger trg_recompute_%1$s
+      after insert or update or delete on public.%1$s
+      for each row execute function public.mp_trigger_recompute();
+    $f$, t);
+  end loop;
+end$$;
+
+-- 7.3 Vue partagée pour l'écosystème MiPROJET Invest (lecture)
+create or replace view public.v_mp_ecosystem_scoring as
+select p.id as project_id, p.name, p.owner_id, p.visibility,
+       s.score_global, s.niveau, s.maturite,
+       s.score_juridique, s.score_financier, s.score_technique,
+       s.score_marche, s.score_equipe, s.score_impact,
+       s.updated_at
+from public.mp_projects p
+left join public.mp_project_score s on s.project_id = p.id
+where coalesce(p.visibility,'private') in ('public','ecosystem');
+
+grant select on public.v_mp_ecosystem_scoring to anon, authenticated;
+
+-- 7.4 RLS : édition admin + membres équipe du projet
+alter table public.mp_project_score enable row level security;
+
+drop policy if exists "score_read_owner_team_admin" on public.mp_project_score;
+create policy "score_read_owner_team_admin" on public.mp_project_score
+for select to authenticated using (
+  public.has_role(auth.uid(),'admin')
+  or exists(select 1 from public.mp_projects p
+             where p.id=project_id and p.owner_id=auth.uid())
+  or exists(select 1 from public.mp_project_team t
+             where t.project_id=mp_project_score.project_id
+               and t.user_id=auth.uid())
+);
+
+drop policy if exists "score_write_admin_or_team" on public.mp_project_score;
+create policy "score_write_admin_or_team" on public.mp_project_score
+for update to authenticated using (
+  public.has_role(auth.uid(),'admin')
+  or exists(select 1 from public.mp_project_team t
+             where t.project_id=mp_project_score.project_id
+               and t.user_id=auth.uid()
+               and t.role in ('owner','manager','editor'))
+) with check (
+  public.has_role(auth.uid(),'admin')
+  or exists(select 1 from public.mp_project_team t
+             where t.project_id=mp_project_score.project_id
+               and t.user_id=auth.uid()
+               and t.role in ('owner','manager','editor'))
+);
+
+-- 7.5 Backfill initial
+do $$ declare r record;
+begin
+  for r in select id from public.mp_projects loop
+    perform public.mp_recompute_score(r.id);
+  end loop;
+end$$;
+
+-- 7.6 Marqueur
+insert into public.mp_platform_meta(key,value)
+values ('scoring_automation_v1', jsonb_build_object(
+  'triggers','installed','view','v_mp_ecosystem_scoring','ts',now()
+))
+on conflict (key) do update set value=excluded.value;
+```
+
+Une fois exécuté : chaque insert/update/delete sur les tables sources
+recalcule le score et la maturité, l'écosystème lit
+`v_mp_ecosystem_scoring`, et l'admin comme les membres équipe
+(owner/manager/editor) peuvent éditer via l'UI existante.
