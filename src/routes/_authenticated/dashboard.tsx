@@ -166,7 +166,7 @@ function Dashboard() {
                 {score?.score_global ?? "—"}
               </div>
               <div
-                className={`mt-3 inline-flex w-fit px-3 py-1 rounded-full text-xs font-bold ${score ? "bg-gold text-gold-foreground" : "bg-on-primary/15 text-on-primary"}`}
+                className={`mt-3 inline-flex w-fit px-3 py-1 rounded-full text-xs font-bold ${score ? "bg-gold text-gold-foreground" : "bg-[color-mix(in_oklab,var(--on-primary)_15%,transparent)] text-on-primary"}`}
               >
                 {score?.niveau ?? "En attente"}
               </div>
@@ -177,7 +177,7 @@ function Dashboard() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full bg-on-primary/10 border-on-primary/30 text-on-primary hover:bg-on-primary/20 hover:text-on-primary"
+                  className="w-full bg-[color-mix(in_oklab,var(--on-primary)_10%,transparent)] border-[color-mix(in_oklab,var(--on-primary)_30%,transparent)] text-on-primary hover:bg-[color-mix(in_oklab,var(--on-primary)_20%,transparent)] hover:text-on-primary"
                 >
                   Voir le détail
                 </Button>
