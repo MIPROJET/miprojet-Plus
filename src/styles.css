@@ -85,6 +85,10 @@
   --success: oklch(0.6 0.19 145);
   --success-foreground: oklch(0.99 0.01 95);
 
+  /* Textes verts posés sur aplat orange (--primary) — charte MiPROJET */
+  --on-primary: oklch(0.92 0.16 145);
+  --on-primary-muted: oklch(0.82 0.14 145);
+
   --warning: oklch(0.78 0.17 75);
   --warning-foreground: oklch(0.2 0.05 40);
 
