@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Paperclip, FileText } from "lucide-react";
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Paperclip, FileText, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -126,6 +126,11 @@ function FinancesPage() {
               <SelectItem value="pret">Prêts</SelectItem>
             </SelectContent>
           </Select>
+          <Link to="/finances/analyse" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">
+              <BarChart3 className="w-4 h-4 mr-1.5" /> Analyse & exports
+            </Button>
+          </Link>
           <Dialog open={importOpen} onOpenChange={setImportOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-full sm:w-auto">
