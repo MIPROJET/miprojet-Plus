@@ -122,7 +122,7 @@ export function MiProjetCard({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 border-t border-on-primary/20 pt-2">
+                <div className="flex items-center justify-between gap-2 border-t border-[color-mix(in_oklab,var(--on-primary)_20%,transparent)] pt-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <Cpu className="h-4 w-4 shrink-0 text-gold" />
                     <span className="truncate text-[11px] tracking-[0.14em] font-mono text-on-primary">{cardId}</span>
