@@ -188,8 +188,8 @@ function ScorePage() {
             </a>
           )}
           <div className="grid min-w-0 gap-4 lg:grid-cols-3 lg:gap-6">
-            <div className="overflow-hidden rounded-2xl gradient-hero p-5 text-center text-white sm:rounded-3xl sm:p-8 lg:col-span-1">
-              <div className="text-xs uppercase tracking-[0.16em] text-white/70">Score global</div>
+            <div className="overflow-hidden rounded-2xl gradient-hero p-5 text-center sm:rounded-3xl sm:p-8 lg:col-span-1">
+              <div className="text-xs uppercase tracking-[0.16em] text-on-primary-muted">Score global</div>
               <div className="mt-2 text-6xl font-bold text-gradient-gold sm:text-7xl lg:text-8xl">
                 {score.score_global}
               </div>
