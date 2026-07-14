@@ -97,7 +97,7 @@ export function MiProjetCard({
                     {formatXOF(incomes)}
                   </div>
                   <div className="mt-0.5 text-[10px] text-on-primary-muted">
-                    Solde&nbsp;: <span className="font-semibold text-gold">{formatXOF(balance)}</span>
+                    Solde&nbsp;: <span className="font-semibold text-on-primary-accent">{formatXOF(balance)}</span>
                     <span className="mx-1.5 opacity-40">•</span>
                     {operationsCount} opé.
                   </div>
