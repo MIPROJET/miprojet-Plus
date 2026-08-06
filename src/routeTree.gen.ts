@@ -25,6 +25,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as AuthenticatedFinancesAnalyseRouteImport } from './routes/_authenticated/finances.analyse'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicHooksProcessEmailQueueRouteImport } from './routes/api/public/hooks/process-email-queue'
 
 const AuthRoute = AuthRouteImport.update({
@@ -109,6 +110,11 @@ const AuthenticatedFinancesAnalyseRoute =
     path: '/analyse',
     getParentRoute: () => AuthenticatedFinancesRoute,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksProcessEmailQueueRoute =
   ApiPublicHooksProcessEmailQueueRouteImport.update({
     id: '/api/public/hooks/process-email-queue',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/certificat/$shortId': typeof CertificatShortIdRoute
   '/projets/$slug': typeof ProjetsSlugRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/.lovable/oauth/consent'
     | '/finances/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/.lovable/oauth/consent'
     | '/finances/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/_authenticated/support'
     | '/certificat/$shortId'
     | '/projets/$slug'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/finances/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
@@ -236,6 +248,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CertificatShortIdRoute: typeof CertificatShortIdRoute
   ProjetsSlugRoute: typeof ProjetsSlugRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicHooksProcessEmailQueueRoute: typeof ApiPublicHooksProcessEmailQueueRoute
 }
@@ -354,6 +367,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinancesAnalyseRouteImport
       parentRoute: typeof AuthenticatedFinancesRoute
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/process-email-queue': {
       id: '/api/public/hooks/process-email-queue'
       path: '/api/public/hooks/process-email-queue'
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CertificatShortIdRoute: CertificatShortIdRoute,
   ProjetsSlugRoute: ProjetsSlugRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicHooksProcessEmailQueueRoute: ApiPublicHooksProcessEmailQueueRoute,
 }

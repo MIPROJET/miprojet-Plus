@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://nrrgqnruoylwztddkntm.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "miprojet",
+      "version": "0.1.0",
+      "title": "MIPROJET+"
+    },
+    "tools": [
+      {
+        "name": "list_projects",
+        "title": "Lister les projets",
+        "description": "Liste les projets MiPROJET+ de l'utilisateur connecté (titre, secteur, maturité, statut).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Nombre max de projets (défaut 20).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "search": {
+              "description": "Filtre sur le titre du projet.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_project",
+        "title": "Détail d'un projet",
+        "description": "Renvoie la fiche complète d'un projet (identité, activité, finances clés, gouvernance) ainsi que son équipe.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "description": "Identifiant UUID du projet."
+            }
+          },
+          "required": [
+            "project_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_financial_records",
+        "title": "Lister les opérations financières",
+        "description": "Liste les opérations financières (recettes, dépenses, apports) d'un projet, avec totaux calculés.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "description": "Identifiant UUID du projet."
+            },
+            "record_type": {
+              "description": "Filtre par type d'opération, ex. 'income', 'expense', 'contribution'.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Nombre max d'opérations (défaut 50).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "project_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_financial_record",
+        "title": "Ajouter une opération financière",
+        "description": "Enregistre une nouvelle opération financière (recette, dépense ou apport) sur un projet de l'utilisateur.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "description": "Identifiant UUID du projet."
+            },
+            "record_type": {
+              "type": "string",
+              "description": "Type d'opération : 'income', 'expense' ou 'contribution'."
+            },
+            "amount": {
+              "type": "number",
+              "description": "Montant de l'opération."
+            },
+            "currency": {
+              "description": "Devise, défaut XOF.",
+              "type": "string"
+            },
+            "category": {
+              "description": "Catégorie, ex. 'matériel', 'RH'.",
+              "type": "string"
+            },
+            "description": {
+              "description": "Libellé de l'opération.",
+              "type": "string"
+            },
+            "record_date": {
+              "description": "Date de l'opération au format AAAA-MM-JJ (défaut aujourd'hui).",
+              "type": "string"
+            }
+          },
+          "required": [
+            "project_id",
+            "record_type",
+            "amount"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_project_score",
+        "title": "Score et maturité d'un projet",
+        "description": "Renvoie le MiProjet Score actif (global et par axe), le niveau de finançabilité, les forces, faiblesses et recommandations.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "description": "Identifiant UUID du projet."
+            }
+          },
+          "required": [
+            "project_id"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
