@@ -10,11 +10,15 @@ import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Connexion · MiProjet+" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") ? s.next : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +27,11 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   async function routeAfterAuth() {
+    // Retour vers la destination demandée (ex. consentement OAuth/MCP)
+    if (next) {
+      window.location.href = next;
+      return;
+    }
     // Redirige vers /organisation si aucune org, sinon dashboard maturité
     try {
       const { data: userData } = await supabase.auth.getUser();
@@ -39,6 +48,7 @@ function AuthPage() {
       navigate({ to: "/dashboard" });
     }
   }
+
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
