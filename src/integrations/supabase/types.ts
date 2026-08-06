@@ -3783,6 +3783,30 @@ export type Database = {
       }
     }
     Functions: {
+      admin_list_access_requests: {
+        Args: never
+        Returns: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          message: string | null
+          project_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "access_requests"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      admin_update_access_request: {
+        Args: { _id: string; _notes: string; _status: string }
+        Returns: undefined
+      }
       archive_expired_tenders: { Args: never; Returns: undefined }
       build_email_html: {
         Args: {
@@ -3883,7 +3907,6 @@ export type Database = {
         Args: { _r: Database["public"]["Enums"]["org_role"] }
         Returns: number
       }
-      unaccent: { Args: { "": string }; Returns: string }
       unsubscribe_by_token: { Args: { _token: string }; Returns: Json }
       user_profile_type: { Args: { _user_id: string }; Returns: string }
       verify_certificate_public: {
