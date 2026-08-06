@@ -65,7 +65,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: {
-            emailRedirectTo: `${window.location.origin}/organisation`,
+            emailRedirectTo: `${window.location.origin}${next ?? "/organisation"}`,
             data: { first_name: firstName.trim(), last_name: lastName.trim() },
           },
         });
