@@ -1301,6 +1301,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "mp_certifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_certifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
+          {
             foreignKeyName: "mp_certifications_scoring_id_fkey"
             columns: ["scoring_id"]
             isOneToOne: false
@@ -1496,6 +1510,20 @@ export type Database = {
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_evaluations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_evaluations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
         ]
       }
       mp_financial_records: {
@@ -1548,6 +1576,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_financial_records_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_financial_records_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
           },
         ]
       }
@@ -1602,6 +1644,20 @@ export type Database = {
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_funder_connections_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_funder_connections_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
         ]
       }
       mp_introductions: {
@@ -1654,6 +1710,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_introductions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_introductions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
           },
         ]
       }
@@ -1806,6 +1876,20 @@ export type Database = {
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_project_media_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_project_media_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
         ]
       }
       mp_project_team: {
@@ -1867,6 +1951,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_project_team_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_project_team_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
           },
         ]
       }
@@ -2047,63 +2145,89 @@ export type Database = {
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_recommendations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_recommendations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
         ]
       }
       mp_scoring_results: {
         Row: {
           answers: Json | null
+          computed_at: string
           created_at: string
           faiblesses: string[] | null
           forces: string[] | null
           id: string
           is_active: boolean | null
+          maturite: string | null
           niveau: string | null
           project_id: string
           recommandations: string[] | null
+          score_equipe: number
           score_financier: number | null
           score_global: number | null
           score_impact: number | null
           score_juridique: number | null
           score_marche: number | null
           score_technique: number | null
+          source: string
           updated_at: string
           user_id: string
         }
         Insert: {
           answers?: Json | null
+          computed_at?: string
           created_at?: string
           faiblesses?: string[] | null
           forces?: string[] | null
           id?: string
           is_active?: boolean | null
+          maturite?: string | null
           niveau?: string | null
           project_id: string
           recommandations?: string[] | null
+          score_equipe?: number
           score_financier?: number | null
           score_global?: number | null
           score_impact?: number | null
           score_juridique?: number | null
           score_marche?: number | null
           score_technique?: number | null
+          source?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           answers?: Json | null
+          computed_at?: string
           created_at?: string
           faiblesses?: string[] | null
           forces?: string[] | null
           id?: string
           is_active?: boolean | null
+          maturite?: string | null
           niveau?: string | null
           project_id?: string
           recommandations?: string[] | null
+          score_equipe?: number
           score_financier?: number | null
           score_global?: number | null
           score_impact?: number | null
           score_juridique?: number | null
           score_marche?: number | null
           score_technique?: number | null
+          source?: string
           updated_at?: string
           user_id?: string
         }
@@ -2114,6 +2238,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_scoring_results_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_scoring_results_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
           },
         ]
       }
@@ -2328,6 +2466,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "mp_projects"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_user_service_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_user_service_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
           },
           {
             foreignKeyName: "mp_user_service_requests_service_id_fkey"
@@ -3299,6 +3451,7 @@ export type Database = {
           image_url: string | null
           is_public: boolean | null
           logo_url: string | null
+          metadata: Json
           mp_score: number | null
           owner_id: string
           public_summary: string | null
@@ -3337,6 +3490,7 @@ export type Database = {
           image_url?: string | null
           is_public?: boolean | null
           logo_url?: string | null
+          metadata?: Json
           mp_score?: number | null
           owner_id: string
           public_summary?: string | null
@@ -3375,6 +3529,7 @@ export type Database = {
           image_url?: string | null
           is_public?: boolean | null
           logo_url?: string | null
+          metadata?: Json
           mp_score?: number | null
           owner_id?: string
           public_summary?: string | null
@@ -4032,6 +4187,51 @@ export type Database = {
         }
         Relationships: []
       }
+      v_mp_ecosystem_scoring: {
+        Row: {
+          city: string | null
+          computed_at: string | null
+          country: string | null
+          display_id: string | null
+          journey: string | null
+          maturite: string | null
+          niveau: string | null
+          profile_kind: string | null
+          project_id: string | null
+          score_equipe: number | null
+          score_financier: number | null
+          score_global: number | null
+          score_impact: number | null
+          score_juridique: number | null
+          score_marche: number | null
+          score_technique: number | null
+          sector: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
+      v_mp_scoring_coherence: {
+        Row: {
+          computed_at: string | null
+          ecart_invest: boolean | null
+          ecart_maturite: boolean | null
+          etat: string | null
+          is_public: boolean | null
+          manque_publication: boolean | null
+          manque_score: boolean | null
+          maturite_calculee: string | null
+          maturite_projet: string | null
+          niveau_calcule: string | null
+          project_id: string | null
+          score_calcule: number | null
+          score_evaluation: number | null
+          score_invest: number | null
+          title: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_list_access_requests: {
@@ -4157,6 +4357,18 @@ export type Database = {
       mark_email_sent: {
         Args: { _id: string; _provider: string }
         Returns: undefined
+      }
+      mp_recompute_score: { Args: { _project_id: string }; Returns: undefined }
+      mp_resync_scoring: { Args: { _project_id?: string }; Returns: Json }
+      mp_rls_test_report: {
+        Args: never
+        Returns: {
+          details: string
+          expected: string
+          passed: boolean
+          suite: string
+          test_name: string
+        }[]
       }
       mp_valid_notification_link: { Args: { _link: string }; Returns: string }
       org_role_at_least: {
