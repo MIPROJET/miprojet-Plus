@@ -56,7 +56,7 @@ import {
   Legend,
 } from "recharts";
 
-export const Route = createFileRoute("/_authenticated/finances/analyse")({
+export const Route = createFileRoute("/_authenticated/finances_/analyse")({
   head: () => ({ meta: [{ title: "Analyse financière · MiProjet+" }] }),
   component: AnalysePage,
 });

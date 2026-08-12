@@ -28,7 +28,7 @@ import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authe
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
-import { Route as AuthenticatedFinancesAnalyseRouteImport } from './routes/_authenticated/finances.analyse'
+import { Route as AuthenticatedFinancesAnalyseRouteImport } from './routes/_authenticated/finances_.analyse'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicHooksProcessEmailQueueRouteImport } from './routes/api/public/hooks/process-email-queue'
@@ -133,9 +133,9 @@ const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
 } as any)
 const AuthenticatedFinancesAnalyseRoute =
   AuthenticatedFinancesAnalyseRouteImport.update({
-    id: '/analyse',
-    path: '/analyse',
-    getParentRoute: () => AuthenticatedFinancesRoute,
+    id: '/finances_/analyse',
+    path: '/finances/analyse',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
@@ -166,7 +166,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/evaluation': typeof AuthenticatedEvaluationRoute
-  '/finances': typeof AuthenticatedFinancesRouteWithChildren
+  '/finances': typeof AuthenticatedFinancesRoute
   '/organisation': typeof AuthenticatedOrganisationRoute
   '/projets': typeof AuthenticatedProjetsRoute
   '/score': typeof AuthenticatedScoreRoute
@@ -190,7 +190,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/evaluation': typeof AuthenticatedEvaluationRoute
-  '/finances': typeof AuthenticatedFinancesRouteWithChildren
+  '/finances': typeof AuthenticatedFinancesRoute
   '/organisation': typeof AuthenticatedOrganisationRoute
   '/projets': typeof AuthenticatedProjetsRoute
   '/score': typeof AuthenticatedScoreRoute
@@ -216,7 +216,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/evaluation': typeof AuthenticatedEvaluationRoute
-  '/_authenticated/finances': typeof AuthenticatedFinancesRouteWithChildren
+  '/_authenticated/finances': typeof AuthenticatedFinancesRoute
   '/_authenticated/organisation': typeof AuthenticatedOrganisationRoute
   '/_authenticated/projets': typeof AuthenticatedProjetsRoute
   '/_authenticated/score': typeof AuthenticatedScoreRoute
@@ -225,7 +225,7 @@ export interface FileRoutesById {
   '/projets/$slug': typeof ProjetsSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/_authenticated/finances/analyse': typeof AuthenticatedFinancesAnalyseRoute
+  '/_authenticated/finances_/analyse': typeof AuthenticatedFinancesAnalyseRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/hooks/process-email-queue': typeof ApiPublicHooksProcessEmailQueueRoute
 }
@@ -300,7 +300,7 @@ export interface FileRouteTypes {
     | '/projets/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/_authenticated/finances/analyse'
+    | '/_authenticated/finances_/analyse'
     | '/api/public/unsubscribe'
     | '/api/public/hooks/process-email-queue'
   fileRoutesById: FileRoutesById
@@ -455,12 +455,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/finances/analyse': {
-      id: '/_authenticated/finances/analyse'
-      path: '/analyse'
+    '/_authenticated/finances_/analyse': {
+      id: '/_authenticated/finances_/analyse'
+      path: '/finances/analyse'
       fullPath: '/finances/analyse'
       preLoaderRoute: typeof AuthenticatedFinancesAnalyseRouteImport
-      parentRoute: typeof AuthenticatedFinancesRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
@@ -486,30 +486,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedFinancesRouteChildren {
-  AuthenticatedFinancesAnalyseRoute: typeof AuthenticatedFinancesAnalyseRoute
-}
-
-const AuthenticatedFinancesRouteChildren: AuthenticatedFinancesRouteChildren = {
-  AuthenticatedFinancesAnalyseRoute: AuthenticatedFinancesAnalyseRoute,
-}
-
-const AuthenticatedFinancesRouteWithChildren =
-  AuthenticatedFinancesRoute._addFileChildren(
-    AuthenticatedFinancesRouteChildren,
-  )
-
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccompagnementRoute: typeof AuthenticatedAccompagnementRoute
   AuthenticatedCoherenceRoute: typeof AuthenticatedCoherenceRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEvaluationRoute: typeof AuthenticatedEvaluationRoute
-  AuthenticatedFinancesRoute: typeof AuthenticatedFinancesRouteWithChildren
+  AuthenticatedFinancesRoute: typeof AuthenticatedFinancesRoute
   AuthenticatedOrganisationRoute: typeof AuthenticatedOrganisationRoute
   AuthenticatedProjetsRoute: typeof AuthenticatedProjetsRoute
   AuthenticatedScoreRoute: typeof AuthenticatedScoreRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
+  AuthenticatedFinancesAnalyseRoute: typeof AuthenticatedFinancesAnalyseRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -518,11 +506,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEvaluationRoute: AuthenticatedEvaluationRoute,
-  AuthenticatedFinancesRoute: AuthenticatedFinancesRouteWithChildren,
+  AuthenticatedFinancesRoute: AuthenticatedFinancesRoute,
   AuthenticatedOrganisationRoute: AuthenticatedOrganisationRoute,
   AuthenticatedProjetsRoute: AuthenticatedProjetsRoute,
   AuthenticatedScoreRoute: AuthenticatedScoreRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
+  AuthenticatedFinancesAnalyseRoute: AuthenticatedFinancesAnalyseRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
