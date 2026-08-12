@@ -65,6 +65,84 @@ export type Database = {
           },
         ]
       }
+      activity_settings: {
+        Row: {
+          activity_name: string
+          activity_type: string
+          address: string | null
+          city: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          email: string | null
+          facebook: string | null
+          id: string
+          instagram: string | null
+          latitude: number | null
+          longitude: number | null
+          opening_hours: string | null
+          owner_name: string | null
+          phone: string | null
+          photos: string[]
+          slogan: string | null
+          tiktok: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          activity_name: string
+          activity_type?: string
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          email?: string | null
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          opening_hours?: string | null
+          owner_name?: string | null
+          phone?: string | null
+          photos?: string[]
+          slogan?: string | null
+          tiktok?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          activity_name?: string
+          activity_type?: string
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          email?: string | null
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          opening_hours?: string | null
+          owner_name?: string | null
+          phone?: string | null
+          photos?: string[]
+          slogan?: string | null
+          tiktok?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       connection_requests: {
         Row: {
           admin_notes: string | null
@@ -743,6 +821,39 @@ export type Database = {
         }
         Relationships: []
       }
+      export_audit_logs: {
+        Row: {
+          admin_phone: string | null
+          admin_user_id: string
+          created_at: string
+          id: string
+          periode_start: string | null
+          query_text: string | null
+          rows_count: number
+          type_filter: string | null
+        }
+        Insert: {
+          admin_phone?: string | null
+          admin_user_id: string
+          created_at?: string
+          id?: string
+          periode_start?: string | null
+          query_text?: string | null
+          rows_count?: number
+          type_filter?: string | null
+        }
+        Update: {
+          admin_phone?: string | null
+          admin_user_id?: string
+          created_at?: string
+          id?: string
+          periode_start?: string | null
+          query_text?: string | null
+          rows_count?: number
+          type_filter?: string | null
+        }
+        Relationships: []
+      }
       faqs: {
         Row: {
           answer: string
@@ -804,6 +915,33 @@ export type Database = {
           form_type?: string
           id?: string
           is_completed?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      import_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          operations_extraites: Json
+          statut: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          operations_extraites?: Json
+          statut?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          operations_extraites?: Json
+          statut?: string
           updated_at?: string
           user_id?: string
         }
@@ -2371,6 +2509,65 @@ export type Database = {
         }
         Relationships: []
       }
+      operations: {
+        Row: {
+          categorie: string
+          created_at: string
+          date_operation: string
+          description: string
+          id: string
+          mode_paiement: string
+          montant: number
+          note: string | null
+          produit_id: string | null
+          quantite: number | null
+          source: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categorie?: string
+          created_at?: string
+          date_operation?: string
+          description?: string
+          id?: string
+          mode_paiement?: string
+          montant?: number
+          note?: string | null
+          produit_id?: string | null
+          quantite?: number | null
+          source?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          date_operation?: string
+          description?: string
+          id?: string
+          mode_paiement?: string
+          montant?: number
+          note?: string | null
+          produit_id?: string | null
+          quantite?: number | null
+          source?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operations_produit_id_fkey"
+            columns: ["produit_id"]
+            isOneToOne: false
+            referencedRelation: "produits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunities: {
         Row: {
           amount_max: number | null
@@ -2712,6 +2909,51 @@ export type Database = {
         }
         Relationships: []
       }
+      produits: {
+        Row: {
+          actif: boolean
+          categorie: string
+          created_at: string
+          id: string
+          nom: string
+          prix_unitaire: number
+          seuil_alerte: number
+          stock_actif: boolean
+          stock_actuel: number
+          unite: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actif?: boolean
+          categorie?: string
+          created_at?: string
+          id?: string
+          nom: string
+          prix_unitaire?: number
+          seuil_alerte?: number
+          stock_actif?: boolean
+          stock_actuel?: number
+          unite?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actif?: boolean
+          categorie?: string
+          created_at?: string
+          id?: string
+          nom?: string
+          prix_unitaire?: number
+          seuil_alerte?: number
+          stock_actif?: boolean
+          stock_actuel?: number
+          unite?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_status: string | null
@@ -2725,8 +2967,10 @@ export type Database = {
           created_at: string
           email: string | null
           employees_count: number | null
+          export_unlocked_until: string | null
           first_name: string | null
           founding_year: number | null
+          full_name: string | null
           id: string
           is_verified: boolean | null
           last_name: string | null
@@ -2745,6 +2989,7 @@ export type Database = {
           unsubscribe_token: string | null
           updated_at: string
           user_type: string
+          username: string | null
           website: string | null
           whatsapp: string | null
         }
@@ -2760,8 +3005,10 @@ export type Database = {
           created_at?: string
           email?: string | null
           employees_count?: number | null
+          export_unlocked_until?: string | null
           first_name?: string | null
           founding_year?: number | null
+          full_name?: string | null
           id: string
           is_verified?: boolean | null
           last_name?: string | null
@@ -2780,6 +3027,7 @@ export type Database = {
           unsubscribe_token?: string | null
           updated_at?: string
           user_type?: string
+          username?: string | null
           website?: string | null
           whatsapp?: string | null
         }
@@ -2795,8 +3043,10 @@ export type Database = {
           created_at?: string
           email?: string | null
           employees_count?: number | null
+          export_unlocked_until?: string | null
           first_name?: string | null
           founding_year?: number | null
+          full_name?: string | null
           id?: string
           is_verified?: boolean | null
           last_name?: string | null
@@ -2815,6 +3065,7 @@ export type Database = {
           unsubscribe_token?: string | null
           updated_at?: string
           user_type?: string
+          username?: string | null
           website?: string | null
           whatsapp?: string | null
         }
@@ -3879,6 +4130,16 @@ export type Database = {
           external_link: string
         }[]
       }
+      get_project_team_contacts: {
+        Args: { _project_id: string }
+        Returns: {
+          contact_email: string
+          contact_phone: string
+          full_name: string
+          id: string
+        }[]
+      }
+      go_is_admin: { Args: { _user_id: string }; Returns: boolean }
       has_active_subscription: { Args: { _user_id: string }; Returns: boolean }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       increment_email_provider_usage: {
@@ -3907,6 +4168,8 @@ export type Database = {
         Args: { _r: Database["public"]["Enums"]["org_role"] }
         Returns: number
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       unsubscribe_by_token: { Args: { _token: string }; Returns: Json }
       user_profile_type: { Args: { _user_id: string }; Returns: string }
       verify_certificate_public: {
