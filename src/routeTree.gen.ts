@@ -23,6 +23,7 @@ import { Route as AuthenticatedFinancesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedEvaluationRouteImport } from './routes/_authenticated/evaluation'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCoherenceRouteImport } from './routes/_authenticated/coherence'
 import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -102,6 +103,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCoherenceRoute = AuthenticatedCoherenceRouteImport.update({
+  id: '/coherence',
+  path: '/coherence',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAccompagnementRoute =
   AuthenticatedAccompagnementRouteImport.update({
     id: '/accompagnement',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/accompagnement': typeof AuthenticatedAccompagnementRoute
+  '/coherence': typeof AuthenticatedCoherenceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/evaluation': typeof AuthenticatedEvaluationRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/accompagnement': typeof AuthenticatedAccompagnementRoute
+  '/coherence': typeof AuthenticatedCoherenceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/evaluation': typeof AuthenticatedEvaluationRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/accompagnement': typeof AuthenticatedAccompagnementRoute
+  '/_authenticated/coherence': typeof AuthenticatedCoherenceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/evaluation': typeof AuthenticatedEvaluationRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/accompagnement'
+    | '/coherence'
     | '/dashboard'
     | '/documents'
     | '/evaluation'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/accompagnement'
+    | '/coherence'
     | '/dashboard'
     | '/documents'
     | '/evaluation'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/accompagnement'
+    | '/_authenticated/coherence'
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
     | '/_authenticated/evaluation'
@@ -408,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/coherence': {
+      id: '/_authenticated/coherence'
+      path: '/coherence'
+      fullPath: '/coherence'
+      preLoaderRoute: typeof AuthenticatedCoherenceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/accompagnement': {
       id: '/_authenticated/accompagnement'
       path: '/accompagnement'
@@ -482,6 +501,7 @@ const AuthenticatedFinancesRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccompagnementRoute: typeof AuthenticatedAccompagnementRoute
+  AuthenticatedCoherenceRoute: typeof AuthenticatedCoherenceRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEvaluationRoute: typeof AuthenticatedEvaluationRoute
@@ -494,6 +514,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccompagnementRoute: AuthenticatedAccompagnementRoute,
+  AuthenticatedCoherenceRoute: AuthenticatedCoherenceRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEvaluationRoute: AuthenticatedEvaluationRoute,
