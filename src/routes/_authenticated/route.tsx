@@ -19,6 +19,8 @@ import {
   Building2,
   FileText,
   TrendingUp,
+  ShieldCheck,
+
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
