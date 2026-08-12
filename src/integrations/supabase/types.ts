@@ -4350,6 +4350,7 @@ export type Database = {
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
       is_email_unsubscribed: { Args: { _email: string }; Returns: boolean }
       is_org_member: { Args: { _org_id: string }; Returns: boolean }
+      is_org_owner: { Args: { _org_id: string }; Returns: boolean }
       mark_email_failed: {
         Args: { _error: string; _id: string }
         Returns: undefined
