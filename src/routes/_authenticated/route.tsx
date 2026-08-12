@@ -43,7 +43,9 @@ const NAV = [
   { to: "/documents", icon: FileText, label: "Documents" },
   { to: "/evaluation", icon: TrendingUp, label: "Maturité" },
   { to: "/score", icon: Gauge, label: "Score" },
+  { to: "/coherence", icon: ShieldCheck, label: "Cohérence" },
   { to: "/accompagnement", icon: LifeBuoy, label: "Accompagnement" },
+
 ] as const;
 
 function AuthLayout() {
