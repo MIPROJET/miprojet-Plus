@@ -10,6 +10,15 @@ export type PublicTeamMember = {
   organization: string | null;
 };
 
+export type PublicMilestone = {
+  kind: string;
+  title: string;
+  description: string | null;
+  event_date: string;
+  location: string | null;
+  participants_count: number | null;
+};
+
 export type PublicProject = {
   id: string;
   display_id: string | null;
@@ -30,6 +39,11 @@ export type PublicProject = {
   // v1.1 enrichments
   objectif: string | null;
   maturite: string | null;
+  governance_mode: string | null;
+  offices_count: number;
+  advisors_count: number;
+  operational_units: number | null;
+  milestones: PublicMilestone[];
   governance: Record<string, string | number | boolean | null> | null;
   // Media + team
   gallery: { url: string; caption: string | null }[];
@@ -52,7 +66,7 @@ export const getPublicProject = createServerFn({ method: "GET" })
     const query = supabaseAdmin
       .from("mp_projects")
       .select(
-        "id, display_id, title, short_pitch, description, sector, city, country, creation_date, legal_status, logo_url, cover_url, product_description, target_customers, commercialization, monitoring_evaluation, objectif, maturite, governance, is_public",
+        "id, display_id, title, short_pitch, description, sector, city, country, creation_date, legal_status, logo_url, cover_url, product_description, target_customers, commercialization, monitoring_evaluation, objectif, maturite, governance, governance_mode, offices_count, advisors_count, operational_units, is_public",
       )
       .eq("is_public", true)
       .limit(1);
@@ -64,7 +78,7 @@ export const getPublicProject = createServerFn({ method: "GET" })
     const p = rows?.[0] as any;
     if (!p) return null;
 
-    const [{ data: media }, { data: teamRows }] = await Promise.all([
+    const [{ data: media }, { data: teamRows }, { data: milestoneRows }] = await Promise.all([
       supabaseAdmin
         .from("mp_project_media")
         .select("kind, storage_path, caption")
@@ -75,6 +89,12 @@ export const getPublicProject = createServerFn({ method: "GET" })
         .select("full_name, role_title, expertise, bio, photo_url, is_external, organization, sort_order")
         .eq("project_id", p.id)
         .order("sort_order", { ascending: true }),
+      supabaseAdmin
+        .from("mp_project_milestones")
+        .select("kind, title, description, event_date, location, participants_count")
+        .eq("project_id", p.id)
+        .eq("is_public", true)
+        .order("event_date", { ascending: false }),
     ]);
 
     const pub = (path: string) =>
@@ -117,6 +137,18 @@ export const getPublicProject = createServerFn({ method: "GET" })
       objectif: p.objectif ?? null,
       maturite: p.maturite ?? null,
       governance: (p.governance ?? null) as Record<string, string | number | boolean | null> | null,
+      governance_mode: p.governance_mode ?? null,
+      offices_count: Number(p.offices_count ?? 0),
+      advisors_count: Number(p.advisors_count ?? 0),
+      operational_units: p.operational_units === null || p.operational_units === undefined ? null : Number(p.operational_units),
+      milestones: ((milestoneRows ?? []) as any[]).map((m) => ({
+        kind: m.kind,
+        title: m.title,
+        description: m.description ?? null,
+        event_date: m.event_date,
+        location: m.location ?? null,
+        participants_count: m.participants_count ?? null,
+      })),
       gallery,
       video_url,
       team,

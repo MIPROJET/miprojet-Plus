@@ -32,6 +32,8 @@ import { toast } from "sonner";
 import { SmartImage } from "@/components/SmartImage";
 import { TeamManager } from "@/components/projets/TeamManager";
 import { GovernanceEditor, emptyGovernance, type Governance } from "@/components/projets/GovernanceEditor";
+import { MilestonesManager } from "@/components/projets/MilestonesManager";
+
 
 const MATURITE_OPTIONS = [
   { value: "idee", label: "Idée" },
@@ -344,8 +346,13 @@ function ProjectForm({
     budget_initial: initial?.budget_initial ?? "",
     objectif: initial?.objectif ?? "",
     maturite: initial?.maturite ?? "",
+    governance_mode: initial?.governance_mode ?? "",
+    offices_count: initial?.offices_count ?? 0,
+    advisors_count: initial?.advisors_count ?? 0,
+    operational_units: initial?.operational_units ?? "",
     governance: emptyGovernance(initial?.governance) as Governance,
   });
+
 
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
@@ -359,7 +366,16 @@ function ProjectForm({
       } else {
         payload.budget_initial = Number(payload.budget_initial);
       }
+      if (payload.operational_units === "" || payload.operational_units === null) {
+        payload.operational_units = null;
+      } else {
+        payload.operational_units = Number(payload.operational_units);
+      }
+      payload.offices_count = Number(payload.offices_count) || 0;
+      payload.advisors_count = Number(payload.advisors_count) || 0;
+      if (!payload.governance_mode) payload.governance_mode = null;
       if (!payload.maturite) payload.maturite = null;
+
       if (initial?.id) {
         const { error } = await supabase.from("mp_projects").update(payload).eq("id", initial.id);
         if (error) throw error;
@@ -389,7 +405,9 @@ function ProjectForm({
     showSuivi && { value: "suivi", label: "Suivi" },
     showEquipe && { value: "equipe", label: "Équipe" },
     showEquipe && { value: "gouvernance", label: "Gouvernance" },
+    { value: "traction", label: "Traction" },
     { value: "docs", label: "Visuels" },
+
   ].filter(Boolean) as { value: string; label: string }[];
 
   return (
@@ -584,6 +602,59 @@ function ProjectForm({
             />
           </TabsContent>
         )}
+
+        <TabsContent value="traction" className="space-y-5">
+          <div>
+            <Label>Mode de gouvernance</Label>
+            <Textarea
+              rows={2}
+              className="mt-1.5"
+              value={form.governance_mode}
+              onChange={(e) => set("governance_mode", e.target.value)}
+              placeholder="Ex. Gérance SARL appuyée par un comité stratégique et des experts externes"
+            />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <Label>Bureaux / antennes</Label>
+              <Input
+                type="number"
+                min={0}
+                className="mt-1.5"
+                value={form.offices_count}
+                onChange={(e) => set("offices_count", e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Conseillers / commerciaux formés</Label>
+              <Input
+                type="number"
+                min={0}
+                className="mt-1.5"
+                value={form.advisors_count}
+                onChange={(e) => set("advisors_count", e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Unités opérationnelles (ha, points de vente…)</Label>
+              <Input
+                type="number"
+                min={0}
+                step="0.01"
+                className="mt-1.5"
+                value={form.operational_units}
+                onChange={(e) => set("operational_units", e.target.value)}
+              />
+            </div>
+          </div>
+          {initial?.id ? (
+            <MilestonesManager userId={userId} projectId={initial.id} />
+          ) : (
+            <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+              Enregistrez d'abord le projet pour ajouter vos jalons et réalisations.
+            </div>
+          )}
+        </TabsContent>
 
 
         <TabsContent value="docs" className="space-y-6">
