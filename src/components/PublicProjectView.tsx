@@ -340,3 +340,12 @@ export function PublicProjectView({ project }: { project: PublicProject }) {
     </article>
   );
 }
+
+function StatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border bg-card p-4 text-center shadow-sm">
+      <div className="text-2xl font-bold text-primary">{value}</div>
+      <div className="mt-1 text-xs text-muted-foreground">{label}</div>
+    </div>
+  );
+}
