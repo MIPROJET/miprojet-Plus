@@ -601,6 +601,59 @@ function ProjectForm({
           </TabsContent>
         )}
 
+        <TabsContent value="traction" className="space-y-5">
+          <div>
+            <Label>Mode de gouvernance</Label>
+            <Textarea
+              rows={2}
+              className="mt-1.5"
+              value={form.governance_mode}
+              onChange={(e) => set("governance_mode", e.target.value)}
+              placeholder="Ex. Gérance SARL appuyée par un comité stratégique et des experts externes"
+            />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <Label>Bureaux / antennes</Label>
+              <Input
+                type="number"
+                min={0}
+                className="mt-1.5"
+                value={form.offices_count}
+                onChange={(e) => set("offices_count", e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Conseillers / commerciaux formés</Label>
+              <Input
+                type="number"
+                min={0}
+                className="mt-1.5"
+                value={form.advisors_count}
+                onChange={(e) => set("advisors_count", e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Unités opérationnelles (ha, points de vente…)</Label>
+              <Input
+                type="number"
+                min={0}
+                step="0.01"
+                className="mt-1.5"
+                value={form.operational_units}
+                onChange={(e) => set("operational_units", e.target.value)}
+              />
+            </div>
+          </div>
+          {initial?.id ? (
+            <MilestonesManager userId={userId} projectId={initial.id} />
+          ) : (
+            <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+              Enregistrez d'abord le projet pour ajouter vos jalons et réalisations.
+            </div>
+          )}
+        </TabsContent>
+
 
         <TabsContent value="docs" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
