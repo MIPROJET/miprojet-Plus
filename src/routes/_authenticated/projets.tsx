@@ -364,7 +364,16 @@ function ProjectForm({
       } else {
         payload.budget_initial = Number(payload.budget_initial);
       }
+      if (payload.operational_units === "" || payload.operational_units === null) {
+        payload.operational_units = null;
+      } else {
+        payload.operational_units = Number(payload.operational_units);
+      }
+      payload.offices_count = Number(payload.offices_count) || 0;
+      payload.advisors_count = Number(payload.advisors_count) || 0;
+      if (!payload.governance_mode) payload.governance_mode = null;
       if (!payload.maturite) payload.maturite = null;
+
       if (initial?.id) {
         const { error } = await supabase.from("mp_projects").update(payload).eq("id", initial.id);
         if (error) throw error;
