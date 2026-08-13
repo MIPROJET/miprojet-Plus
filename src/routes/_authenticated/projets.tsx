@@ -344,8 +344,13 @@ function ProjectForm({
     budget_initial: initial?.budget_initial ?? "",
     objectif: initial?.objectif ?? "",
     maturite: initial?.maturite ?? "",
+    governance_mode: initial?.governance_mode ?? "",
+    offices_count: initial?.offices_count ?? 0,
+    advisors_count: initial?.advisors_count ?? 0,
+    operational_units: initial?.operational_units ?? "",
     governance: emptyGovernance(initial?.governance) as Governance,
   });
+
 
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
