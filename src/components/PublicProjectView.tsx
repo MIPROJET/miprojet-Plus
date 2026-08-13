@@ -257,6 +257,65 @@ export function PublicProjectView({ project }: { project: PublicProject }) {
         </section>
       )}
 
+      {/* TRACTION & JALONS */}
+      {(project.milestones.length > 0 ||
+        project.offices_count > 0 ||
+        project.advisors_count > 0 ||
+        project.governance_mode) && (
+        <section className="container mx-auto px-4 py-12">
+          <h2 className="text-center text-2xl font-bold md:text-3xl">Traction & réalisations</h2>
+
+          {(project.offices_count > 0 ||
+            project.advisors_count > 0 ||
+            project.operational_units) && (
+            <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:grid-cols-3">
+              {project.offices_count > 0 && (
+                <StatBox label="Bureaux / antennes" value={String(project.offices_count)} />
+              )}
+              {project.advisors_count > 0 && (
+                <StatBox label="Conseillers formés" value={String(project.advisors_count)} />
+              )}
+              {project.operational_units ? (
+                <StatBox label="Unités opérationnelles" value={String(project.operational_units)} />
+              ) : null}
+            </div>
+          )}
+
+          {project.governance_mode && (
+            <p className="mx-auto mt-6 max-w-3xl rounded-xl border bg-card p-4 text-center text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">Gouvernance : </span>
+              {project.governance_mode}
+            </p>
+          )}
+
+          {project.milestones.length > 0 && (
+            <ol className="mx-auto mt-8 max-w-3xl space-y-4 border-l pl-6">
+              {project.milestones.map((m) => (
+                <li key={`${m.title}-${m.event_date}`} className="relative">
+                  <span className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full bg-primary" />
+                  <div className="text-xs font-medium text-primary">
+                    {new Date(m.event_date).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <div className="mt-0.5 font-semibold">{m.title}</div>
+                  {m.description && (
+                    <p className="mt-1 text-sm text-muted-foreground">{m.description}</p>
+                  )}
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {[m.location, m.participants_count ? `${m.participants_count} participants` : null]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+      )}
+
 
       <section className="container mx-auto px-4 py-16">
         <div className="rounded-3xl border bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground shadow-xl md:p-12">
