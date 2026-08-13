@@ -1892,6 +1892,79 @@ export type Database = {
           },
         ]
       }
+      mp_project_milestones: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_date: string
+          id: string
+          is_public: boolean
+          kind: string
+          location: string | null
+          media_url: string | null
+          participants_count: number | null
+          project_id: string
+          sort_order: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          id?: string
+          is_public?: boolean
+          kind?: string
+          location?: string | null
+          media_url?: string | null
+          participants_count?: number | null
+          project_id: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          id?: string
+          is_public?: boolean
+          kind?: string
+          location?: string | null
+          media_url?: string | null
+          participants_count?: number | null
+          project_id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
+        ]
+      }
       mp_project_team: {
         Row: {
           bio: string | null
@@ -1971,6 +2044,7 @@ export type Database = {
       mp_projects: {
         Row: {
           activity_type: string | null
+          advisors_count: number
           annual_revenue: number | null
           budget_initial: number | null
           city: string | null
@@ -1984,6 +2058,7 @@ export type Database = {
           display_id: string | null
           employees_count: number | null
           governance: Json | null
+          governance_mode: string | null
           has_accounting: boolean | null
           has_bank_account: boolean | null
           has_business_plan: boolean | null
@@ -1996,6 +2071,8 @@ export type Database = {
           monitoring_evaluation: string | null
           monthly_expenses: number | null
           objectif: string | null
+          offices_count: number
+          operational_units: number | null
           product_description: string | null
           profile_kind: string
           project_type: string | null
@@ -2010,6 +2087,7 @@ export type Database = {
         }
         Insert: {
           activity_type?: string | null
+          advisors_count?: number
           annual_revenue?: number | null
           budget_initial?: number | null
           city?: string | null
@@ -2023,6 +2101,7 @@ export type Database = {
           display_id?: string | null
           employees_count?: number | null
           governance?: Json | null
+          governance_mode?: string | null
           has_accounting?: boolean | null
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
@@ -2035,6 +2114,8 @@ export type Database = {
           monitoring_evaluation?: string | null
           monthly_expenses?: number | null
           objectif?: string | null
+          offices_count?: number
+          operational_units?: number | null
           product_description?: string | null
           profile_kind?: string
           project_type?: string | null
@@ -2049,6 +2130,7 @@ export type Database = {
         }
         Update: {
           activity_type?: string | null
+          advisors_count?: number
           annual_revenue?: number | null
           budget_initial?: number | null
           city?: string | null
@@ -2062,6 +2144,7 @@ export type Database = {
           display_id?: string | null
           employees_count?: number | null
           governance?: Json | null
+          governance_mode?: string | null
           has_accounting?: boolean | null
           has_bank_account?: boolean | null
           has_business_plan?: boolean | null
@@ -2074,6 +2157,8 @@ export type Database = {
           monitoring_evaluation?: string | null
           monthly_expenses?: number | null
           objectif?: string | null
+          offices_count?: number
+          operational_units?: number | null
           product_description?: string | null
           profile_kind?: string
           project_type?: string | null
@@ -4189,13 +4274,19 @@ export type Database = {
       }
       v_mp_ecosystem_scoring: {
         Row: {
+          advisors_count: number | null
           city: string | null
           computed_at: string | null
           country: string | null
           display_id: string | null
+          governance_mode: string | null
           journey: string | null
+          last_milestone_date: string | null
           maturite: string | null
+          milestones_count: number | null
           niveau: string | null
+          offices_count: number | null
+          operational_units: number | null
           profile_kind: string | null
           project_id: string | null
           score_equipe: number | null
