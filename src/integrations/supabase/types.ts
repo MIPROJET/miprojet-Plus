@@ -143,6 +143,45 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_user_id: string | null
+          created_at: string
+          details: Json
+          entity_id: string | null
+          entity_label: string | null
+          entity_table: string | null
+          id: string
+          module: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          details?: Json
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_table?: string | null
+          id?: string
+          module: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          details?: Json
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_table?: string | null
+          id?: string
+          module?: string
+        }
+        Relationships: []
+      }
       connection_requests: {
         Row: {
           admin_notes: string | null
@@ -3101,6 +3140,66 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string | null
+        }
+        Relationships: []
+      }
+      platform_sync_conflicts: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_label: string | null
+          entity_table: string
+          id: string
+          resolution_strategy: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          resolved_payload: Json | null
+          source_payload: Json
+          source_platform: string | null
+          source_updated_at: string | null
+          status: string
+          target_payload: Json
+          target_platform: string | null
+          target_updated_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_table: string
+          id?: string
+          resolution_strategy?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resolved_payload?: Json | null
+          source_payload?: Json
+          source_platform?: string | null
+          source_updated_at?: string | null
+          status?: string
+          target_payload?: Json
+          target_platform?: string | null
+          target_updated_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_table?: string
+          id?: string
+          resolution_strategy?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resolved_payload?: Json | null
+          source_payload?: Json
+          source_platform?: string | null
+          source_updated_at?: string | null
+          status?: string
+          target_payload?: Json
+          target_platform?: string | null
+          target_updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
