@@ -247,41 +247,73 @@ function CoherencePage() {
           {rows.map((r) => {
             const meta = ETAT_META[r.etat];
             const Icon = meta.Icon;
+            const diffs = diffsOf(r);
             return (
-              <div
-                key={r.project_id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
-              >
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{r.title ?? "Projet"}</div>
-                  <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    <span>Score calculé : {r.score_calcule ?? "—"}</span>
-                    <span>Niveau : {r.niveau_calcule ?? "—"}</span>
-                    <span>Maturité : {r.maturite_calculee ?? "—"}</span>
-                    <span>Invest : {r.score_invest ?? "non publié"}</span>
-                  </div>
-                  {(r.ecart_invest || r.ecart_maturite || r.manque_publication) && (
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {r.ecart_invest && (
-                        <Badge variant="outline">Écart score Invest</Badge>
-                      )}
-                      {r.ecart_maturite && (
-                        <Badge variant="outline">Écart maturité</Badge>
-                      )}
-                      {r.manque_publication && (
-                        <Badge variant="outline">Publication manquante</Badge>
-                      )}
+              <div key={r.project_id} className="rounded-lg border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{r.title ?? "Projet"}</div>
+                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      <span>Score calculé : {r.score_calcule ?? "—"}</span>
+                      <span>Niveau : {r.niveau_calcule ?? "—"}</span>
+                      <span>Maturité : {r.maturite_calculee ?? "—"}</span>
+                      <span>Invest : {r.score_invest ?? "non publié"}</span>
                     </div>
-                  )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`flex items-center gap-2 rounded-md px-2.5 py-1 text-xs font-semibold ${meta.className}`}
+                    >
+                      <Icon className="h-3.5 w-3.5" /> {meta.label}
+                    </div>
+                    {r.etat !== "ok" && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={syncing}
+                        onClick={() => void resync(r.project_id)}
+                      >
+                        <RefreshCw
+                          className={`mr-1.5 h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`}
+                        />
+                        Resynchroniser
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div
-                  className={`flex items-center gap-2 rounded-md px-2.5 py-1 text-xs font-semibold ${meta.className}`}
-                >
-                  <Icon className="h-3.5 w-3.5" /> {meta.label}
-                </div>
+
+                {diffs.length > 0 && (
+                  <div className="mt-3 overflow-x-auto rounded-md border bg-muted/30">
+                    <table className="w-full min-w-[520px] text-xs">
+                      <thead className="text-muted-foreground">
+                        <tr className="border-b">
+                          <th className="px-3 py-2 text-left font-medium">Champ</th>
+                          <th className="px-3 py-2 text-left font-medium">
+                            Valeur calculée (MiPROJET+)
+                          </th>
+                          <th className="px-3 py-2 text-left font-medium">
+                            Valeur exposée (écosystème)
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diffs.map((d) => (
+                          <tr key={d.champ} className="border-b last:border-0">
+                            <td className="px-3 py-2 font-medium">{d.champ}</td>
+                            <td className="px-3 py-2 text-emerald-700 dark:text-emerald-400">
+                              {d.calcule}
+                            </td>
+                            <td className="px-3 py-2 text-destructive">{d.expose}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             );
           })}
+
         </CardContent>
       </Card>
 
