@@ -35,13 +35,13 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/documents")({
   head: () => ({
     meta: [
-      { title: "Espace documentaire · MiProjet+" },
+      { title: "Espace document · MiProjet+" },
       {
         name: "description",
         content:
           "Classez, partagez et sécurisez les documents de votre organisation : dossiers, contrôle d'accès par rôle et téléchargement sécurisé.",
       },
-      { property: "og:title", content: "Espace documentaire · MiProjet+" },
+      { property: "og:title", content: "Espace document · MiProjet+" },
       {
         property: "og:description",
         content: "Cloud documentaire sécurisé pour votre organisation.",
@@ -283,7 +283,7 @@ function DocumentsPage() {
       <div className="flex flex-wrap items-center gap-3">
         <FileText className="h-7 w-7 text-primary" />
         <div className="flex-1">
-          <h1 className="text-2xl font-bold sm:text-3xl">Espace documentaire</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Espace document</h1>
           <p className="text-sm text-muted-foreground">
             Dossiers, fichiers, catégories et recherche — sécurisés par rôle et partagés avec votre
             organisation.

@@ -281,7 +281,7 @@ function ModulesSection() {
     { icon: Building2, t: "Profil organisation", d: "Identité, secteur, équipe, historique, vision." },
     { icon: Users, t: "Gestion d'équipe", d: "Collaborateurs, rôles, permissions, responsabilités." },
     { icon: TrendingUp, t: "Gestion financière", d: "Recettes, dépenses, trésorerie, rapports auto." },
-    { icon: FileText, t: "Espace documentaire", d: "Administratif, finance, stratégie, investissement." },
+    { icon: FileText, t: "Espace document", d: "Administratif, finance, stratégie, investissement." },
     { icon: BadgeCheck, t: "Évaluation & maturité", d: "Gouvernance, finance, marché, équipe, potentiel." },
   ];
   return (
