@@ -127,16 +127,65 @@ function CoherencePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function resync() {
+  async function resync(projectId?: string) {
     setSyncing(true);
     const { error } = await supabase.rpc("mp_resync_scoring" as never, {
-      _project_id: null,
+      _project_id: projectId ?? null,
     } as never);
     if (error) toast.error("Resynchronisation échouée : " + error.message);
-    else toast.success("Scoring et maturité resynchronisés.");
+    else
+      toast.success(
+        projectId
+          ? "Projet resynchronisé avec l'écosystème."
+          : "Scoring et maturité resynchronisés.",
+      );
     await loadCoherence();
     setSyncing(false);
   }
+
+  function diffsOf(r: CoherenceRow) {
+    const d: { champ: string; calcule: string; expose: string }[] = [];
+    if (r.manque_score)
+      d.push({
+        champ: "Scoring",
+        calcule: "non calculé",
+        expose: String(r.score_invest ?? "—"),
+      });
+    if (r.ecart_invest)
+      d.push({
+        champ: "Score exposé (MiPROJET Invest)",
+        calcule: String(r.score_calcule ?? "—"),
+        expose: String(r.score_invest ?? "non publié"),
+      });
+    if (r.ecart_maturite)
+      d.push({
+        champ: "Niveau de maturité",
+        calcule: r.maturite_calculee ?? "—",
+        expose: r.maturite_projet ?? "—",
+      });
+    if (r.manque_publication)
+      d.push({
+        champ: "Publication écosystème",
+        calcule: "éligible à la publication",
+        expose: r.is_public ? "publié sans score" : "non publié",
+      });
+    if (r.score_evaluation != null && r.score_evaluation !== r.score_calcule)
+      d.push({
+        champ: "Score évaluation manuelle",
+        calcule: String(r.score_calcule ?? "—"),
+        expose: String(r.score_evaluation),
+      });
+    if (r.etat === "obsolete")
+      d.push({
+        champ: "Dernier calcul",
+        calcule: "recalcul requis",
+        expose: r.computed_at
+          ? new Date(r.computed_at).toLocaleString("fr-FR")
+          : "jamais",
+      });
+    return d;
+  }
+
 
   const alerts = rows.filter((r) => r.etat !== "ok");
   const failed = tests.filter((t) => !t.passed);
