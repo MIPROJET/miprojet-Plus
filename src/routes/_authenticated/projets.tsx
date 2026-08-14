@@ -463,7 +463,7 @@ function ProjectForm({
           </div>
           <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t">
             <div>
-              <Label>Budget initial (XOF)</Label>
+              <Label>Chiffre d’Affaires Prévisionnel (XOF)</Label>
               <Input
                 type="number"
                 min={0}
