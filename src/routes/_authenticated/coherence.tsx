@@ -208,7 +208,7 @@ function CoherencePage() {
             d'accès (admin lecture/écriture, équipe et écosystème en lecture seule).
           </p>
         </div>
-        <Button onClick={resync} disabled={syncing}>
+        <Button onClick={() => void resync()} disabled={syncing}>
           <RefreshCw className={`mr-2 h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
           Resynchroniser
         </Button>
