@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   AlertTriangle,
@@ -127,16 +126,65 @@ function CoherencePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function resync() {
+  async function resync(projectId?: string) {
     setSyncing(true);
     const { error } = await supabase.rpc("mp_resync_scoring" as never, {
-      _project_id: null,
+      _project_id: projectId ?? null,
     } as never);
     if (error) toast.error("Resynchronisation échouée : " + error.message);
-    else toast.success("Scoring et maturité resynchronisés.");
+    else
+      toast.success(
+        projectId
+          ? "Projet resynchronisé avec l'écosystème."
+          : "Scoring et maturité resynchronisés.",
+      );
     await loadCoherence();
     setSyncing(false);
   }
+
+  function diffsOf(r: CoherenceRow) {
+    const d: { champ: string; calcule: string; expose: string }[] = [];
+    if (r.manque_score)
+      d.push({
+        champ: "Scoring",
+        calcule: "non calculé",
+        expose: String(r.score_invest ?? "—"),
+      });
+    if (r.ecart_invest)
+      d.push({
+        champ: "Score exposé (MiPROJET Invest)",
+        calcule: String(r.score_calcule ?? "—"),
+        expose: String(r.score_invest ?? "non publié"),
+      });
+    if (r.ecart_maturite)
+      d.push({
+        champ: "Niveau de maturité",
+        calcule: r.maturite_calculee ?? "—",
+        expose: r.maturite_projet ?? "—",
+      });
+    if (r.manque_publication)
+      d.push({
+        champ: "Publication écosystème",
+        calcule: "éligible à la publication",
+        expose: r.is_public ? "publié sans score" : "non publié",
+      });
+    if (r.score_evaluation != null && r.score_evaluation !== r.score_calcule)
+      d.push({
+        champ: "Score évaluation manuelle",
+        calcule: String(r.score_calcule ?? "—"),
+        expose: String(r.score_evaluation),
+      });
+    if (r.etat === "obsolete")
+      d.push({
+        champ: "Dernier calcul",
+        calcule: "recalcul requis",
+        expose: r.computed_at
+          ? new Date(r.computed_at).toLocaleString("fr-FR")
+          : "jamais",
+      });
+    return d;
+  }
+
 
   const alerts = rows.filter((r) => r.etat !== "ok");
   const failed = tests.filter((t) => !t.passed);
@@ -159,7 +207,7 @@ function CoherencePage() {
             d'accès (admin lecture/écriture, équipe et écosystème en lecture seule).
           </p>
         </div>
-        <Button onClick={resync} disabled={syncing}>
+        <Button onClick={() => void resync()} disabled={syncing}>
           <RefreshCw className={`mr-2 h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
           Resynchroniser
         </Button>
@@ -198,41 +246,73 @@ function CoherencePage() {
           {rows.map((r) => {
             const meta = ETAT_META[r.etat];
             const Icon = meta.Icon;
+            const diffs = diffsOf(r);
             return (
-              <div
-                key={r.project_id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
-              >
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{r.title ?? "Projet"}</div>
-                  <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    <span>Score calculé : {r.score_calcule ?? "—"}</span>
-                    <span>Niveau : {r.niveau_calcule ?? "—"}</span>
-                    <span>Maturité : {r.maturite_calculee ?? "—"}</span>
-                    <span>Invest : {r.score_invest ?? "non publié"}</span>
-                  </div>
-                  {(r.ecart_invest || r.ecart_maturite || r.manque_publication) && (
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {r.ecart_invest && (
-                        <Badge variant="outline">Écart score Invest</Badge>
-                      )}
-                      {r.ecart_maturite && (
-                        <Badge variant="outline">Écart maturité</Badge>
-                      )}
-                      {r.manque_publication && (
-                        <Badge variant="outline">Publication manquante</Badge>
-                      )}
+              <div key={r.project_id} className="rounded-lg border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{r.title ?? "Projet"}</div>
+                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      <span>Score calculé : {r.score_calcule ?? "—"}</span>
+                      <span>Niveau : {r.niveau_calcule ?? "—"}</span>
+                      <span>Maturité : {r.maturite_calculee ?? "—"}</span>
+                      <span>Invest : {r.score_invest ?? "non publié"}</span>
                     </div>
-                  )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`flex items-center gap-2 rounded-md px-2.5 py-1 text-xs font-semibold ${meta.className}`}
+                    >
+                      <Icon className="h-3.5 w-3.5" /> {meta.label}
+                    </div>
+                    {r.etat !== "ok" && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={syncing}
+                        onClick={() => void resync(r.project_id)}
+                      >
+                        <RefreshCw
+                          className={`mr-1.5 h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`}
+                        />
+                        Resynchroniser
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div
-                  className={`flex items-center gap-2 rounded-md px-2.5 py-1 text-xs font-semibold ${meta.className}`}
-                >
-                  <Icon className="h-3.5 w-3.5" /> {meta.label}
-                </div>
+
+                {diffs.length > 0 && (
+                  <div className="mt-3 overflow-x-auto rounded-md border bg-muted/30">
+                    <table className="w-full min-w-[520px] text-xs">
+                      <thead className="text-muted-foreground">
+                        <tr className="border-b">
+                          <th className="px-3 py-2 text-left font-medium">Champ</th>
+                          <th className="px-3 py-2 text-left font-medium">
+                            Valeur calculée (MiPROJET+)
+                          </th>
+                          <th className="px-3 py-2 text-left font-medium">
+                            Valeur exposée (écosystème)
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diffs.map((d) => (
+                          <tr key={d.champ} className="border-b last:border-0">
+                            <td className="px-3 py-2 font-medium">{d.champ}</td>
+                            <td className="px-3 py-2 text-emerald-700 dark:text-emerald-400">
+                              {d.calcule}
+                            </td>
+                            <td className="px-3 py-2 text-destructive">{d.expose}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             );
           })}
+
         </CardContent>
       </Card>
 
