@@ -8,7 +8,13 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
 export default defineConfig({
-  vite: { plugins: [mcpPlugin()] },
+  vite: {
+    plugins: [mcpPlugin()],
+    // `cloudflare:workers` is a Workers-only built-in dynamically imported (and
+    // guarded by .catch) inside @lovable.dev/mcp-js. On non-Cloudflare targets
+    // (Vercel/Node) Rollup cannot resolve it, so keep it external.
+    build: { rollupOptions: { external: [/^cloudflare:/] } },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     server: { entry: "server" },
