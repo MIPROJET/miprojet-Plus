@@ -658,6 +658,16 @@ function ProjectForm({
           )}
         </TabsContent>
 
+        <TabsContent value="acteurs" className="space-y-4">
+          {initial?.id ? (
+            <StakeholdersManager userId={userId} projectId={initial.id} />
+          ) : (
+            <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+              Enregistrez d'abord le projet pour ajouter vos associés et parties prenantes.
+            </div>
+          )}
+        </TabsContent>
+
 
         <TabsContent value="docs" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
