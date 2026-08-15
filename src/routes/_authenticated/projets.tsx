@@ -33,6 +33,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { TeamManager } from "@/components/projets/TeamManager";
 import { GovernanceEditor, emptyGovernance, type Governance } from "@/components/projets/GovernanceEditor";
 import { MilestonesManager } from "@/components/projets/MilestonesManager";
+import { StakeholdersManager } from "@/components/projets/StakeholdersManager";
+
 
 
 const MATURITE_OPTIONS = [
