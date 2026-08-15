@@ -9,6 +9,8 @@ export type FinancialRecord = {
   description?: string | null;
   category?: string | null;
   currency?: string | null;
+  party_name?: string | null;
+  stakeholder_id?: string | null;
 };
 
 export type Period = "day" | "week" | "month" | "quarter" | "year" | "custom";
@@ -46,7 +48,10 @@ export function byParty(records: FinancialRecord[]) {
   >();
 
   for (const r of inflows) {
-    const name = extractPartyName(r.description) ?? financingSource(r);
+    const name =
+      (r.party_name && r.party_name.trim()) ||
+      extractPartyName(r.description) ||
+      financingSource(r);
     const key = `${name}::${r.record_type}`;
     const g = groups.get(key) ?? {
       name,

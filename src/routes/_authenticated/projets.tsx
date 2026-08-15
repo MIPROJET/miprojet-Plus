@@ -33,6 +33,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { TeamManager } from "@/components/projets/TeamManager";
 import { GovernanceEditor, emptyGovernance, type Governance } from "@/components/projets/GovernanceEditor";
 import { MilestonesManager } from "@/components/projets/MilestonesManager";
+import { StakeholdersManager } from "@/components/projets/StakeholdersManager";
+
 
 
 const MATURITE_OPTIONS = [
@@ -406,7 +408,9 @@ function ProjectForm({
     showEquipe && { value: "equipe", label: "Équipe" },
     showEquipe && { value: "gouvernance", label: "Gouvernance" },
     { value: "traction", label: "Traction" },
+    { value: "acteurs", label: "Acteurs" },
     { value: "docs", label: "Visuels" },
+
 
   ].filter(Boolean) as { value: string; label: string }[];
 
@@ -652,6 +656,16 @@ function ProjectForm({
           ) : (
             <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
               Enregistrez d'abord le projet pour ajouter vos jalons et réalisations.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="acteurs" className="space-y-4">
+          {initial?.id ? (
+            <StakeholdersManager userId={userId} projectId={initial.id} />
+          ) : (
+            <div className="rounded-xl border-2 border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+              Enregistrez d'abord le projet pour ajouter vos associés et parties prenantes.
             </div>
           )}
         </TabsContent>

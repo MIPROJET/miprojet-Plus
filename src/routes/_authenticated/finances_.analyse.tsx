@@ -105,6 +105,8 @@ function AnalysePage() {
       record_date: r.record_date,
       description: r.description,
       category: r.category,
+      party_name: (r as any).party_name ?? null,
+      stakeholder_id: (r as any).stakeholder_id ?? null,
     }));
     if (period === "custom" && customFrom) list = list.filter((r) => r.record_date >= customFrom);
     if (period === "custom" && customTo) list = list.filter((r) => r.record_date <= customTo);

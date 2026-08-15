@@ -4,6 +4,13 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchMyProjects, fetchAllUserRecords } from "@/lib/data";
 import { RECORD_TYPES, formatXOF, recordFlow, recordLabel } from "@/lib/financial-types";
+import {
+  PARTY_RECORD_TYPES,
+  fetchStakeholders,
+  ensureStakeholder,
+  stakeholderTypeLabel,
+} from "@/lib/stakeholders";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -403,13 +410,35 @@ function RecordForm({
     record_date: new Date().toISOString().slice(0, 10),
     party_name: "",
   });
-  const needsParty = ["apport_associe", "pret", "don", "investissement"].includes(form.record_type);
+  const needsParty = PARTY_RECORD_TYPES.includes(form.record_type);
+
+  const stakeholdersQ = useQuery({
+    queryKey: ["mp_stakeholders", form.project_id],
+    queryFn: () => fetchStakeholders(form.project_id),
+    enabled: !!form.project_id,
+  });
+  const stakeholders = stakeholdersQ.data ?? [];
 
   const m = useMutation({
     mutationFn: async () => {
+      const party = needsParty ? form.party_name.trim() : "";
+      const stakeholderId = party
+        ? await ensureStakeholder(
+            form.project_id,
+            userId,
+            party,
+            form.record_type === "investissement"
+              ? "investisseur"
+              : form.record_type === "pret" || form.record_type === "remboursement"
+                ? "banque"
+                : form.record_type === "don"
+                  ? "donateur"
+                  : "associe",
+          )
+        : null;
       const desc =
-        needsParty && form.party_name
-          ? `${form.description ? form.description + " — " : ""}Source : ${form.party_name}`
+        party
+          ? `${form.description ? form.description + " — " : ""}Source : ${party}`
           : form.description;
       const { error } = await supabase.from("mp_financial_records").insert({
         user_id: userId,
@@ -420,7 +449,9 @@ function RecordForm({
         amount: Number(form.amount),
         record_date: form.record_date,
         currency: "XOF",
-      });
+        ...(party ? { party_name: party } : {}),
+        ...(stakeholderId ? { stakeholder_id: stakeholderId } : {}),
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -429,6 +460,7 @@ function RecordForm({
     },
     onError: (e: any) => toast.error(e.message),
   });
+
 
   return (
     <form
@@ -476,7 +508,26 @@ function RecordForm({
       </div>
       {needsParty && (
         <div>
-          <Label>Nom de la source (personne ou structure) *</Label>
+          <Label>Partie prenante / acteur (personne ou structure) *</Label>
+          {stakeholders.length > 0 && (
+            <Select
+              value={
+                stakeholders.some((s) => s.name === form.party_name) ? form.party_name : ""
+              }
+              onValueChange={(v) => setForm({ ...form, party_name: v })}
+            >
+              <SelectTrigger className="mt-1.5">
+                <SelectValue placeholder="Choisir un acteur enregistré…" />
+              </SelectTrigger>
+              <SelectContent>
+                {stakeholders.map((s) => (
+                  <SelectItem key={s.id} value={s.name}>
+                    {s.name} · {stakeholderTypeLabel(s.stakeholder_type)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           <Input
             required
             value={form.party_name}
@@ -484,8 +535,13 @@ function RecordForm({
             className="mt-1.5"
             placeholder="ex: Konan Marcel · ou BICICI"
           />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sélectionnez un acteur existant ou saisissez un nouveau nom : il sera automatiquement
+            ajouté aux parties prenantes du projet.
+          </p>
         </div>
       )}
+
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <Label>Montant (FCFA) *</Label>
