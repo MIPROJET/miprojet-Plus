@@ -508,7 +508,26 @@ function RecordForm({
       </div>
       {needsParty && (
         <div>
-          <Label>Nom de la source (personne ou structure) *</Label>
+          <Label>Partie prenante / acteur (personne ou structure) *</Label>
+          {stakeholders.length > 0 && (
+            <Select
+              value={
+                stakeholders.some((s) => s.name === form.party_name) ? form.party_name : ""
+              }
+              onValueChange={(v) => setForm({ ...form, party_name: v })}
+            >
+              <SelectTrigger className="mt-1.5">
+                <SelectValue placeholder="Choisir un acteur enregistré…" />
+              </SelectTrigger>
+              <SelectContent>
+                {stakeholders.map((s) => (
+                  <SelectItem key={s.id} value={s.name}>
+                    {s.name} · {stakeholderTypeLabel(s.stakeholder_type)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           <Input
             required
             value={form.party_name}
@@ -516,8 +535,13 @@ function RecordForm({
             className="mt-1.5"
             placeholder="ex: Konan Marcel · ou BICICI"
           />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sélectionnez un acteur existant ou saisissez un nouveau nom : il sera automatiquement
+            ajouté aux parties prenantes du projet.
+          </p>
         </div>
       )}
+
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <Label>Montant (FCFA) *</Label>
