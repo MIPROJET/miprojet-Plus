@@ -58,6 +58,26 @@ export function exportExcel(ctx: ExportCtx) {
     "Associés & Sources",
   );
 
+  // Détail ligne à ligne, regroupé par acteur (associé / banque / partenaire)
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.aoa_to_sheet([
+      ["Acteur", "Date", "Type", "Description", "Catégorie", "Montant"],
+      ...parties.flatMap((p) =>
+        p.ops.map((o) => [
+          p.name,
+          o.record_date,
+          recordLabel(o.record_type),
+          o.description ?? "",
+          o.category ?? "",
+          Number(o.amount),
+        ]),
+      ),
+    ]),
+    "Détail par acteur",
+  );
+
+
   const inflows = ctx.records.filter((r) =>
     ["vente", "encaissement", "apport_associe", "pret", "don", "investissement"].includes(
       r.record_type,
