@@ -406,7 +406,9 @@ function ProjectForm({
     showEquipe && { value: "equipe", label: "Équipe" },
     showEquipe && { value: "gouvernance", label: "Gouvernance" },
     { value: "traction", label: "Traction" },
+    { value: "acteurs", label: "Acteurs" },
     { value: "docs", label: "Visuels" },
+
 
   ].filter(Boolean) as { value: string; label: string }[];
 
