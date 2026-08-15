@@ -1573,10 +1573,12 @@ export type Database = {
           currency: string | null
           description: string | null
           id: string
+          party_name: string | null
           project_id: string
           receipt_path: string | null
           record_date: string
           record_type: string
+          stakeholder_id: string | null
           updated_at: string
           user_id: string
         }
@@ -1587,10 +1589,12 @@ export type Database = {
           currency?: string | null
           description?: string | null
           id?: string
+          party_name?: string | null
           project_id: string
           receipt_path?: string | null
           record_date?: string
           record_type?: string
+          stakeholder_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1601,10 +1605,12 @@ export type Database = {
           currency?: string | null
           description?: string | null
           id?: string
+          party_name?: string | null
           project_id?: string
           receipt_path?: string | null
           record_date?: string
           record_type?: string
+          stakeholder_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1629,6 +1635,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_mp_scoring_coherence"
             referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_financial_records_stakeholder_id_fkey"
+            columns: ["stakeholder_id"]
+            isOneToOne: false
+            referencedRelation: "mp_project_stakeholders"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1997,6 +2010,76 @@ export type Database = {
           },
           {
             foreignKeyName: "mp_project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_scoring_coherence"
+            referencedColumns: ["project_id"]
+          },
+        ]
+      }
+      mp_project_stakeholders: {
+        Row: {
+          capital_share: number | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          organization: string | null
+          phone: string | null
+          project_id: string
+          role: string | null
+          stakeholder_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          capital_share?: number | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          organization?: string | null
+          phone?: string | null
+          project_id: string
+          role?: string | null
+          stakeholder_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          capital_share?: number | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          organization?: string | null
+          phone?: string | null
+          project_id?: string
+          role?: string | null
+          stakeholder_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_project_stakeholders_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "mp_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_project_stakeholders_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_mp_ecosystem_scoring"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "mp_project_stakeholders_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "v_mp_scoring_coherence"
