@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from "@/assets/miprojet-logo.png.asset.json";
+const logo = { url: "/media/miprojet-logo.png" };
 
 /**
  * Logo MiProjet+ — résilient au chargement.
