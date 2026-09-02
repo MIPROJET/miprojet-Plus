@@ -1,0 +1,10 @@
+GRANT EXECUTE ON FUNCTION public.is_any_admin(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.mp_rls_test_report() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.owns_any_project(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_org_member(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_org_owner(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_manage_org(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.current_org_role(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.org_role_at_least(uuid, public.org_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.mp_can_read_document(uuid, uuid, public.org_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_access_connection_channel(uuid, uuid) TO authenticated;
