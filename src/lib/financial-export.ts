@@ -1,7 +1,7 @@
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 import { formatXOF, recordLabel } from "@/lib/financial-types";
 import {
   byCategory,
@@ -179,10 +179,7 @@ export function exportExcel(ctx: ExportCtx) {
     "Statistiques",
   );
 
-  XLSX.writeFile(
-    wb,
-    `MiProjet_${ctx.projectTitle.replace(/[^a-z0-9]+/gi, "_")}_${Date.now()}.xlsx`,
-  );
+  XLSX.writeFile(wb, exportFileName("Etat-financier", ctx.projectTitle, ctx.period, "xlsx"));
 }
 
 /* ---------- PDF ---------- */
@@ -287,19 +284,27 @@ export function exportPDF(ctx: ExportCtx) {
     );
   }
 
-  doc.save(`MiProjet_${ctx.projectTitle.replace(/[^a-z0-9]+/gi, "_")}_${Date.now()}.pdf`);
+  doc.save(exportFileName("Rapport-financier", ctx.projectTitle, ctx.period, "pdf"));
 }
 
-/* ---------- PNG ---------- */
-export async function exportPNG(node: HTMLElement, filename = "rapport") {
-  const canvas = await html2canvas(node, {
+/* ---------- PNG / Image HD ---------- */
+export async function exportPNG(
+  node: HTMLElement,
+  projectTitle = "rapport",
+  quality: "hd" | "fhd" = "fhd",
+) {
+  const targetWidth = quality === "fhd" ? 1920 : 1280;
+  const pixelRatio = Math.max(1, Math.min(4, targetWidth / (node.offsetWidth || targetWidth)));
+  const dataUrl = await toPng(node, {
     backgroundColor: "#ffffff",
-    scale: 2,
-    useCORS: true,
-    logging: false,
+    pixelRatio,
+    cacheBust: true,
+    skipFonts: false,
   });
   const link = document.createElement("a");
-  link.download = `${filename}_${Date.now()}.png`;
-  link.href = canvas.toDataURL("image/png");
+  const d = new Date();
+  const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  link.download = `MiProjet_Analyse_${slug(projectTitle)}_${quality.toUpperCase()}_${stamp}.png`;
+  link.href = dataUrl;
   link.click();
 }
