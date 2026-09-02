@@ -36,54 +36,43 @@ export function financingSource(r: FinancialRecord): string {
   return IN_SOURCES[r.record_type] ?? "Autres entrées";
 }
 
+/** Clé de fusion insensible à la casse, aux accents et aux espaces multiples. */
+export function normalizeName(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
 /** Regroupe les entrées par contributeur nommé (associé / banque / partenaire).
- *  Les lignes sans source explicite sont regroupées par type. */
+ *  Les lignes sans acteur explicite sont regroupées sous « Non attribué ». */
 export function byParty(records: FinancialRecord[]) {
   const inflows = records.filter((r) => recordFlow(r.record_type) === "in");
   const totalIn = inflows.reduce((s, r) => s + Number(r.amount), 0);
 
-  const groups = new Map<
-    string,
-    { name: string; total: number; count: number; ops: FinancialRecord[]; kind: string }
-  >();
-
-  for (const r of inflows) {
-    const name =
-      (r.party_name && r.party_name.trim()) ||
-      extractPartyName(r.description) ||
-      financingSource(r);
-    const key = `${name}::${r.record_type}`;
-    const g = groups.get(key) ?? {
-      name,
-      total: 0,
-      count: 0,
-      ops: [],
-      kind: recordLabel(r.record_type),
-    };
-    g.total += Number(r.amount);
-    g.count += 1;
-    g.ops.push(r);
-    groups.set(key, g);
-  }
-
-  // Fusion par nom (agrège les différents types d'un même associé)
   const merged = new Map<
     string,
     { name: string; total: number; count: number; ops: FinancialRecord[]; kinds: Set<string> }
   >();
-  for (const g of groups.values()) {
-    const m = merged.get(g.name) ?? {
-      name: g.name,
+
+  for (const r of inflows) {
+    const raw =
+      (r.party_name && r.party_name.trim()) || extractPartyName(r.description) || "Non attribué";
+    const key = normalizeName(raw);
+    const g = merged.get(key) ?? {
+      name: raw.toUpperCase() === raw ? raw : raw,
       total: 0,
       count: 0,
       ops: [],
       kinds: new Set<string>(),
     };
-    m.total += g.total;
-    m.count += g.count;
-    m.ops.push(...g.ops);
-    m.kinds.add(g.kind);
-    merged.set(g.name, m);
+    g.total += Number(r.amount);
+    g.count += 1;
+    g.ops.push(r);
+    g.kinds.add(recordLabel(r.record_type));
+    merged.set(key, g);
   }
 
   return Array.from(merged.values())
@@ -97,6 +86,7 @@ export function byParty(records: FinancialRecord[]) {
     }))
     .sort((a, b) => b.total - a.total);
 }
+
 
 export function byCategory(records: FinancialRecord[]) {
   const outflows = records.filter((r) => recordFlow(r.record_type) === "out");
@@ -190,7 +180,7 @@ export function overallTotals(records: FinancialRecord[]) {
     sorties: outSum,
     solde: inSum - outSum,
     operations: records.length,
-    contributeurs: byParty(records).length,
+    contributeurs: byParty(records).filter((p) => p.name !== "Non attribué").length,
   };
 }
 
