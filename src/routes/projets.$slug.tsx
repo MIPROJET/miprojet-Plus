@@ -177,25 +177,40 @@ function AgriCapitalPage() {
         </div>
       </section>
 
-      {/* Flyers gallery */}
+      {/* Arguments commerciaux */}
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold text-foreground">Supports commerciaux</h2>
-          <p className="mt-2 text-center text-muted-foreground">Flyers officiels AgriCapital — V2</p>
+          <h2 className="text-center text-3xl font-bold text-foreground">Pourquoi AgriCapital</h2>
+          <p className="mt-2 text-center text-muted-foreground">
+            Patrimoine agricole durable — offres PalmInvest, TerraPalm et AgriPlan
+          </p>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {[
-              { src: flyerVerso.url, label: "Vision — Patrimoine agricole durable" },
-              { src: flyerRecto.url, label: "Promo lancement -25 %" },
-              { src: flyerExclusif.url, label: "Exclusive -35 % · Premiers clients privilégiés" },
+              {
+                title: "Vision — Patrimoine agricole durable",
+                text: "Une plantation de palmier à huile productive pendant plus de 25 ans, installée et suivie par nos équipes techniques.",
+              },
+              {
+                title: "Promo lancement -25 %",
+                text: "Tarifs de lancement sur PalmInvest et TerraPalm, paiement échelonné sur 34 mois sans intérêt.",
+              },
+              {
+                title: "AgriPlan — 350 000 F",
+                text: "Étude technique, plan d'exploitation et accompagnement à la mise en place pour les porteurs autonomes.",
+              },
             ].map((f) => (
-              <a key={f.src} href={f.src} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-xl border border-border bg-card shadow-sm transition hover:shadow-lg">
-                <img src={f.src} alt={f.label} loading="lazy" className="aspect-[3/4] w-full object-cover transition group-hover:scale-[1.02]" />
-                <div className="p-3 text-xs font-medium text-foreground">{f.label}</div>
-              </a>
+              <div
+                key={f.title}
+                className="rounded-xl border border-border bg-card p-6 shadow-sm transition hover:shadow-lg"
+              >
+                <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400">{f.title}</div>
+                <p className="mt-2 text-sm text-muted-foreground">{f.text}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* Valorisation */}
       <section className="container mx-auto px-4 py-16">
