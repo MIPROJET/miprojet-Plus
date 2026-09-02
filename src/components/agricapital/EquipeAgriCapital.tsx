@@ -1,4 +1,4 @@
-import equipeImg from "@/assets/agricapital/equipe-agricapital.png.asset.json";
+const equipeImg = { url: "/media/equipe-agricapital.png" };
 
 type Member = {
   name: string;
