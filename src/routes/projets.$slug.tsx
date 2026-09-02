@@ -4,12 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getAgriCapitalPartition } from "@/lib/agricapital-public.functions";
 import { getPublicProject } from "@/lib/public-project.functions";
 import { PublicProjectView } from "@/components/PublicProjectView";
-import logoAsset from "@/assets/agricapital/agricapital-logo.png.asset.json";
-import posterAsset from "@/assets/agricapital/agricapital-poster.jpg.asset.json";
-import flyerVerso from "@/assets/agricapital/agricapital-flyer-verso.png.asset.json";
-import flyerRecto from "@/assets/agricapital/agricapital-flyer-recto.png.asset.json";
-import flyerExclusif from "@/assets/agricapital/agricapital-flyer-exclusif.png.asset.json";
-import palmierAsset from "@/assets/agricapital/agricapital-palmier.png.asset.json";
+const logoAsset = { url: "/media/agricapital-logo.png" };
+const posterAsset = { url: "/media/agricapital-poster.jpg" };
+const palmierAsset = { url: "/media/agricapital-palmier.jpg" };
+
 import { EquipeAgriCapital } from "@/components/agricapital/EquipeAgriCapital";
 import { formatXOF, recordLabel, recordFlow } from "@/lib/financial-types";
 import { CheckCircle2, Phone, Mail, Globe, MapPin, ArrowUpRight, ArrowDownRight } from "lucide-react";
