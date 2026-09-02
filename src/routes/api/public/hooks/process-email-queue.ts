@@ -70,7 +70,23 @@ async function sendViaResend(row: QueueRow, apiKey: string, lovableKey: string) 
 export const Route = createFileRoute("/api/public/hooks/process-email-queue")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const CRON_SECRET = process.env.EMAIL_QUEUE_CRON_SECRET;
+        if (!CRON_SECRET) {
+          return new Response(JSON.stringify({ error: "Endpoint not configured" }), {
+            status: 503,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        const provided =
+          request.headers.get("x-cron-secret") ??
+          (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+        if (!provided || !timingSafeEqualStr(provided, CRON_SECRET)) {
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
         const BREVO_API_KEY = process.env.BREVO_API_KEY;
