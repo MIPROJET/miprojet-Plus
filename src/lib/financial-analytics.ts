@@ -180,7 +180,7 @@ export function overallTotals(records: FinancialRecord[]) {
     sorties: outSum,
     solde: inSum - outSum,
     operations: records.length,
-    contributeurs: byParty(records).length,
+    contributeurs: byParty(records).filter((p) => p.name !== "Non attribué").length,
   };
 }
 
