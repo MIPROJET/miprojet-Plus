@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -182,10 +182,44 @@ export type Database = {
         }
         Relationships: []
       }
+      connection_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          request_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          request_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          request_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "connection_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connection_requests: {
         Row: {
           admin_notes: string | null
+          amount: number | null
           created_at: string
+          currency: string
           id: string
           meeting_at: string | null
           meeting_link: string | null
@@ -202,7 +236,9 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          amount?: number | null
           created_at?: string
+          currency?: string
           id?: string
           meeting_at?: string | null
           meeting_link?: string | null
@@ -219,7 +255,9 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          amount?: number | null
           created_at?: string
+          currency?: string
           id?: string
           meeting_at?: string | null
           meeting_link?: string | null
@@ -956,6 +994,51 @@ export type Database = {
           is_completed?: boolean | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      go_sync_runs: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          details: Json
+          error: string | null
+          id: string
+          modules_pushed: number
+          roles_pushed: number
+          settings_pushed: number
+          signal_id: string | null
+          status: string
+          trigger: string
+          updated_at: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          error?: string | null
+          id?: string
+          modules_pushed?: number
+          roles_pushed?: number
+          settings_pushed?: number
+          signal_id?: string | null
+          status?: string
+          trigger?: string
+          updated_at?: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          error?: string | null
+          id?: string
+          modules_pushed?: number
+          roles_pushed?: number
+          settings_pushed?: number
+          signal_id?: string | null
+          status?: string
+          trigger?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -4545,6 +4628,10 @@ export type Database = {
         Args: { _prefix: string; _rank: number; _ts: string }
         Returns: string
       }
+      can_access_connection_channel: {
+        Args: { _request_id: string; _user_id: string }
+        Returns: boolean
+      }
       can_manage_org: { Args: { _org_id: string }; Returns: boolean }
       current_org_role: {
         Args: { _org_id: string }
@@ -4620,6 +4707,21 @@ export type Database = {
         Returns: number
       }
       increment_tender_views: { Args: { _id: string }; Returns: undefined }
+      invest_can_read_document_object: {
+        Args: { _path: string }
+        Returns: boolean
+      }
+      invest_project_documents: {
+        Args: { _project_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          name: string
+          size_bytes: number
+          storage_path: string
+          unlocked: boolean
+        }[]
+      }
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
       is_email_unsubscribed: { Args: { _email: string }; Returns: boolean }
       is_org_member: { Args: { _org_id: string }; Returns: boolean }
@@ -4631,6 +4733,33 @@ export type Database = {
       mark_email_sent: {
         Args: { _id: string; _provider: string }
         Returns: undefined
+      }
+      mp_can_read_document: {
+        Args: {
+          _min_role: Database["public"]["Enums"]["org_role"]
+          _org_id: string
+          _owner_id: string
+        }
+        Returns: boolean
+      }
+      mp_public_projects: {
+        Args: never
+        Returns: {
+          activity_type: string
+          city: string
+          country: string
+          cover_url: string
+          created_at: string
+          description: string
+          display_id: string
+          id: string
+          logo_url: string
+          project_type: string
+          sector: string
+          short_pitch: string
+          status: string
+          title: string
+        }[]
       }
       mp_recompute_score: { Args: { _project_id: string }; Returns: undefined }
       mp_resync_scoring: { Args: { _project_id?: string }; Returns: Json }
@@ -4649,6 +4778,7 @@ export type Database = {
         Args: { _min: Database["public"]["Enums"]["org_role"]; _org: string }
         Returns: boolean
       }
+      owns_any_project: { Args: { _user_id: string }; Returns: boolean }
       pick_email_provider: { Args: never; Returns: string }
       role_rank: {
         Args: { _r: Database["public"]["Enums"]["org_role"] }
@@ -4687,12 +4817,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4716,11 +4846,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4741,11 +4871,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4766,11 +4896,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4783,11 +4913,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
