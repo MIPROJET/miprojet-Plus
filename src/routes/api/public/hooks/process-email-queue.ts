@@ -2,7 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 
 // Public cron endpoint that drains public.email_queue.
 // Bascule automatique: Brevo (300/j) → Resend (100/j) via pick_email_provider().
-// Auth: apikey header = SUPABASE_ANON_KEY (bypass at /api/public/*).
+// Auth: shared secret privé EMAIL_QUEUE_CRON_SECRET (header x-cron-secret
+// ou Authorization: Bearer <secret>), comparé en temps constant.
+
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const ea = new TextEncoder().encode(a);
+  const eb = new TextEncoder().encode(b);
+  if (ea.length !== eb.length) return false;
+  let diff = 0;
+  for (let i = 0; i < ea.length; i++) diff |= ea[i]! ^ eb[i]!;
+  return diff === 0;
+}
 
 const BATCH_SIZE = 25;
 const FROM_ADDRESS = "MiProjet <info@ivoireprojet.com>";
@@ -60,7 +70,23 @@ async function sendViaResend(row: QueueRow, apiKey: string, lovableKey: string) 
 export const Route = createFileRoute("/api/public/hooks/process-email-queue")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const CRON_SECRET = process.env.EMAIL_QUEUE_CRON_SECRET;
+        if (!CRON_SECRET) {
+          return new Response(JSON.stringify({ error: "Endpoint not configured" }), {
+            status: 503,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        const provided =
+          request.headers.get("x-cron-secret") ??
+          (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+        if (!provided || !timingSafeEqualStr(provided, CRON_SECRET)) {
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
         const BREVO_API_KEY = process.env.BREVO_API_KEY;
