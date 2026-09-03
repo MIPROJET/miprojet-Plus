@@ -1,0 +1,7 @@
+- [ ] Consolider les associés AgriCapital et réaffecter les opérations sans modifier montants/dates
+- [ ] Importer les statuts signés dans Gouvernance et Espace document
+- [ ] Ajouter filtres et exports PDF/Excel/PNG HD-FHD
+- [ ] Ajouter jusqu’à 3 justificatifs par opération
+- [ ] Implémenter import CV avec analyse IA
+- [ ] Importer/dédoublonner 25 visuels AgriCapital et synchroniser contenu/score 80%%
+- [ ] Tester les parcours et publier
