@@ -32,7 +32,7 @@ async function handle(request: Request): Promise<Response> {
   if (error || !data || !(data as any).ok) {
     return html('Lien invalide', 'Ce lien de désinscription est invalide ou expiré.')
   }
-  const email = (data as any).email as string
+  const email = escapeHtml((data as any).email)
   return html(
     'Désinscription confirmée',
     `L'adresse <strong>${email}</strong> ne recevra plus d'emails de MiProjet. Vous pouvez réactiver les notifications depuis votre espace personnel à tout moment.`,
