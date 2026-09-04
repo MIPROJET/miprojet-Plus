@@ -69,6 +69,9 @@ function AnalysePage() {
   const [period, setPeriod] = useState<Period>("month");
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
+  const [partyFilter, setPartyFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   const reportRef = useRef<HTMLDivElement>(null);
 
   const projectsQ = useQuery({
@@ -96,22 +99,54 @@ function AnalysePage() {
     },
   });
 
+  const base = useMemo(
+    () =>
+      (recordsQ.data ?? []).map((r) => ({
+        id: r.id,
+        project_id: r.project_id,
+        record_type: r.record_type,
+        amount: Number(r.amount),
+        record_date: r.record_date,
+        description: r.description,
+        category: r.category,
+        party_name: (r as any).party_name ?? null,
+        stakeholder_id: (r as any).stakeholder_id ?? null,
+      })),
+    [recordsQ.data],
+  );
+
+  /** Listes de valeurs pour les filtres (calculées sur les données brutes). */
+  const partyOptions = useMemo(
+    () => byParty(base).map((p) => p.name),
+    [base],
+  );
+  const categoryOptions = useMemo(
+    () => byCategory(base).map((c) => c.category),
+    [base],
+  );
+  const sourceOptions = useMemo(() => bySource(base).map((s) => s.source), [base]);
+
   const filtered = useMemo(() => {
-    let list = (recordsQ.data ?? []).map((r) => ({
-      id: r.id,
-      project_id: r.project_id,
-      record_type: r.record_type,
-      amount: Number(r.amount),
-      record_date: r.record_date,
-      description: r.description,
-      category: r.category,
-      party_name: (r as any).party_name ?? null,
-      stakeholder_id: (r as any).stakeholder_id ?? null,
-    }));
+    let list = base;
     if (period === "custom" && customFrom) list = list.filter((r) => r.record_date >= customFrom);
     if (period === "custom" && customTo) list = list.filter((r) => r.record_date <= customTo);
+    if (partyFilter !== "all")
+      list = list.filter(
+        (r) =>
+          normalizeName(
+            (r.party_name && r.party_name.trim()) ||
+              extractPartyName(r.description) ||
+              "Non attribué",
+          ) === normalizeName(partyFilter),
+      );
+    if (categoryFilter !== "all")
+      list = list.filter((r) => (r.category?.trim() || "Non classé") === categoryFilter);
+    if (sourceFilter !== "all")
+      list = list.filter(
+        (r) => recordFlow(r.record_type) !== "in" || financingSource(r) === sourceFilter,
+      );
     return list;
-  }, [recordsQ.data, period, customFrom, customTo]);
+  }, [base, period, customFrom, customTo, partyFilter, categoryFilter, sourceFilter]);
 
   const totals = overallTotals(filtered);
   const parties = byParty(filtered);
@@ -124,12 +159,30 @@ function AnalysePage() {
       ? "Tous les projets"
       : (projects.find((p) => p.id === projectId)?.title ?? "Projet");
 
+  const activeFilters = [
+    partyFilter !== "all" ? `Associé : ${partyFilter}` : null,
+    categoryFilter !== "all" ? `Poste : ${categoryFilter}` : null,
+    sourceFilter !== "all" ? `Source : ${sourceFilter}` : null,
+  ].filter(Boolean) as string[];
+
+  const exportKind =
+    partyFilter !== "all"
+      ? `Analyse-par-associe-${partyFilter}`
+      : categoryFilter !== "all"
+        ? `Analyse-par-poste-${categoryFilter}`
+        : sourceFilter !== "all"
+          ? `Analyse-par-source-${sourceFilter}`
+          : "Etat-financier";
+
   const ctx = {
     projectTitle,
     organizationName: orgQ.data?.name,
     period,
     records: filtered,
+    kind: exportKind,
+    filters: activeFilters,
   };
+
 
   if (projects.length === 0) {
     return (
