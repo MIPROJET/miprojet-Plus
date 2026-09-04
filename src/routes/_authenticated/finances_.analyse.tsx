@@ -13,10 +13,14 @@ import {
   bySource,
   byPeriod,
   overallTotals,
+  normalizeName,
+  extractPartyName,
+  financingSource,
   DISCLAIMER,
   type Period,
 } from "@/lib/financial-analytics";
-import { formatXOF } from "@/lib/financial-types";
+import { formatXOF, recordFlow } from "@/lib/financial-types";
+
 import { exportExcel, exportPDF, exportPNG } from "@/lib/financial-export";
 import { Button } from "@/components/ui/button";
 import {
