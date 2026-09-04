@@ -4742,6 +4742,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      mp_can_write_project: { Args: { _project_id: string }; Returns: boolean }
       mp_public_projects: {
         Args: never
         Returns: {
