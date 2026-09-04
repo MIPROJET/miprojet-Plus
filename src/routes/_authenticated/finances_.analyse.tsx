@@ -13,10 +13,14 @@ import {
   bySource,
   byPeriod,
   overallTotals,
+  normalizeName,
+  extractPartyName,
+  financingSource,
   DISCLAIMER,
   type Period,
 } from "@/lib/financial-analytics";
-import { formatXOF } from "@/lib/financial-types";
+import { formatXOF, recordFlow } from "@/lib/financial-types";
+
 import { exportExcel, exportPDF, exportPNG } from "@/lib/financial-export";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,6 +73,9 @@ function AnalysePage() {
   const [period, setPeriod] = useState<Period>("month");
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
+  const [partyFilter, setPartyFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   const reportRef = useRef<HTMLDivElement>(null);
 
   const projectsQ = useQuery({
@@ -96,22 +103,54 @@ function AnalysePage() {
     },
   });
 
+  const base = useMemo(
+    () =>
+      (recordsQ.data ?? []).map((r) => ({
+        id: r.id,
+        project_id: r.project_id,
+        record_type: r.record_type,
+        amount: Number(r.amount),
+        record_date: r.record_date,
+        description: r.description,
+        category: r.category,
+        party_name: (r as any).party_name ?? null,
+        stakeholder_id: (r as any).stakeholder_id ?? null,
+      })),
+    [recordsQ.data],
+  );
+
+  /** Listes de valeurs pour les filtres (calculées sur les données brutes). */
+  const partyOptions = useMemo(
+    () => byParty(base).map((p) => p.name),
+    [base],
+  );
+  const categoryOptions = useMemo(
+    () => byCategory(base).map((c) => c.category),
+    [base],
+  );
+  const sourceOptions = useMemo(() => bySource(base).map((s) => s.source), [base]);
+
   const filtered = useMemo(() => {
-    let list = (recordsQ.data ?? []).map((r) => ({
-      id: r.id,
-      project_id: r.project_id,
-      record_type: r.record_type,
-      amount: Number(r.amount),
-      record_date: r.record_date,
-      description: r.description,
-      category: r.category,
-      party_name: (r as any).party_name ?? null,
-      stakeholder_id: (r as any).stakeholder_id ?? null,
-    }));
+    let list = base;
     if (period === "custom" && customFrom) list = list.filter((r) => r.record_date >= customFrom);
     if (period === "custom" && customTo) list = list.filter((r) => r.record_date <= customTo);
+    if (partyFilter !== "all")
+      list = list.filter(
+        (r) =>
+          normalizeName(
+            (r.party_name && r.party_name.trim()) ||
+              extractPartyName(r.description) ||
+              "Non attribué",
+          ) === normalizeName(partyFilter),
+      );
+    if (categoryFilter !== "all")
+      list = list.filter((r) => (r.category?.trim() || "Non classé") === categoryFilter);
+    if (sourceFilter !== "all")
+      list = list.filter(
+        (r) => recordFlow(r.record_type) !== "in" || financingSource(r) === sourceFilter,
+      );
     return list;
-  }, [recordsQ.data, period, customFrom, customTo]);
+  }, [base, period, customFrom, customTo, partyFilter, categoryFilter, sourceFilter]);
 
   const totals = overallTotals(filtered);
   const parties = byParty(filtered);
@@ -124,12 +163,30 @@ function AnalysePage() {
       ? "Tous les projets"
       : (projects.find((p) => p.id === projectId)?.title ?? "Projet");
 
+  const activeFilters = [
+    partyFilter !== "all" ? `Associé : ${partyFilter}` : null,
+    categoryFilter !== "all" ? `Poste : ${categoryFilter}` : null,
+    sourceFilter !== "all" ? `Source : ${sourceFilter}` : null,
+  ].filter(Boolean) as string[];
+
+  const exportKind =
+    partyFilter !== "all"
+      ? `Analyse-par-associe-${partyFilter}`
+      : categoryFilter !== "all"
+        ? `Analyse-par-poste-${categoryFilter}`
+        : sourceFilter !== "all"
+          ? `Analyse-par-source-${sourceFilter}`
+          : "Etat-financier";
+
   const ctx = {
     projectTitle,
     organizationName: orgQ.data?.name,
     period,
     records: filtered,
+    kind: exportKind,
+    filters: activeFilters,
   };
+
 
   if (projects.length === 0) {
     return (
@@ -214,6 +271,81 @@ function AnalysePage() {
         </div>
       )}
 
+      {/* Filtres d'impression : associé, poste de dépense, source */}
+      <div className="grid grid-cols-1 gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3">
+        <div>
+          <Label className="text-xs">Associé / contributeur</Label>
+          <Select value={partyFilter} onValueChange={setPartyFilter}>
+            <SelectTrigger className="mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les associés</SelectItem>
+              {partyOptions.map((n) => (
+                <SelectItem key={n} value={n}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs">Poste de dépense</Label>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les postes</SelectItem>
+              {categoryOptions.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs">Source de financement</Label>
+          <Select value={sourceFilter} onValueChange={setSourceFilter}>
+            <SelectTrigger className="mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les sources</SelectItem>
+              {sourceOptions.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {activeFilters.length > 0 && (
+          <div className="sm:col-span-3 flex flex-wrap items-center gap-2">
+            {activeFilters.map((f) => (
+              <span
+                key={f}
+                className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+              >
+                {f}
+              </span>
+            ))}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setPartyFilter("all");
+                setCategoryFilter("all");
+                setSourceFilter("all");
+              }}
+            >
+              Réinitialiser
+            </Button>
+          </div>
+        )}
+      </div>
+
       {/* Exports */}
       <div className="flex flex-wrap gap-2">
         <Button onClick={() => exportPDF(ctx)} variant="outline">
@@ -223,12 +355,23 @@ function AnalysePage() {
           <FileSpreadsheet className="mr-2 h-4 w-4" /> Exporter Excel
         </Button>
         <Button
-          onClick={() => reportRef.current && exportPNG(reportRef.current, projectTitle)}
+          onClick={() =>
+            reportRef.current && exportPNG(reportRef.current, `${exportKind}_${projectTitle}`, "hd")
+          }
           variant="outline"
         >
-          <ImageIcon className="mr-2 h-4 w-4" /> Exporter Image PNG
+          <ImageIcon className="mr-2 h-4 w-4" /> Image HD
+        </Button>
+        <Button
+          onClick={() =>
+            reportRef.current && exportPNG(reportRef.current, `${exportKind}_${projectTitle}`, "fhd")
+          }
+          variant="outline"
+        >
+          <ImageIcon className="mr-2 h-4 w-4" /> Image Full HD
         </Button>
       </div>
+
 
       {/* Zone exportable */}
       <div ref={reportRef} className="space-y-6 rounded-2xl bg-background p-4">

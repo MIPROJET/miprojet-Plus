@@ -268,6 +268,8 @@ function FinancesPage() {
   );
 }
 
+const MAX_RECEIPTS = 3;
+
 function ReceiptCell({
   record,
   userId,
@@ -278,53 +280,88 @@ function ReceiptCell({
   onChanged: () => void;
 }) {
   const [busy, setBusy] = useState(false);
-  const [signedUrl, setSignedUrl] = useState<string | null>(null);
-  const hasReceipt = !!record.receipt_path;
+  const [urls, setUrls] = useState<Record<string, string>>({});
 
-  // Receipts now live in the private `documents` bucket and are served via
-  // short-lived signed URLs. Legacy receipts saved in `project-media` keep
-  // working through the public URL fallback.
-  const ensureUrl = async (): Promise<string | null> => {
-    if (!hasReceipt) return null;
-    if (signedUrl) return signedUrl;
-    const path: string = record.receipt_path;
-    const isLegacyPublic = !path.startsWith("mp/");
-    if (isLegacyPublic) {
+  /** Jusqu'à 3 justificatifs (reçu, référence, photo) par opération. */
+  const paths: string[] =
+    (Array.isArray(record.receipt_paths) && record.receipt_paths.length
+      ? record.receipt_paths
+      : record.receipt_path
+        ? [record.receipt_path]
+        : []) ?? [];
+
+  // Les justificatifs vivent dans le bucket privé `documents` et sont servis via
+  // des URLs signées de courte durée. Les anciens fichiers publics restent lisibles.
+  const ensureUrl = async (path: string): Promise<string | null> => {
+    if (urls[path]) return urls[path];
+    if (!path.startsWith("mp/")) {
       const u = publicUrlFor(path);
-      setSignedUrl(u);
+      setUrls((s) => ({ ...s, [path]: u }));
       return u;
     }
-    const { data, error } = await supabase.storage
-      .from("documents")
-      .createSignedUrl(path, 3600);
+    const { data, error } = await supabase.storage.from("documents").createSignedUrl(path, 3600);
     if (error) {
-      toast.error("Impossible d'ouvrir la facture");
+      toast.error("Impossible d'ouvrir le justificatif");
       return null;
     }
-    setSignedUrl(data.signedUrl);
+    setUrls((s) => ({ ...s, [path]: data.signedUrl }));
     return data.signedUrl;
   };
 
-  const onFile = async (file: File) => {
-    if (file.size > 8 * 1024 * 1024) {
-      toast.error("Max 8 Mo");
+  // Vignettes : on précharge les URLs signées des images déjà liées.
+  useEffect(() => {
+    paths.filter(isImagePath).forEach((p) => void ensureUrl(p));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paths.join("|")]);
+
+  const onFiles = async (files: FileList) => {
+    const room = MAX_RECEIPTS - paths.length;
+    if (room <= 0) {
+      toast.error(`Maximum ${MAX_RECEIPTS} justificatifs par opération`);
+      return;
+    }
+    const list = Array.from(files).slice(0, room);
+    if (list.some((f) => f.size > 8 * 1024 * 1024)) {
+      toast.error("Chaque fichier doit faire moins de 8 Mo");
       return;
     }
     setBusy(true);
     try {
-      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `mp/${userId}/receipts/${record.project_id}/${Date.now()}-${safe}`;
-      const { error: upErr } = await supabase.storage
-        .from("documents")
-        .upload(path, file, { upsert: false, contentType: file.type });
-      if (upErr) throw upErr;
+      const added: string[] = [];
+      for (const file of list) {
+        const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `mp/${userId}/receipts/${record.project_id}/${Date.now()}-${safe}`;
+        const { error: upErr } = await supabase.storage
+          .from("documents")
+          .upload(path, file, { upsert: false, contentType: file.type });
+        if (upErr) throw upErr;
+        added.push(path);
+      }
+      const next = [...paths, ...added];
       const { error } = await supabase
         .from("mp_financial_records")
-        .update({ receipt_path: path })
+        .update({ receipt_paths: next, receipt_path: next[0] } as any)
         .eq("id", record.id);
       if (error) throw error;
-      toast.success("Facture liée");
-      setSignedUrl(null);
+      toast.success(added.length > 1 ? "Justificatifs liés" : "Justificatif lié");
+      onChanged();
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const removeAt = async (path: string) => {
+    setBusy(true);
+    try {
+      const next = paths.filter((p) => p !== path);
+      const { error } = await supabase
+        .from("mp_financial_records")
+        .update({ receipt_paths: next, receipt_path: next[0] ?? null } as any)
+        .eq("id", record.id);
+      if (error) throw error;
+      await supabase.storage.from("documents").remove([path]);
       onChanged();
     } catch (e: any) {
       toast.error(e.message);
@@ -334,37 +371,69 @@ function ReceiptCell({
   };
 
   return (
-    <div className="flex items-center justify-center">
-      {hasReceipt ? (
-        <button
-          type="button"
-          onClick={async () => {
-            const u = await ensureUrl();
-            if (u) window.open(u, "_blank", "noopener,noreferrer");
-          }}
-          title="Voir la facture"
-          className="text-primary hover:text-primary/70"
-        >
-          <FileText className="h-4 w-4" />
-        </button>
-      ) : (
+    <div className="flex flex-wrap items-center justify-center gap-1">
+      {paths.map((p) => (
+        <div key={p} className="group relative">
+          <button
+            type="button"
+            onClick={async () => {
+              const u = await ensureUrl(p);
+              if (u) window.open(u, "_blank", "noopener,noreferrer");
+            }}
+            title="Voir le justificatif"
+            className="block"
+          >
+            {isImagePath(p) && urls[p] ? (
+              <img
+                src={urls[p]}
+                alt="Justificatif"
+                loading="lazy"
+                className="h-8 w-8 rounded border object-cover"
+              />
+            ) : (
+              <span className="flex h-8 w-8 items-center justify-center rounded border text-primary">
+                <FileText className="h-4 w-4" />
+              </span>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => removeAt(p)}
+            disabled={busy}
+            title="Retirer"
+            className="absolute -right-1 -top-1 hidden h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] leading-none text-destructive-foreground group-hover:flex"
+          >
+            ×
+          </button>
+        </div>
+      ))}
+      {paths.length < MAX_RECEIPTS && (
         <label
           className={`cursor-pointer text-muted-foreground hover:text-primary ${busy ? "opacity-50" : ""}`}
-          title="Joindre une facture"
+          title={`Joindre un justificatif (${paths.length}/${MAX_RECEIPTS})`}
         >
           <Paperclip className="h-4 w-4" />
           <input
             type="file"
+            multiple
             accept="image/*,application/pdf"
             className="hidden"
             disabled={busy}
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); }}
+            onChange={(e) => {
+              if (e.target.files?.length) onFiles(e.target.files);
+              e.target.value = "";
+            }}
           />
         </label>
       )}
     </div>
   );
 }
+
+function isImagePath(path: string) {
+  return /\.(png|jpe?g|webp|gif|avif)$/i.test(path);
+}
+
 
 function KPI({
   label,
