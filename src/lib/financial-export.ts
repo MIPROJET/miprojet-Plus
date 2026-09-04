@@ -73,6 +73,7 @@ export function exportExcel(ctx: ExportCtx) {
     ["Organisation", ctx.organizationName ?? "—"],
     ["Généré le", new Date().toLocaleString("fr-FR")],
     ["Référence", ref()],
+    ["Filtres actifs", ctx.filters?.length ? ctx.filters.join(" · ") : "Aucun"],
     [],
     ["Entrées totales", totals.entrees],
     ["Sorties totales", totals.sorties],
@@ -83,6 +84,7 @@ export function exportExcel(ctx: ExportCtx) {
     ["Avertissement", DISCLAIMER],
   ];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), "Résumé");
+
 
   const parties = byParty(ctx.records);
   XLSX.utils.book_append_sheet(
