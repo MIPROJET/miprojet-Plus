@@ -186,7 +186,7 @@ export function exportExcel(ctx: ExportCtx) {
     "Statistiques",
   );
 
-  XLSX.writeFile(wb, exportFileName("Etat-financier", ctx.projectTitle, ctx.period, "xlsx"));
+  XLSX.writeFile(wb, exportFileName(ctx.kind ?? "Etat-financier", ctx.projectTitle, ctx.period, "xlsx"));
 }
 
 /* ---------- PDF ---------- */
@@ -204,6 +204,7 @@ export function exportPDF(ctx: ExportCtx) {
   if (ctx.organizationName) doc.text(`Organisation : ${ctx.organizationName}`, 40, 88);
   doc.text(`Généré le : ${new Date().toLocaleString("fr-FR")}`, 40, 104);
   doc.text(`Référence : ${reference}`, 40, 120);
+  if (ctx.filters?.length) doc.text(`Filtres : ${ctx.filters.join(" · ")}`, 40, 136);
 
   autoTable(doc, {
     startY: 140,
@@ -291,7 +292,7 @@ export function exportPDF(ctx: ExportCtx) {
     );
   }
 
-  doc.save(exportFileName("Rapport-financier", ctx.projectTitle, ctx.period, "pdf"));
+  doc.save(exportFileName(ctx.kind ?? "Rapport-financier", ctx.projectTitle, ctx.period, "pdf"));
 }
 
 /* ---------- PNG / Image HD ---------- */
