@@ -271,6 +271,81 @@ function AnalysePage() {
         </div>
       )}
 
+      {/* Filtres d'impression : associé, poste de dépense, source */}
+      <div className="grid grid-cols-1 gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-3">
+        <div>
+          <Label className="text-xs">Associé / contributeur</Label>
+          <Select value={partyFilter} onValueChange={setPartyFilter}>
+            <SelectTrigger className="mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les associés</SelectItem>
+              {partyOptions.map((n) => (
+                <SelectItem key={n} value={n}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs">Poste de dépense</Label>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les postes</SelectItem>
+              {categoryOptions.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs">Source de financement</Label>
+          <Select value={sourceFilter} onValueChange={setSourceFilter}>
+            <SelectTrigger className="mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les sources</SelectItem>
+              {sourceOptions.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {activeFilters.length > 0 && (
+          <div className="sm:col-span-3 flex flex-wrap items-center gap-2">
+            {activeFilters.map((f) => (
+              <span
+                key={f}
+                className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+              >
+                {f}
+              </span>
+            ))}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setPartyFilter("all");
+                setCategoryFilter("all");
+                setSourceFilter("all");
+              }}
+            >
+              Réinitialiser
+            </Button>
+          </div>
+        )}
+      </div>
+
       {/* Exports */}
       <div className="flex flex-wrap gap-2">
         <Button onClick={() => exportPDF(ctx)} variant="outline">
@@ -280,12 +355,23 @@ function AnalysePage() {
           <FileSpreadsheet className="mr-2 h-4 w-4" /> Exporter Excel
         </Button>
         <Button
-          onClick={() => reportRef.current && exportPNG(reportRef.current, projectTitle)}
+          onClick={() =>
+            reportRef.current && exportPNG(reportRef.current, `${exportKind}_${projectTitle}`, "hd")
+          }
           variant="outline"
         >
-          <ImageIcon className="mr-2 h-4 w-4" /> Exporter Image PNG
+          <ImageIcon className="mr-2 h-4 w-4" /> Image HD
+        </Button>
+        <Button
+          onClick={() =>
+            reportRef.current && exportPNG(reportRef.current, `${exportKind}_${projectTitle}`, "fhd")
+          }
+          variant="outline"
+        >
+          <ImageIcon className="mr-2 h-4 w-4" /> Image Full HD
         </Button>
       </div>
+
 
       {/* Zone exportable */}
       <div ref={reportRef} className="space-y-6 rounded-2xl bg-background p-4">
