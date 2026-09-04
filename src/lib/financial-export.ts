@@ -207,7 +207,7 @@ export function exportPDF(ctx: ExportCtx) {
   if (ctx.filters?.length) doc.text(`Filtres : ${ctx.filters.join(" · ")}`, 40, 136);
 
   autoTable(doc, {
-    startY: 140,
+    startY: ctx.filters?.length ? 152 : 140,
     head: [["Indicateur", "Valeur"]],
     body: [
       ["Entrées totales", formatXOF(totals.entrees)],
