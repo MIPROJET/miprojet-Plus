@@ -19,7 +19,12 @@ type ExportCtx = {
   organizationName?: string;
   period: Period;
   records: FinancialRecord[];
+  /** Type d'analyse exporté (sert au nom de fichier). */
+  kind?: string;
+  /** Filtres actifs, rappelés en tête du document. */
+  filters?: string[];
 };
+
 
 function ref(): string {
   const d = new Date();
