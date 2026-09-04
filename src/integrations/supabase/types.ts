@@ -1659,6 +1659,7 @@ export type Database = {
           party_name: string | null
           project_id: string
           receipt_path: string | null
+          receipt_paths: string[]
           record_date: string
           record_type: string
           stakeholder_id: string | null
@@ -1675,6 +1676,7 @@ export type Database = {
           party_name?: string | null
           project_id: string
           receipt_path?: string | null
+          receipt_paths?: string[]
           record_date?: string
           record_type?: string
           stakeholder_id?: string | null
@@ -1691,6 +1693,7 @@ export type Database = {
           party_name?: string | null
           project_id?: string
           receipt_path?: string | null
+          receipt_paths?: string[]
           record_date?: string
           record_type?: string
           stakeholder_id?: string | null
