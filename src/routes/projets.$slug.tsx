@@ -9,7 +9,7 @@ const posterAsset = { url: "/media/agricapital-poster.jpg" };
 const palmierAsset = { url: "/media/agricapital-palmier.jpg" };
 
 import { EquipeAgriCapital } from "@/components/agricapital/EquipeAgriCapital";
-import { formatXOF, recordLabel, recordFlow } from "@/lib/financial-types";
+import { formatXOF } from "@/lib/financial-types";
 import { CheckCircle2, Phone, Mail, Globe, MapPin, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 export const Route = createFileRoute("/projets/$slug")({
@@ -244,8 +244,9 @@ function AgriCapitalPage() {
       {/* Partition financière live */}
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-foreground">Partition financière — journal des opérations</h2>
-          <p className="mt-2 text-muted-foreground">Synchronisé depuis MiProjet+ · contrôle de cohérence automatique</p>
+          <h2 className="text-3xl font-bold text-foreground">Partition financière — synthèse</h2>
+          <p className="mt-2 text-muted-foreground">Synchronisé depuis MiProjet+ · totaux agrégés, détail des opérations réservé aux membres du projet</p>
+
 
           {partitionQ.isLoading && <div className="mt-6 text-sm text-muted-foreground">Chargement…</div>}
           {partitionQ.data && (
@@ -271,34 +272,12 @@ function AgriCapitalPage() {
                   )}
                 </div>
               </div>
-              <div className="mt-6 overflow-x-auto rounded-xl border border-border bg-card">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-3 py-2 text-left">Date</th>
-                      <th className="px-3 py-2 text-left">Type</th>
-                      <th className="px-3 py-2 text-left">Description</th>
-                      <th className="px-3 py-2 text-right">Montant</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {partitionQ.data.records.map((r, i) => (
-                      <tr key={i} className="border-t border-border/50">
-                        <td className="px-3 py-2 text-muted-foreground tabular-nums">{r.record_date}</td>
-                        <td className="px-3 py-2">{recordLabel(r.record_type)}</td>
-                        <td className="px-3 py-2 text-muted-foreground">{r.description}</td>
-                        <td className={`px-3 py-2 text-right font-medium tabular-nums ${recordFlow(r.record_type) === "in" ? "text-emerald-600" : "text-red-600"}`}>
-                          {recordFlow(r.record_type) === "in" ? "+" : "−"}{formatXOF(Number(r.amount))}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="border-t border-border/50 px-3 py-2 text-center text-xs text-muted-foreground">
-                  Aperçu des 25 premières opérations · {partitionQ.data.nbOperations} au total
-                </div>
-              </div>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Le journal détaillé des opérations n'est pas public : il reste accessible aux
+                porteurs du projet et aux partenaires autorisés depuis MiProjet+.
+              </p>
             </>
+
           )}
         </div>
       </section>
