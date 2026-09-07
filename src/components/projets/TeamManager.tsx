@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SmartImage } from "@/components/SmartImage";
-import { Plus, Trash2, Pencil, Upload, X } from "lucide-react";
+import { Plus, Trash2, Pencil, Upload, X, FileText, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { extractCvFields } from "@/lib/cv-import.functions";
 
 type Member = {
   id?: string;
