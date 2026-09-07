@@ -1042,6 +1042,51 @@ export type Database = {
         }
         Relationships: []
       }
+      go_team_members: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          member_id: string
+          owner_id: string
+          team_role: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          member_id: string
+          owner_id: string
+          team_role?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          member_id?: string
+          owner_id?: string
+          team_role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "go_team_members_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "go_team_members_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       import_sessions: {
         Row: {
           created_at: string
@@ -4702,6 +4747,12 @@ export type Database = {
           id: string
         }[]
       }
+      go_can_access_shared_row: {
+        Args: { _row_user: string }
+        Returns: boolean
+      }
+      go_can_access_team_row: { Args: { _row_user: string }; Returns: boolean }
+      go_is_activity_admin: { Args: { _user_id: string }; Returns: boolean }
       go_is_admin: { Args: { _user_id: string }; Returns: boolean }
       has_active_subscription: { Args: { _user_id: string }; Returns: boolean }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
