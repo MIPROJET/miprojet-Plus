@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchMyProjects, fetchAllUserRecords } from "@/lib/data";
 import { RECORD_TYPES, formatXOF, recordFlow, recordLabel } from "@/lib/financial-types";
