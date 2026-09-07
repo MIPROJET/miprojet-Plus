@@ -9,7 +9,7 @@ const posterAsset = { url: "/media/agricapital-poster.jpg" };
 const palmierAsset = { url: "/media/agricapital-palmier.jpg" };
 
 import { EquipeAgriCapital } from "@/components/agricapital/EquipeAgriCapital";
-import { formatXOF, recordLabel, recordFlow } from "@/lib/financial-types";
+import { formatXOF } from "@/lib/financial-types";
 import { CheckCircle2, Phone, Mail, Globe, MapPin, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 export const Route = createFileRoute("/projets/$slug")({
