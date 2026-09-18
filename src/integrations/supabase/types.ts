@@ -214,6 +214,44 @@ export type Database = {
           },
         ]
       }
+      connection_request_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          notes: string | null
+          request_id: string
+          to_status: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          notes?: string | null
+          request_id: string
+          to_status: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          notes?: string | null
+          request_id?: string
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_request_events_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "connection_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connection_requests: {
         Row: {
           admin_notes: string | null
@@ -4776,6 +4814,63 @@ export type Database = {
           unlocked: boolean
         }[]
       }
+      invest_project_member: {
+        Args: { _id: string }
+        Returns: {
+          amount_requested: number
+          currency: string
+          current_funding: number
+          description: string
+          funding_goal: number
+          funds_raised: number
+          gallery_urls: string[]
+          id: string
+          mp_score: number
+        }[]
+      }
+      invest_public_project: {
+        Args: { _id: string }
+        Returns: {
+          category: string
+          city: string
+          country: string
+          cover_url: string
+          created_at: string
+          currency: string
+          display_id: string
+          id: string
+          image_url: string
+          logo_url: string
+          mp_project_id: string
+          public_summary: string
+          sector: string
+          tagline: string
+          title: string
+          website_url: string
+        }[]
+      }
+      invest_public_projects: {
+        Args: never
+        Returns: {
+          category: string
+          city: string
+          country: string
+          cover_url: string
+          created_at: string
+          currency: string
+          display_id: string
+          id: string
+          image_url: string
+          logo_url: string
+          mp_project_id: string
+          public_summary: string
+          sector: string
+          tagline: string
+          title: string
+          website_url: string
+        }[]
+      }
+      invest_public_stats: { Args: never; Returns: Json }
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
       is_email_unsubscribed: { Args: { _email: string }; Returns: boolean }
       is_org_member: { Args: { _org_id: string }; Returns: boolean }
