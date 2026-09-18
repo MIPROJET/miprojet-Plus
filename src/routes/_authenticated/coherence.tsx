@@ -243,12 +243,12 @@ function CoherencePage() {
           {!loading && rows.length === 0 && (
             <p className="text-sm text-muted-foreground">Aucun projet à contrôler.</p>
           )}
-          {rows.map((r) => {
+          {rows.map((r, i) => {
             const meta = ETAT_META[r.etat];
             const Icon = meta.Icon;
             const diffs = diffsOf(r);
             return (
-              <div key={r.project_id} className="rounded-lg border p-3">
+              <div key={`${r.project_id}-${i}`} className="rounded-lg border p-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{r.title ?? "Projet"}</div>

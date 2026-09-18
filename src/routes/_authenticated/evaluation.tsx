@@ -63,6 +63,7 @@ function EvalPage() {
   const [projects, setProjects] = useState<Array<{ id: string; title: string }>>([]);
   const [projectId, setProjectId] = useState<string | null>(null);
   const [auto, setAuto] = useState<Record<string, number> | null>(null);
+  const [official, setOfficial] = useState<{ score: number; niveau: string } | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [current, setCurrent] = useState<Eval>(empty);
   const [history, setHistory] = useState<Eval[]>([]);
@@ -108,8 +109,13 @@ function EvalPage() {
           potentiel_croissance: Number(row.score_impact ?? 0),
         };
         setAuto(mapped);
-        if (!forProject) setCurrent((c) => ({ ...c, ...mapped }));
-      } else setAuto(null);
+        setOfficial({
+          score: Number(row.score_global ?? 0),
+          niveau: String((row as unknown as { niveau?: string }).niveau ?? ""),
+        });
+        // Le score officiel du projet fait foi : on aligne les axes affichés dessus.
+        setCurrent((c) => ({ ...c, ...mapped }));
+      } else { setAuto(null); setOfficial(null); }
     }
   }
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [projectId]);
@@ -129,8 +135,12 @@ function EvalPage() {
     toast.success("Valeurs calculées appliquées");
   }
 
-  const score = Math.round(AXES.reduce((s, a) => s + (current[a.key] as number), 0) / AXES.length);
-  const niveau = score >= 80 ? "Finançable" : score >= 60 ? "Structuré" : score >= 40 ? "En construction" : "Émergent";
+  const localScore = Math.round(AXES.reduce((s, a) => s + (current[a.key] as number), 0) / AXES.length);
+  // Le score officiel enregistré pour le projet prime sur la moyenne locale des axes.
+  const score = official ? official.score : localScore;
+  const niveau = official?.niveau
+    ? official.niveau
+    : score >= 80 ? "Finançable" : score >= 60 ? "Structuré" : score >= 40 ? "En construction" : "Émergent";
   const niveauColor = score >= 80 ? "bg-secondary text-secondary-foreground" : score >= 60 ? "bg-primary text-primary-foreground" : score >= 40 ? "bg-gold text-gold-foreground" : "bg-muted text-muted-foreground";
 
   async function save() {
