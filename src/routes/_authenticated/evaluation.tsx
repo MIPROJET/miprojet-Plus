@@ -135,8 +135,12 @@ function EvalPage() {
     toast.success("Valeurs calculées appliquées");
   }
 
-  const score = Math.round(AXES.reduce((s, a) => s + (current[a.key] as number), 0) / AXES.length);
-  const niveau = score >= 80 ? "Finançable" : score >= 60 ? "Structuré" : score >= 40 ? "En construction" : "Émergent";
+  const localScore = Math.round(AXES.reduce((s, a) => s + (current[a.key] as number), 0) / AXES.length);
+  // Le score officiel enregistré pour le projet prime sur la moyenne locale des axes.
+  const score = official ? official.score : localScore;
+  const niveau = official?.niveau
+    ? official.niveau
+    : score >= 80 ? "Finançable" : score >= 60 ? "Structuré" : score >= 40 ? "En construction" : "Émergent";
   const niveauColor = score >= 80 ? "bg-secondary text-secondary-foreground" : score >= 60 ? "bg-primary text-primary-foreground" : score >= 40 ? "bg-gold text-gold-foreground" : "bg-muted text-muted-foreground";
 
   async function save() {
