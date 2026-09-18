@@ -109,8 +109,13 @@ function EvalPage() {
           potentiel_croissance: Number(row.score_impact ?? 0),
         };
         setAuto(mapped);
-        if (!forProject) setCurrent((c) => ({ ...c, ...mapped }));
-      } else setAuto(null);
+        setOfficial({
+          score: Number(row.score_global ?? 0),
+          niveau: String((row as unknown as { niveau?: string }).niveau ?? ""),
+        });
+        // Le score officiel du projet fait foi : on aligne les axes affichés dessus.
+        setCurrent((c) => ({ ...c, ...mapped }));
+      } else { setAuto(null); setOfficial(null); }
     }
   }
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [projectId]);
