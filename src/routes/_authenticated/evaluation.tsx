@@ -63,6 +63,7 @@ function EvalPage() {
   const [projects, setProjects] = useState<Array<{ id: string; title: string }>>([]);
   const [projectId, setProjectId] = useState<string | null>(null);
   const [auto, setAuto] = useState<Record<string, number> | null>(null);
+  const [official, setOfficial] = useState<{ score: number; niveau: string } | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [current, setCurrent] = useState<Eval>(empty);
   const [history, setHistory] = useState<Eval[]>([]);
