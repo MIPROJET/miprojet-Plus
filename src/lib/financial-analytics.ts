@@ -58,8 +58,12 @@ export function byParty(records: FinancialRecord[]) {
   >();
 
   for (const r of inflows) {
+    // Toute entrée est rattachée à un contributeur : nom explicite, nom extrait
+    // de la description, sinon la source de financement (Ventes / Clients, etc.).
     const raw =
-      (r.party_name && r.party_name.trim()) || extractPartyName(r.description) || "Non attribué";
+      (r.party_name && r.party_name.trim()) ||
+      extractPartyName(r.description) ||
+      financingSource(r);
     const key = normalizeName(raw);
     const g = merged.get(key) ?? {
       name: raw.toUpperCase() === raw ? raw : raw,
