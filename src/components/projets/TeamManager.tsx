@@ -147,6 +147,36 @@ function MemberEditor({
   const [m, setM] = useState<Member>(value);
   const set = (k: keyof Member, v: any) => setM((p) => ({ ...p, [k]: v }));
   const [uploading, setUploading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  const onCv = async (f: File) => {
+    if (f.size > 8 * 1024 * 1024) return toast.error("Max 8 Mo");
+    setAnalyzing(true);
+    try {
+      const buf = new Uint8Array(await f.arrayBuffer());
+      let bin = "";
+      for (let i = 0; i < buf.length; i += 8192)
+        bin += String.fromCharCode(...buf.subarray(i, i + 8192));
+      const fields = await extractCvFields({
+        data: { fileName: f.name, mimeType: f.type, dataBase64: btoa(bin) },
+      });
+      setM((p) => ({
+        ...p,
+        full_name: fields.full_name || p.full_name,
+        role_title: fields.role_title || p.role_title,
+        expertise: fields.expertise || p.expertise,
+        bio: fields.bio || p.bio,
+        organization: fields.organization || p.organization,
+        contact_email: fields.contact_email || p.contact_email,
+        contact_phone: fields.contact_phone || p.contact_phone,
+      }));
+      toast.success("CV analysé : vérifiez et complétez les champs, puis ajoutez la photo.");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Analyse du CV impossible");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const onPhoto = async (f: File) => {
     if (!f.type.startsWith("image/")) return toast.error("Image uniquement");
