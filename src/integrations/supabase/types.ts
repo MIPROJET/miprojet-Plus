@@ -4768,6 +4768,13 @@ export type Database = {
         }[]
       }
       get_agricapital_partition: { Args: never; Returns: Json }
+      get_entity_contacts: {
+        Args: { _entity_id: string }
+        Returns: {
+          contact_email: string
+          contact_phone: string
+        }[]
+      }
       get_opportunity_contacts: {
         Args: { p_id: string }
         Returns: {
