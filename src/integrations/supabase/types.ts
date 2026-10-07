@@ -4810,6 +4810,7 @@ export type Database = {
         Args: { _path: string }
         Returns: boolean
       }
+      invest_owner_space: { Args: never; Returns: Json }
       invest_project_documents: {
         Args: { _project_id: string }
         Returns: {
@@ -4878,6 +4879,7 @@ export type Database = {
         }[]
       }
       invest_public_stats: { Args: never; Returns: Json }
+      invest_request_detail: { Args: { _request_id: string }; Returns: Json }
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
       is_email_unsubscribed: { Args: { _email: string }; Returns: boolean }
       is_org_member: { Args: { _org_id: string }; Returns: boolean }
