@@ -215,6 +215,17 @@ function MemberEditor({
             onChange={(e) => { const f = e.target.files?.[0]; if (f) onPhoto(f); }}
           />
         </label>
+        <label className="inline-flex cursor-pointer items-center gap-2 self-start rounded-md border bg-background px-3 py-2 text-xs hover:bg-accent">
+          <Upload className="h-3 w-3" />
+          {analyzing ? "Analyse du CV…" : "Importer un CV"}
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx,.ppt,.pptx,image/*"
+            className="hidden"
+            disabled={analyzing}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onCv(f); e.target.value = ""; }}
+          />
+        </label>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">

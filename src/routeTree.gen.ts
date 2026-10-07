@@ -9,45 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProjetsSlugRouteImport } from './routes/projets.$slug'
-import { Route as CertificatShortIdRouteImport } from './routes/certificat.$shortId'
-import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
-import { Route as AuthenticatedScoreRouteImport } from './routes/_authenticated/score'
-import { Route as AuthenticatedProjetsRouteImport } from './routes/_authenticated/projets'
-import { Route as AuthenticatedOrganisationRouteImport } from './routes/_authenticated/organisation'
-import { Route as AuthenticatedFinancesRouteImport } from './routes/_authenticated/finances'
-import { Route as AuthenticatedEvaluationRouteImport } from './routes/_authenticated/evaluation'
-import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedCoherenceRouteImport } from './routes/_authenticated/coherence'
-import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
-import { Route as AuthenticatedFinancesAnalyseRouteImport } from './routes/_authenticated/finances_.analyse'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AuthenticatedAccompagnementRouteImport } from './routes/_authenticated/accompagnement'
+import { Route as AuthenticatedCoherenceRouteImport } from './routes/_authenticated/coherence'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
+import { Route as AuthenticatedEvaluationRouteImport } from './routes/_authenticated/evaluation'
+import { Route as AuthenticatedFinancesRouteImport } from './routes/_authenticated/finances'
+import { Route as AuthenticatedOrganisationRouteImport } from './routes/_authenticated/organisation'
+import { Route as AuthenticatedProjetsRouteImport } from './routes/_authenticated/projets'
+import { Route as AuthenticatedScoreRouteImport } from './routes/_authenticated/score'
+import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
+import { Route as CertificatShortIdRouteImport } from './routes/certificat.$shortId'
+import { Route as ProjetsSlugRouteImport } from './routes/projets.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as AuthenticatedFinancesAnalyseRouteImport } from './routes/_authenticated/finances_.analyse'
+import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as ApiPublicHooksProcessEmailQueueRouteImport } from './routes/api/public/hooks/process-email-queue'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -55,38 +49,62 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjetsSlugRoute = ProjetsSlugRouteImport.update({
-  id: '/projets/$slug',
-  path: '/projets/$slug',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CertificatShortIdRoute = CertificatShortIdRouteImport.update({
-  id: '/certificat/$shortId',
-  path: '/certificat/$shortId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
-  id: '/support',
-  path: '/support',
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAccompagnementRoute =
+  AuthenticatedAccompagnementRouteImport.update({
+    id: '/accompagnement',
+    path: '/accompagnement',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoherenceRoute = AuthenticatedCoherenceRouteImport.update({
+  id: '/coherence',
+  path: '/coherence',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedScoreRoute = AuthenticatedScoreRouteImport.update({
-  id: '/score',
-  path: '/score',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProjetsRoute = AuthenticatedProjetsRouteImport.update({
-  id: '/projets',
-  path: '/projets',
+const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEvaluationRoute = AuthenticatedEvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFinancesRoute = AuthenticatedFinancesRouteImport.update({
+  id: '/finances',
+  path: '/finances',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOrganisationRoute =
@@ -95,69 +113,51 @@ const AuthenticatedOrganisationRoute =
     path: '/organisation',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedFinancesRoute = AuthenticatedFinancesRouteImport.update({
-  id: '/finances',
-  path: '/finances',
+const AuthenticatedProjetsRoute = AuthenticatedProjetsRouteImport.update({
+  id: '/projets',
+  path: '/projets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedEvaluationRoute = AuthenticatedEvaluationRouteImport.update({
-  id: '/evaluation',
-  path: '/evaluation',
+const AuthenticatedScoreRoute = AuthenticatedScoreRouteImport.update({
+  id: '/score',
+  path: '/score',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
+const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedCoherenceRoute = AuthenticatedCoherenceRouteImport.update({
-  id: '/coherence',
-  path: '/coherence',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAccompagnementRoute =
-  AuthenticatedAccompagnementRouteImport.update({
-    id: '/accompagnement',
-    path: '/accompagnement',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
-  id: '/api/public/unsubscribe',
-  path: '/api/public/unsubscribe',
+const CertificatShortIdRoute = CertificatShortIdRouteImport.update({
+  id: '/certificat/$shortId',
+  path: '/certificat/$shortId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedFinancesAnalyseRoute =
-  AuthenticatedFinancesAnalyseRouteImport.update({
-    id: '/finances_/analyse',
-    path: '/finances/analyse',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
+const ProjetsSlugRoute = ProjetsSlugRouteImport.update({
+  id: '/projets/$slug',
+  path: '/projets/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
+const AuthenticatedFinancesAnalyseRoute =
+  AuthenticatedFinancesAnalyseRouteImport.update({
+    id: '/finances_/analyse',
+    path: '/finances/analyse',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
+  id: '/api/public/unsubscribe',
+  path: '/api/public/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksProcessEmailQueueRoute =
@@ -348,32 +348,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -383,102 +362,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projets/$slug': {
-      id: '/projets/$slug'
-      path: '/projets/$slug'
-      fullPath: '/projets/$slug'
-      preLoaderRoute: typeof ProjetsSlugRouteImport
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/certificat/$shortId': {
-      id: '/certificat/$shortId'
-      path: '/certificat/$shortId'
-      fullPath: '/certificat/$shortId'
-      preLoaderRoute: typeof CertificatShortIdRouteImport
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/support': {
-      id: '/_authenticated/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof AuthenticatedSupportRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/score': {
-      id: '/_authenticated/score'
-      path: '/score'
-      fullPath: '/score'
-      preLoaderRoute: typeof AuthenticatedScoreRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/projets': {
-      id: '/_authenticated/projets'
-      path: '/projets'
-      fullPath: '/projets'
-      preLoaderRoute: typeof AuthenticatedProjetsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/organisation': {
-      id: '/_authenticated/organisation'
-      path: '/organisation'
-      fullPath: '/organisation'
-      preLoaderRoute: typeof AuthenticatedOrganisationRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/finances': {
-      id: '/_authenticated/finances'
-      path: '/finances'
-      fullPath: '/finances'
-      preLoaderRoute: typeof AuthenticatedFinancesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/evaluation': {
-      id: '/_authenticated/evaluation'
-      path: '/evaluation'
-      fullPath: '/evaluation'
-      preLoaderRoute: typeof AuthenticatedEvaluationRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/documents': {
-      id: '/_authenticated/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/coherence': {
-      id: '/_authenticated/coherence'
-      path: '/coherence'
-      fullPath: '/coherence'
-      preLoaderRoute: typeof AuthenticatedCoherenceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/accompagnement': {
-      id: '/_authenticated/accompagnement'
-      path: '/accompagnement'
-      fullPath: '/accompagnement'
-      preLoaderRoute: typeof AuthenticatedAccompagnementRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -488,11 +397,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/unsubscribe': {
-      id: '/api/public/unsubscribe'
-      path: '/api/public/unsubscribe'
-      fullPath: '/api/public/unsubscribe'
-      preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/accompagnement': {
+      id: '/_authenticated/accompagnement'
+      path: '/accompagnement'
+      fullPath: '/accompagnement'
+      preLoaderRoute: typeof AuthenticatedAccompagnementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/coherence': {
+      id: '/_authenticated/coherence'
+      path: '/coherence'
+      fullPath: '/coherence'
+      preLoaderRoute: typeof AuthenticatedCoherenceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/evaluation': {
+      id: '/_authenticated/evaluation'
+      path: '/evaluation'
+      fullPath: '/evaluation'
+      preLoaderRoute: typeof AuthenticatedEvaluationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/finances': {
+      id: '/_authenticated/finances'
+      path: '/finances'
+      fullPath: '/finances'
+      preLoaderRoute: typeof AuthenticatedFinancesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/organisation': {
+      id: '/_authenticated/organisation'
+      path: '/organisation'
+      fullPath: '/organisation'
+      preLoaderRoute: typeof AuthenticatedOrganisationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projets': {
+      id: '/_authenticated/projets'
+      path: '/projets'
+      fullPath: '/projets'
+      preLoaderRoute: typeof AuthenticatedProjetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/score': {
+      id: '/_authenticated/score'
+      path: '/score'
+      fullPath: '/score'
+      preLoaderRoute: typeof AuthenticatedScoreRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/support': {
+      id: '/_authenticated/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AuthenticatedSupportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/certificat/$shortId': {
+      id: '/certificat/$shortId'
+      path: '/certificat/$shortId'
+      fullPath: '/certificat/$shortId'
+      preLoaderRoute: typeof CertificatShortIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projets/$slug': {
+      id: '/projets/$slug'
+      path: '/projets/$slug'
+      fullPath: '/projets/$slug'
+      preLoaderRoute: typeof ProjetsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/finances_/analyse': {
@@ -502,18 +509,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinancesAnalyseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+    '/api/public/unsubscribe': {
+      id: '/api/public/unsubscribe'
+      path: '/api/public/unsubscribe'
+      fullPath: '/api/public/unsubscribe'
+      preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/process-email-queue': {

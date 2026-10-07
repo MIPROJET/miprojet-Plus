@@ -71,10 +71,40 @@ function ScorePage() {
     enabled: !!activeId,
   });
 
-  const score = useMemo(
-    () => (activeProject ? computeScore(activeProject, recordsQ.data ?? []) : null),
-    [activeProject, recordsQ.data],
-  );
+  const officialQ = useQuery({
+    queryKey: ["scoring", "official", activeId],
+    enabled: !!activeId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("mp_scoring_results")
+        .select("*")
+        .eq("project_id", activeId)
+        .order("computed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data as any;
+    },
+  });
+
+  const score = useMemo(() => {
+    if (!activeProject) return null;
+    const local = computeScore(activeProject, recordsQ.data ?? []);
+    const o = officialQ.data;
+    if (!o) return local;
+    return {
+      ...local,
+      score_juridique: o.score_juridique ?? local.score_juridique,
+      score_financier: o.score_financier ?? local.score_financier,
+      score_technique: o.score_technique ?? local.score_technique,
+      score_marche: o.score_marche ?? local.score_marche,
+      score_impact: o.score_impact ?? local.score_impact,
+      score_global: Math.round(Number(o.score_global ?? local.score_global)),
+      niveau: o.niveau ?? local.niveau,
+      forces: o.forces?.length ? o.forces : local.forces,
+      faiblesses: o.faiblesses?.length ? o.faiblesses : local.faiblesses,
+      recommandations: o.recommandations?.length ? o.recommandations : local.recommandations,
+    };
+  }, [activeProject, recordsQ.data, officialQ.data]);
 
   const saveM = useMutation({
     mutationFn: async () => {
